@@ -4,8 +4,9 @@ import { cn } from '@/utils';
 import { Link } from 'react-router-dom';
 import { Turnstile } from 'react-turnstile';
 import { handleDiscordLogin } from '@/hooks';
-import { useLoginForm } from './hooks';
+import { useLoginForm, useDiscordCallback } from './hooks';
 import { PasswordResetModal } from './components';
+import { LoadingSpinner } from '@/components';
 
 export const Login = () => {
   const {
@@ -20,6 +21,9 @@ export const Login = () => {
     onSubmit,
     handlePasswordReset,
   } = useLoginForm();
+  const { isExchanging, error: discordError } = useDiscordCallback();
+
+  if (isExchanging) return <LoadingSpinner />;
 
   return (
     <div className="flex grow items-center justify-center p-5">
@@ -36,10 +40,14 @@ export const Login = () => {
 
         <form onSubmit={onSubmit} noValidate>
           <div className="mb-5">
-            <label className="text-text-muted mb-2 block text-[14px] font-semibold">
+            <label
+              htmlFor="login-email"
+              className="text-text-muted mb-2 block text-[14px] font-semibold"
+            >
               이메일
             </label>
             <input
+              id="login-email"
               type="email"
               value={formData.email}
               onChange={(e) => {
@@ -57,10 +65,14 @@ export const Login = () => {
           </div>
 
           <div className="mb-5">
-            <label className="text-text-muted mb-2 block text-[14px] font-semibold">
+            <label
+              htmlFor="login-password"
+              className="text-text-muted mb-2 block text-[14px] font-semibold"
+            >
               비밀번호
             </label>
             <input
+              id="login-password"
               type="password"
               value={formData.password}
               onChange={(e) => {
@@ -127,11 +139,11 @@ export const Login = () => {
             </div>
           )}
 
-          {(error || uiState.localError) && (
+          {(error || uiState.localError || discordError) && (
             <p className="mb-4 text-center text-[13px] font-medium text-[#ff4757]">
-              {uiState.localError
-                ? uiState.localError
-                : '이메일 또는 비밀번호가 일치하지 않습니다.'}
+              {uiState.localError ||
+                discordError ||
+                '이메일 또는 비밀번호가 일치하지 않습니다.'}
             </p>
           )}
 

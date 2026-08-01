@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { FieldValue } from 'firebase-admin/firestore';
 // 격리된 파이어베이스 어드민 호출
-import { getAdminAuth, getAdminFirestore } from '../../_lib/firebaseAdmin.ts';
+import { getAdminAuth, getAdminFirestore } from '../../_lib/firebaseAdmin.js';
 
 // 디스코드 응답 데이터 타입 단언 (Strict Mode 방어)
 interface DiscordTokenResponse {
