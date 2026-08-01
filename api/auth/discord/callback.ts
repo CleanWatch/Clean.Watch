@@ -104,7 +104,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     await userRef.set(patch, { merge: true });
 
     // Step E: 프론트엔드로 상대 경로 리다이렉트 (레거시의 하드코딩 URL 대체)
-    res.redirect(302, `/login?token=${firebaseToken}`);
+    // 해시(#)로 넘기면 서버 액세스 로그에 토큰이 남지 않습니다.
+    // 쿼리스트링(?)은 요청 URL의 일부라 그대로 기록됩니다.
+    res.redirect(302, `/login#token=${firebaseToken}`);
   } catch (error) {
     clearTimeout(timeoutId);
     console.error('[Discord Callback Error]:', error);
