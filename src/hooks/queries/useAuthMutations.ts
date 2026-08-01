@@ -113,13 +113,18 @@ export const useEmailLoginMutation = () => {
       const persistenceType = keepLoggedIn
         ? browserLocalPersistence
         : browserSessionPersistence;
-      await setPersistence(auth, persistenceType);
 
-      // 파이어베이스 Auth 로그인
-      // 응답이 오지 않으면 SDK가 스스로 포기하지 않아 버튼이 "로그인 중..."에
-      // 갇힙니다. 서버(api/auth/discord/callback.ts)와 같은 10초 제한을 둡니다.
+      // 로그인 절차 전체를 하나의 제한 시간으로 묶습니다.
+      // signInWithEmailAndPassword만 감싸면, 그 앞의 setPersistence가 멈췄을 때
+      // 두 번째 호출에 도달하지 못해 타임아웃이 발동할 기회조차 없습니다.
+      // 응답이 오지 않아도 SDK는 스스로 포기하지 않으므로, 버튼이
+      // "로그인 중..."에 갇힌 채 취소도 원인 파악도 불가능해집니다.
+      // 서버(api/auth/discord/callback.ts)와 같은 10초 수준을 맞춥니다.
       const userCredential = await withTimeout(
-        signInWithEmailAndPassword(auth, email, password),
+        (async () => {
+          await setPersistence(auth, persistenceType);
+          return signInWithEmailAndPassword(auth, email, password);
+        })(),
       );
       return userCredential.user;
     },
