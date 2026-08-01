@@ -78,19 +78,30 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const firebaseToken = await adminAuth.createCustomToken(user.id);
 
     // Step D: Firestore DB 갱신
-    await db
-      .collection('users')
-      .doc(user.id)
-      .set(
-        {
-          uid: user.id,
-          username: user.username,
-          email: user.email || '',
-          avatar: user.avatar || '',
-          lastLogin: FieldValue.serverTimestamp(),
-        },
-        { merge: true }, // 기존 데이터 덮어쓰기 방지
-      );
+    const userRef = db.collection('users').doc(user.id);
+    const prev = (await userRef.get()).data();
+
+    // Discord의 avatar는 URL이 아니라 해시라서 CDN 경로로 조립해야 함
+    const photoUrl = user.avatar
+      ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
+      : `https://ui-avatars.com/api/?name=${encodeURIComponent(user.username)}&background=random&color=fff`;
+
+    // 매 로그인마다 갱신되는 필드
+    const patch: Record<string, unknown> = {
+      uid: user.id,
+      username: user.username,
+      email: user.email || '',
+      avatar: user.avatar || '', // 원본 해시 유지 (다른 크기/포맷 URL 재생성용)
+      photoUrl,
+      lastLogin: FieldValue.serverTimestamp(),
+    };
+
+    // 최초 1회만 기록. 매번 쓰면 관리자가 강등되고 가입일이 갱신됨
+    if (!prev?.role) patch.role = 'user';
+    if (!prev?.createdAt) patch.createdAt = FieldValue.serverTimestamp();
+    if (prev?.battletag === undefined) patch.battletag = null;
+
+    await userRef.set(patch, { merge: true });
 
     // Step E: 프론트엔드로 상대 경로 리다이렉트 (레거시의 하드코딩 URL 대체)
     res.redirect(302, `/login?token=${firebaseToken}`);

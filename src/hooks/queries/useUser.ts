@@ -21,11 +21,10 @@ const fetchUserData = async (uid: string): Promise<User> => {
   return {
     uid: data.uid,
     username: data.username,
-    photoUrl: data.photoUrl,
-    role: data.role,
-    battletag: data.battletag || null, // 빈 값일 경우 null 처리
-    // Firebase Timestamp 객체를 프론트엔드 상태 관리를 위해 ISO 문자열로 변환
-    createdAt: data.createdAt.toDate().toISOString(),
+    photoUrl: data.photoUrl ?? '',
+    role: data.role ?? 'user',
+    battletag: data.battletag || null,
+    createdAt: data.createdAt?.toDate?.().toISOString() ?? '',
   } as User;
 };
 
