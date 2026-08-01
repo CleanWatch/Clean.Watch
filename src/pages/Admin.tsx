@@ -3,29 +3,76 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { cn } from '@/utils';
 import { useAuthStore } from '@/store';
-import { useAdminReportsQuery, useDeleteReportMutation } from '@/hooks';
+import {
+  useAdminReportsQuery,
+  useDeleteReportMutation,
+  useUser,
+} from '@/hooks';
+
+// 접근이 막혔을 때 보여줄 안내. 비로그인과 권한 부족 양쪽에서 씁니다.
+const AccessDenied = ({
+  title,
+  description,
+}: {
+  title: string;
+  description?: string;
+}) => {
+  const navigate = useNavigate();
+
+  return (
+    <div className="flex min-h-[calc(100dvh-160px)] flex-col items-center justify-center gap-4 text-white">
+      <h2 className="text-xl font-bold">{title}</h2>
+      {description && <p className="text-text-muted text-sm">{description}</p>}
+      <button
+        onClick={() => navigate('/')}
+        className="bg-border-main rounded-lg px-6 py-2 font-bold text-white transition-all hover:bg-white/10"
+      >
+        홈으로 돌아가기
+      </button>
+    </div>
+  );
+};
 
 export const Admin = () => {
-  const navigate = useNavigate();
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+  const {
+    data: user,
+    isLoading: isUserLoading,
+    isError: isUserError,
+  } = useUser();
 
   const { data: reports, isLoading, isError } = useAdminReportsQuery();
   const { mutate: deleteReport, isPending: isDeleting } =
     useDeleteReportMutation();
 
-  // 인증 및 권한 가드
+  // 인증 가드
   if (!isLoggedIn) {
+    return <AccessDenied title="🚨 관리자 전용 페이지입니다." />;
+  }
+
+  // 권한 조회가 끝나기 전에 판정하면 실제 관리자도 거부 화면을 봅니다.
+  if (isUserLoading) {
     return (
-      <div className="flex min-h-[calc(100dvh-160px)] flex-col items-center justify-center gap-4 text-white">
-        <h2 className="text-xl font-bold">🚨 관리자 전용 페이지입니다.</h2>
-        <button
-          onClick={() => navigate('/')}
-          className="bg-border-main rounded-lg px-6 py-2 font-bold text-white transition-all hover:bg-white/10"
-        >
-          홈으로 돌아가기
-        </button>
+      <div className="text-text-muted flex min-h-[calc(100dvh-160px)] items-center justify-center">
+        권한을 확인하는 중...
       </div>
     );
+  }
+
+  // 조회 실패를 "권한 없음"으로 표시하면 관리자가 권한을 잃은 줄 오해합니다.
+  // 네트워크 문제와 실제 권한 부족은 반드시 구분해야 합니다.
+  if (isUserError) {
+    return (
+      <AccessDenied
+        title="⚠️ 권한을 확인하지 못했습니다."
+        description="네트워크 상태를 확인한 뒤 새로고침해 주세요."
+      />
+    );
+  }
+
+  // 권한 가드. 로그인 여부는 따로 알려주지 않아 비로그인과 같은 문구를 씁니다.
+  if (user?.role !== 'admin') {
+    return <AccessDenied title="🚨 관리자 전용 페이지입니다." />;
   }
 
   return (
