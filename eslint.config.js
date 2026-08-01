@@ -1,3 +1,4 @@
+import { defineConfig } from 'eslint/config';
 import js from '@eslint/js';
 import globals from 'globals';
 import reactHooks from 'eslint-plugin-react-hooks';
@@ -7,7 +8,9 @@ import reactDom from 'eslint-plugin-react-dom';
 import tseslint from 'typescript-eslint';
 import eslintConfigPrettier from 'eslint-config-prettier';
 
-export default tseslint.config(
+// tseslint.config()는 ESLint 10이 defineConfig()를 코어에 넣으면서 deprecated 됐습니다.
+// tseslint import 자체는 configs.recommended 때문에 계속 필요합니다.
+export default defineConfig([
   // 빌드 결과물 폴더는 린트 검사에서 제외
   { ignores: ['dist'] },
   {
@@ -50,4 +53,4 @@ export default tseslint.config(
 
   // 다른 모든 규칙 중 코드 스타일 관련 사항 덮어쓰기
   eslintConfigPrettier,
-);
+]);
