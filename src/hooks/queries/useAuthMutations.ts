@@ -25,6 +25,7 @@ import {
 
 import { auth, db } from '@/firebase/firebase';
 import { useAuthStore } from '@/store';
+import { withTimeout } from '@/utils';
 import type { UserRole } from '@/types';
 
 // 커스텀 에러 인터페이스 (Axios 에러와 Firebase 에러 동시 호환)
@@ -115,10 +116,10 @@ export const useEmailLoginMutation = () => {
       await setPersistence(auth, persistenceType);
 
       // 파이어베이스 Auth 로그인
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password,
+      // 응답이 오지 않으면 SDK가 스스로 포기하지 않아 버튼이 "로그인 중..."에
+      // 갇힙니다. 서버(api/auth/discord/callback.ts)와 같은 10초 제한을 둡니다.
+      const userCredential = await withTimeout(
+        signInWithEmailAndPassword(auth, email, password),
       );
       return userCredential.user;
     },

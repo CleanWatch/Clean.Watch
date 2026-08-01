@@ -25,6 +25,10 @@ export const getAuthErrorMessage = (error: unknown): string => {
     case 'auth/network-request-failed':
       return '네트워크 연결을 확인해 주세요.';
 
+    // withTimeout이 붙이는 코드. 응답이 오지 않아 우리가 끊은 경우입니다.
+    case 'app/timeout':
+      return '응답이 지연되고 있습니다. 네트워크 상태를 확인한 뒤 다시 시도해 주세요.';
+
     case 'auth/user-disabled':
       return '비활성화된 계정입니다. 관리자에게 문의해 주세요.';
 
