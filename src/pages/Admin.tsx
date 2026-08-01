@@ -9,7 +9,7 @@ export const Admin = () => {
   const navigate = useNavigate();
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
 
-  const { data: reports, isLoading } = useAdminReportsQuery();
+  const { data: reports, isLoading, isError } = useAdminReportsQuery();
   const { mutate: deleteReport, isPending: isDeleting } =
     useDeleteReportMutation();
 
@@ -46,6 +46,17 @@ export const Admin = () => {
         {isLoading ? (
           <div className="text-text-muted py-20 text-center text-lg font-bold">
             데이터를 불러오는 중...
+          </div>
+        ) : isError ? (
+          /* 조회 실패를 "내역 없음"으로 표시하면 DB가 빈 것으로 오인하게 됩니다.
+             관리자 권한이 없거나 Firestore 규칙에 막힌 경우가 여기로 옵니다. */
+          <div className="py-20 text-center">
+            <p className="mb-2 font-bold text-[#ff4757]">
+              신고 내역을 불러오지 못했습니다.
+            </p>
+            <p className="text-text-muted text-sm">
+              관리자 권한이 없거나 네트워크에 문제가 있을 수 있습니다.
+            </p>
           </div>
         ) : !reports?.length ? (
           <div className="text-text-muted py-20 text-center">

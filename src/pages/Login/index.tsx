@@ -13,6 +13,7 @@ export const Login = () => {
   const {
     isPending,
     error,
+    errorMessage,
     formData,
     setFormData,
     uiState,
@@ -142,9 +143,7 @@ export const Login = () => {
 
           {(error || uiState.localError || discordError) && (
             <p className="mb-4 text-center text-[13px] font-medium text-[#ff4757]">
-              {uiState.localError ||
-                discordError ||
-                '이메일 또는 비밀번호가 일치하지 않습니다.'}
+              {uiState.localError || discordError || errorMessage}
             </p>
           )}
 

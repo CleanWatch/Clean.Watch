@@ -1,7 +1,7 @@
 /* src/hooks/useLoginForm.ts */
 
 import { useState } from 'react';
-import { isValidEmail } from '@/utils';
+import { getAuthErrorMessage, isValidEmail } from '@/utils';
 import { useEmailLoginMutation } from '@/hooks';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '@/firebase/firebase';
@@ -116,9 +116,14 @@ export const useLoginForm = () => {
     }
   };
 
+  // 로그인 실패 원인을 에러 코드에 맞는 문구로 변환.
+  // 컴포넌트는 화면에 뿌리기만 하도록 여기서 파생시킵니다.
+  const errorMessage = error ? getAuthErrorMessage(error) : '';
+
   return {
     isPending,
     error,
+    errorMessage,
     formData,
     setFormData,
     uiState,

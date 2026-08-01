@@ -128,16 +128,9 @@ export const useEmailLoginMutation = () => {
       navigate('/');
     },
     onError: (error: AuthError) => {
+      // 사용자에게 보여줄 문구는 useLoginForm이 getAuthErrorMessage로 파생시킵니다.
+      // 여기서는 원본 에러만 남겨 디버깅에 쓰도록 합니다.
       console.error('로그인 에러:', error);
-      // if (
-      //   error.code === 'auth/wrong-password' ||
-      //   error.code === 'auth/invalid-credential' ||
-      //   error.code === 'auth/user-not-found'
-      // ) {
-      //   alert('이메일 또는 비밀번호가 일치하지 않습니다.');
-      // } else {
-      //   alert('로그인 중 오류가 발생했습니다. 다시 시도해 주세요.');
-      // }
     },
   });
 };
