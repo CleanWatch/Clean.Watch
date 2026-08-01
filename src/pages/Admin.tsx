@@ -86,17 +86,9 @@ export const Admin = () => {
                 )}
 
                 <div className="mt-2 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-                  <div className="flex items-center gap-3">
-                    <span className="text-text-muted text-sm">
-                      신고자 UID : {report.reporterUid}
-                    </span>
-                    <Link
-                      to={`/profile/${report.reporterUid}`}
-                      className="rounded-lg bg-blue-500/10 px-3 py-1.5 text-xs font-bold text-blue-400 transition-all hover:bg-blue-500/20"
-                    >
-                      🔍 프로필 보기
-                    </Link>
-                  </div>
+                  <span className="text-text-muted text-sm">
+                    신고자 UID : {report.reporterUid}
+                  </span>
 
                   <button
                     onClick={() => {
