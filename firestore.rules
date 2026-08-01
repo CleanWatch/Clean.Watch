@@ -1,0 +1,178 @@
+rules_version = '2';
+
+// ============================================================================
+// CleanWatch Firestore 보안 규칙
+//
+// [중요] 이 프로젝트는 DB 쓰기가 전부 브라우저에서 일어납니다.
+//        (src/api/report.ts, src/api/admin.ts, src/hooks/queries/*)
+//        프론트엔드 코드는 개발자도구에서 그대로 호출할 수 있으므로,
+//        화면에서 버튼을 숨기는 것은 방어가 아닙니다. 이 파일이 유일한 방어선입니다.
+//
+// [배포] Firebase 콘솔 → Firestore Database → 규칙 탭에 붙여넣고 게시.
+//        콘솔에서 직접 수정하면 이 파일과 어긋나므로, 항상 여기서 수정한 뒤
+//        복사해 붙여넣는 순서를 지켜주세요.
+// ============================================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ------------------------------------------------------------------
+    // 헬퍼 함수
+    // ------------------------------------------------------------------
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // 문서 소유자 본인인지
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // 관리자 여부: users 문서의 role 필드를 신뢰합니다.
+    //
+    // [비용 주의] 규칙 안의 get()은 문서 읽기 1회로 과금됩니다.
+    //             그래서 아래 규칙들은 isAdmin()을 || 의 오른쪽에 두어,
+    //             일반 유저 경로에서는 호출되지 않도록 배치했습니다.
+    //
+    // [전제 조건] 이 함수가 안전하려면 users 문서의 role을 클라이언트가
+    //             수정할 수 없어야 합니다. 아래 users 규칙에서 막고 있습니다.
+    //             그 방어가 뚫리면 권한 체계 전체가 무너집니다.
+    function isAdmin() {
+      return isSignedIn() &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // update 요청에서 실제로 값이 바뀐 필드 목록
+    // (create 시에는 resource가 없으므로 update에서만 사용할 것)
+    function changedKeys() {
+      return request.resource.data.diff(resource.data).affectedKeys();
+    }
+
+    // ------------------------------------------------------------------
+    // 기본값: 전부 차단
+    // 아래에서 명시적으로 허용한 경로만 열립니다.
+    // 새 컬렉션을 추가하면 규칙도 반드시 함께 추가해야 합니다.
+    // ------------------------------------------------------------------
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // ------------------------------------------------------------------
+    // users — 회원 정보
+    //
+    // 읽기: src/hooks/queries/useUser.ts:12       (본인 문서 조회)
+    //       src/api/users.ts:21                   (닉네임·배틀태그 중복 검사)
+    //       src/hooks/queries/useAuthMutations.ts:52 (회원가입 시 닉네임 중복 검사)
+    // 쓰기: src/hooks/queries/useAuthMutations.ts:69 (가입 시 문서 생성)
+    //       src/hooks/queries/useMyPageQueries.ts:73 (프로필 수정)
+    // ------------------------------------------------------------------
+    match /users/{userId} {
+
+      // ⚠️ 알려진 문제: 전체 공개 읽기
+      //
+      // 회원가입 화면의 닉네임 중복 검사가 로그인 이전에 실행되기 때문에
+      // 인증 조건을 걸면 가입 자체가 막힙니다. 그래서 지금은 열어둡니다.
+      //
+      // 그 대가로 users 문서 전체가 공개됩니다. email 필드가 들어 있으므로
+      // getDocs(collection(db,'users')) 한 번이면 전체 회원 이메일이 노출됩니다.
+      // Firestore 규칙은 필드 단위 읽기 제한을 지원하지 않아 여기서는 해결할 수 없습니다.
+      //
+      // TODO: 다음 중 하나로 이관 후 이 규칙을 조일 것
+      //   (A) 중복 검사를 api/ 서버리스 함수로 옮기고 Admin SDK로 조회
+      //   (B) usernames/{username} 형태의 인덱스 컬렉션을 따로 두고 그것만 공개
+      allow read: if true;
+
+      // 생성: 본인 UID의 문서만, 그리고 role은 반드시 'user'
+      //
+      // role을 검사하지 않으면 가입 시점에 { role: 'admin' }으로 문서를 만들어
+      // 스스로 관리자가 될 수 있습니다.
+      //
+      // 참고: Discord 로그인은 api/auth/discord/callback.ts 에서 Admin SDK로
+      //       문서를 만들며, Admin SDK는 이 규칙을 우회하므로 영향받지 않습니다.
+      allow create: if isOwner(userId)
+                    && request.resource.data.role == 'user';
+
+      // 수정: 본인 문서만, 그리고 권한·식별자·가입일은 건드릴 수 없음
+      //
+      // 이 제한이 없으면 콘솔에서
+      //   updateDoc(doc(db,'users',내UID), { role: 'admin' })
+      // 한 줄로 관리자 권한을 획득할 수 있습니다. isAdmin()이 이 필드를
+      // 신뢰하므로 여기가 뚫리면 reports 읽기·삭제까지 전부 열립니다.
+      allow update: if isOwner(userId)
+                    && !changedKeys().hasAny(['role', 'uid', 'createdAt']);
+
+      // 삭제: 현재 회원 탈퇴 기능이 없으므로 차단
+      allow delete: if false;
+    }
+
+    // ------------------------------------------------------------------
+    // reports — 신고 내역
+    //
+    // 읽기: src/hooks/queries/useMyPageQueries.ts:38 (본인 신고 내역)
+    //       src/api/report.ts:25                     (중복 신고 검사)
+    //       src/api/admin.ts:26                      (관리자 전체 조회)
+    // 쓰기: src/api/report.ts:38                     (신고 접수)
+    //       src/api/admin.ts:41                      (관리자 삭제)
+    // ------------------------------------------------------------------
+    match /reports/{reportId} {
+
+      // 본인이 쓴 신고만 읽을 수 있고, 관리자는 전체 열람 가능.
+      //
+      // 주의: Firestore는 쿼리 결과를 문서 단위로 걸러주지 않습니다.
+      //       where 없이 컬렉션 전체를 조회하면(src/api/admin.ts:26) 규칙상
+      //       전부 허용되지 않는 한 통째로 거부됩니다. 비관리자가 관리자 페이지에
+      //       들어갔을 때 목록이 비는 이유가 이것입니다.
+      allow read: if isSignedIn()
+                  && (resource.data.reporterUid == request.auth.uid || isAdmin());
+
+      // 생성: 신고자 UID를 본인 것으로만 기록 가능 (타인 명의 신고 위조 차단)
+      allow create: if isSignedIn()
+                    && request.resource.data.reporterUid == request.auth.uid;
+
+      // 수정·삭제: 관리자만
+      allow update, delete: if isAdmin();
+    }
+
+    // ------------------------------------------------------------------
+    // battletags — 배틀태그별 누적 신고 수 (검색·랭킹의 원본 데이터)
+    //
+    // 읽기: src/api/search.ts:19   (배틀태그 검색)
+    //       src/api/ranking.ts:13  (랭킹)
+    //       src/api/stats.ts:19    (홈 통계 집계)
+    // 쓰기: src/api/report.ts:47   (신고 시 카운트 증가)
+    //       src/api/admin.ts:56    (관리자 삭제 시 카운트 차감)
+    // ------------------------------------------------------------------
+    match /battletags/{tag} {
+
+      // 검색·랭킹은 비로그인 사용자에게도 제공되는 공개 기능
+      allow read: if true;
+
+      // 최초 신고: count는 반드시 1에서 시작하고, 문서 ID와 필드가 일치해야 함
+      allow create: if isSignedIn()
+                    && request.resource.data.count == 1
+                    && request.resource.data.battletag == tag;
+
+      // 증가는 정확히 +1씩만. 관리자는 차감을 위해 예외.
+      //
+      // 이 제한이 없으면 콘솔에서
+      //   setDoc(doc(db,'battletags','아무개#1234'), { count: 9999 })
+      // 로 무고한 사람의 신고 수를 조작할 수 있습니다.
+      //
+      // isAdmin()을 오른쪽에 둔 이유: 일반 유저 신고 경로에서 get() 과금을
+      // 발생시키지 않기 위해서입니다. (|| 는 왼쪽이 참이면 단락 평가)
+      //
+      // ⚠️ 남은 한계: +1씩이라도 반복 호출하면 여전히 부풀릴 수 있습니다.
+      //    src/api/report.ts:26의 중복 신고 검사는 클라이언트에만 있어서
+      //    Firestore를 직접 호출하면 우회됩니다.
+      //    TODO: 카운트 갱신을 api/ 서버리스 함수로 이관하고
+      //          여기 클라이언트 쓰기를 완전히 차단할 것.
+      allow update: if (isSignedIn()
+                        && request.resource.data.count == resource.data.count + 1)
+                    || isAdmin();
+
+      // 삭제: 관리자만 (마지막 신고가 취소되어 카운트가 0이 될 때)
+      allow delete: if isAdmin();
+    }
+  }
+}
