@@ -1,13 +1,5 @@
 /* src/firebase/firebase.ts */
 
-// 글로벌 Window 객체에 커스텀 속성이 존재할 수 있다고 정식으로 타입(명세서) 확장
-declare global {
-  interface Window {
-    FIREBASE_APPCHECK_DEBUG_TOKEN?: boolean | string;
-  }
-}
-self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
-
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
