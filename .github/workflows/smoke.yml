@@ -55,7 +55,10 @@ jobs:
           check "/"                                    200 "사이트가 뜨지 않습니다"
           check "/login"                               200 "SPA 폴백이 동작하지 않습니다 (vercel.json 확인)"
           check "/api/auth/discord"                    302 "Discord 인가 URL 생성 실패 (환경변수 확인)"
-          check "/api/auth/discord/callback?code=test" 401 "콜백 함수가 죽었습니다"
+          # state 없이 호출하므로 CSRF 가드에 걸려 403이 정상입니다.
+          # (state 검증 추가 전에는 Discord 토큰 교환까지 가서 401이었습니다)
+          # 모듈 로드 실패는 핸들러 진입 전에 터지므로 여전히 500으로 잡힙니다.
+          check "/api/auth/discord/callback?code=test" 403 "콜백 함수가 죽었습니다"
           check "/api/verify-captcha"                  405 "캡챠 검증 함수가 죽었습니다"
 
           echo

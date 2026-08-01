@@ -1,5 +1,10 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { FieldValue } from 'firebase-admin/firestore';
+import {
+  OAUTH_STATE_COOKIE,
+  buildClearedStateCookie,
+  safeEqual,
+} from '../../_lib/oauth.js';
 // 격리된 파이어베이스 어드민 호출
 import { getAdminAuth, getAdminFirestore } from '../../_lib/firebaseAdmin.js';
 
@@ -22,13 +27,30 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  const { code } = req.query;
+  const { code, state } = req.query;
 
   // Payload Guard
   if (!code || typeof code !== 'string') {
     return res
       .status(400)
       .json({ error: 'Bad Request: Missing authorization code' });
+  }
+
+  // CSRF Guard: 인가를 시작한 브라우저가 맞는지 확인합니다.
+  // 이 검사가 없으면 공격자가 자신의 인가 코드를 피해자에게 열게 만들어
+  // 피해자를 공격자 계정으로 로그인시킬 수 있습니다.
+  const cookieState = req.cookies?.[OAUTH_STATE_COOKIE];
+
+  // 사용한 state는 재사용되지 않도록 즉시 만료시킵니다.
+  res.setHeader('Set-Cookie', buildClearedStateCookie());
+
+  if (
+    typeof state !== 'string' ||
+    typeof cookieState !== 'string' ||
+    !safeEqual(state, cookieState)
+  ) {
+    console.error('[Discord] state 불일치 — CSRF 의심 또는 쿠키 만료');
+    return res.status(403).json({ error: 'Forbidden: Invalid state' });
   }
 
   // 리소스 고갈 방어 (10s timeout)
