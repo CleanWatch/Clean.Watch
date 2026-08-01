@@ -64,10 +64,14 @@ const SettingsForm = ({
       className="mx-auto flex max-w-112.5 flex-col gap-5"
     >
       <div>
-        <label className="text-text-muted mb-2 block text-sm font-bold">
+        <label
+          htmlFor="settings-username"
+          className="text-text-muted mb-2 block text-sm font-bold"
+        >
           유저네임
         </label>
         <input
+          id="settings-username"
           type="text"
           value={username}
           onChange={(e) => {
@@ -90,10 +94,14 @@ const SettingsForm = ({
       </div>
 
       <div>
-        <label className="text-text-muted mb-2 block text-sm font-bold">
+        <label
+          htmlFor="settings-battletag"
+          className="text-text-muted mb-2 block text-sm font-bold"
+        >
           오버워치 배틀태그
         </label>
         <input
+          id="settings-battletag"
           type="text"
           value={battletag}
           onChange={(e) => {

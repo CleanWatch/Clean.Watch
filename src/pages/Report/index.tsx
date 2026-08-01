@@ -31,7 +31,11 @@ export const Report = () => {
         </h1>
 
         <div className="flex flex-col gap-5">
+          <label htmlFor="report-battletag" className="sr-only">
+            신고할 배틀태그
+          </label>
           <input
+            id="report-battletag"
             type="text"
             placeholder="배틀태그 입력 (예: Hacker#1234)"
             value={battleTag}

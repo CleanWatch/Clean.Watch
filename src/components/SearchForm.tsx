@@ -50,7 +50,13 @@ export const SearchForm = ({
     <form onSubmit={handleSubmit} className="mx-auto w-full">
       <div className="flex items-center gap-3">
         {/* 검색 인풋창 */}
+        {/* placeholder는 라벨을 대신하지 못합니다. 입력을 시작하면 사라지고,
+            스크린리더가 라벨로 읽어준다는 보장도 없습니다. */}
+        <label htmlFor="battletag-search" className="sr-only">
+          배틀태그 검색
+        </label>
         <input
+          id="battletag-search"
           type="text"
           value={searchQuery}
           onChange={handleInputChange}

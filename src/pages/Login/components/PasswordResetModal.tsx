@@ -57,7 +57,13 @@ export const PasswordResetModal = ({
           비밀번호 재설정 링크를 보내드립니다.
         </p>
 
+        {/* 시각적으로는 위 안내 문구가 라벨 역할을 하지만, 스크린리더는
+            <label>이 연결되어 있지 않으면 무슨 칸인지 알 수 없습니다. */}
+        <label htmlFor="reset-email" className="sr-only">
+          가입한 이메일 주소
+        </label>
         <input
+          id="reset-email"
           type="email"
           value={modalState.email}
           onChange={(e) =>
