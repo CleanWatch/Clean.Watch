@@ -2,6 +2,7 @@
 
 import { cn } from '@/utils';
 import { Turnstile } from 'react-turnstile';
+import { TURNSTILE_SITE_KEY } from '@/constants';
 
 // 모달 상태 설계도
 interface ModalStateType {
@@ -81,7 +82,7 @@ export const PasswordResetModal = ({
 
         <div className="mb-4 flex min-h-16.25 justify-center">
           <Turnstile
-            sitekey="0x4AAAAAADwlrxyiGsogdlgW"
+            sitekey={TURNSTILE_SITE_KEY}
             onVerify={(token) => {
               setUiState((prev) => ({ ...prev, turnstileToken: token }));
               setModalState((prev) => ({ ...prev, error: '' }));

@@ -7,6 +7,7 @@ import { handleDiscordLogin } from '@/hooks';
 import { useLoginForm, useDiscordCallback } from './hooks';
 import { PasswordResetModal } from './components';
 import { LoadingSpinner } from '@/components';
+import { TURNSTILE_SITE_KEY } from '@/constants';
 
 export const Login = () => {
   const {
@@ -127,7 +128,7 @@ export const Login = () => {
           {uiState.failedAttempts >= 5 && (
             <div className="mb-4 flex min-h-16.25 justify-center">
               <Turnstile
-                sitekey="0x4AAAAAADwlrxyiGsogdlgW"
+                sitekey={TURNSTILE_SITE_KEY}
                 onVerify={(token) => {
                   setUiState((prev) => ({
                     ...prev,

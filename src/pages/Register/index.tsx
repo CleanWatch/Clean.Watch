@@ -2,6 +2,7 @@ import { Turnstile } from 'react-turnstile';
 import { cn } from '@/utils';
 import { useRegisterForm } from './hooks';
 import { InputGroup } from '@/components';
+import { TURNSTILE_SITE_KEY } from '@/constants';
 
 // 메인 페이지 컴포넌트: Register
 export const Register = () => {
@@ -61,7 +62,7 @@ export const Register = () => {
 
           <div className="mt-4 mb-5 flex justify-center">
             <Turnstile
-              sitekey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
+              sitekey={TURNSTILE_SITE_KEY}
               onVerify={(token) => setCaptchaToken(token)}
             />
           </div>
