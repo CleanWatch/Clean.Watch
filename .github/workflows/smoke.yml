@@ -1,0 +1,112 @@
+name: Smoke Test
+
+# 배포된 사이트가 실제로 살아 있는지 확인합니다.
+#
+# ci.yml은 설치·린트·빌드만 봅니다. 즉 "코드가 말이 되는가"까지만 검사하고
+# 아무것도 실행하지 않습니다. api/ 폴더의 서버리스 함수는 빌드조차 하지 않습니다.
+# 그래서 배포된 함수가 죽어 있어도 CI는 초록불이었습니다.
+#
+# push가 아니라 Vercel의 배포 완료 신호(deployment_status)를 받아 실행합니다.
+# push 시점에 돌리면 배포가 아직 안 끝나서 이전 버전을 검사하게 됩니다.
+on:
+  deployment_status:
+
+jobs:
+  smoke:
+    # 배포 성공 + 프로덕션만. 프리뷰 배포는 Deployment Protection(SSO)이 켜져 있으면
+    # 모든 요청이 인증 페이지로 리다이렉트되어 검사가 무의미해집니다.
+    if: |
+      github.event.deployment_status.state == 'success' &&
+      github.event.deployment_status.environment == 'Production'
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check endpoints
+        env:
+          # deployment_status.environment_url은 배포별 고유 URL
+          # (...-8hdbm8s0i-....vercel.app)을 주는데, 그 주소는 Vercel Deployment
+          # Protection에 걸려 모든 요청이 SSO 페이지로 302됩니다.
+          # 실제 서비스 주소인 프로덕션 별칭을 직접 지정합니다.
+          #
+          # ⚠️ 커스텀 도메인으로 이전하면 이 값을 바꿔야 합니다.
+          URL: https://overwatch-anithack-otzm.vercel.app
+        run: |
+          set -u
+          fail=0
+
+          # 상태 코드 하나를 확인합니다.
+          check() {
+            path="$1"
+            expected="$2"
+            note="$3"
+            code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 "$URL$path")
+            if [ "$code" = "$expected" ]; then
+              printf '  OK   %-40s %s\n' "$path" "$code"
+            else
+              printf '  FAIL %-40s %s (expected %s) - %s\n' "$path" "$code" "$expected" "$note"
+              fail=1
+            fi
+          }
+
+          echo "대상: $URL"
+          echo
+
+          check "/"                                    200 "사이트가 뜨지 않습니다"
+          check "/login"                               200 "SPA 폴백이 동작하지 않습니다 (vercel.json 확인)"
+          check "/api/auth/discord"                    302 "Discord 인가 URL 생성 실패 (환경변수 확인)"
+          check "/api/auth/discord/callback?code=test" 401 "콜백 함수가 죽었습니다"
+          check "/api/verify-captcha"                  405 "캡챠 검증 함수가 죽었습니다"
+
+          echo
+
+          # 302가 "어디로" 가는지까지 확인합니다.
+          # 상태 코드만 보면 엉뚱한 곳으로 보내도 통과해버립니다.
+          loc=$(curl -s -o /dev/null -w '%{redirect_url}' --max-time 20 "$URL/api/auth/discord")
+
+          # 먼저 Discord로 가는 게 맞는지 확인합니다.
+          # 이 검사가 없으면 엉뚱한 리다이렉트(예: Vercel SSO 페이지)의 쿼리에
+          # 우연히 호스트명이 포함되어 아래 검사들이 거짓 통과합니다.
+          case "$loc" in
+            https://discord.com/oauth2/authorize\?*)
+              echo "  OK   Discord 인가 URL로 이동합니다"
+              ;;
+            *)
+              echo "  FAIL Discord 인가 URL이 아닙니다"
+              echo "       Location: $loc"
+              fail=1
+              loc=""
+              ;;
+          esac
+
+          if [ -n "$loc" ] && echo "$loc" | grep -q 'client_id=[^&]\+'; then
+            echo "  OK   client_id 값이 있습니다"
+          elif [ -n "$loc" ]; then
+            echo "  FAIL client_id가 비어 있습니다 (DISCORD_CLIENT_ID 확인)"
+            fail=1
+          fi
+
+          # redirect_uri는 URL 인코딩되어 있으므로 호스트명으로 비교합니다.
+          # 커스텀 도메인으로 옮긴 뒤 DISCORD_REDIRECT_URI 갱신을 잊으면 여기서 걸립니다.
+          #
+          # sed 대신 파라미터 확장을 쓰는 이유: BSD sed(macOS)와 GNU sed(리눅스)의
+          # 정규식 문법이 달라 로컬에서 검증할 때 결과가 갈립니다.
+          host="${URL#*://}"
+          host="${host%%/*}"
+          if [ -n "$loc" ]; then
+            if echo "$loc" | grep -q "redirect_uri=[^&]*$host"; then
+              echo "  OK   redirect_uri가 현재 도메인을 가리킵니다"
+            else
+              echo "  FAIL redirect_uri가 현재 도메인과 다릅니다 (DISCORD_REDIRECT_URI 확인)"
+              echo "       현재 도메인: $host"
+              echo "       Location:   $loc"
+              fail=1
+            fi
+          fi
+
+          echo
+          if [ "$fail" -ne 0 ]; then
+            echo "스모크 테스트 실패"
+            exit 1
+          fi
+          echo "스모크 테스트 통과"
