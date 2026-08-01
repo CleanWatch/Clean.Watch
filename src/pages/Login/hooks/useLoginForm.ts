@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { isValidEmail } from '@/utils';
 import { useEmailLoginMutation } from '@/hooks';
+import { sendPasswordResetEmail } from 'firebase/auth';
+import { auth } from '@/firebase/firebase';
 
 export const useLoginForm = () => {
   const { mutate: login, isPending, error } = useEmailLoginMutation();
@@ -78,7 +80,7 @@ export const useLoginForm = () => {
     );
   };
 
-  const handlePasswordReset = () => {
+  const handlePasswordReset = async () => {
     if (!modalState.email)
       return setModalState((prev) => ({
         ...prev,
@@ -91,8 +93,10 @@ export const useLoginForm = () => {
       }));
     }
 
-    setModalState((prev) => ({ ...prev, isResetting: true }));
-    setTimeout(() => {
+    setModalState((prev) => ({ ...prev, isResetting: true, error: '' }));
+
+    try {
+      await sendPasswordResetEmail(auth, modalState.email);
       alert(
         '비밀번호 재설정 링크가 이메일로 발송되었습니다!\n메일함을 확인해 주세요.',
       );
@@ -101,8 +105,15 @@ export const useLoginForm = () => {
         email: '',
         isResetting: false,
         error: '',
-      }); // 전체 초기화
-    }, 1000);
+      });
+    } catch (e) {
+      console.error('비밀번호 재설정 실패:', e);
+      setModalState((prev) => ({
+        ...prev,
+        isResetting: false,
+        error: '메일 발송에 실패했습니다. 잠시 후 다시 시도해 주세요.',
+      }));
+    }
   };
 
   return {
