@@ -64,5 +64,8 @@
     "./*.{css,json,md}": [
       "prettier --write"
     ]
+  },
+  "overrides": {
+    "jose": "^5.10.0"
   }
 }
