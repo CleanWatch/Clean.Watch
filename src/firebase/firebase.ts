@@ -6,13 +6,37 @@ import { getAuth } from 'firebase/auth';
 import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check';
 import { RECAPTCHA_SITE_KEY } from '@/constants';
 
+/**
+ * Firebase 웹 설정.
+ *
+ * 전부 브라우저에 노출되는 공개값입니다. env로 옮기는 목적은 은닉이 아니라
+ * **환경 분리**입니다 — 나중에 개발용 Firebase 프로젝트를 따로 두려면 필요합니다.
+ *
+ * ?? 뒤의 하드코딩 값을 남겨둔 이유:
+ * VITE_ 변수는 빌드 시점에 값이 치환되므로, 배포 환경에 변수가 없으면
+ * undefined가 그대로 굳어 initializeApp이 죽고 사이트 전체가 멈춥니다.
+ * 실제로 회원가입 캡챠가 정확히 이 방식으로 죽어 있었습니다(sitekey: void 0).
+ * 폴백이 있으면 변수가 빠져도 지금 값으로 돌아가므로 그 사고가 나지 않습니다.
+ *
+ * 폴백을 지우려면 먼저 변수가 실제로 빌드에 들어가는지 확인해야 합니다.
+ * 값이 같아서 번들만 봐서는 구분되지 않으니, 폴백 없는 버전을 프리뷰 배포에
+ * 올려 동작하는지 보는 것이 확인 방법입니다(변수는 Preview 스코프에도 있습니다).
+ */
 const firebaseConfig = {
-  apiKey: 'AIzaSyCF8BQ6GWKxJRPWENeNR_vnelH3TaJJan4',
-  authDomain: 'owanticheat.firebaseapp.com',
-  projectId: 'owanticheat',
-  storageBucket: 'owanticheat.firebasestorage.app',
-  messagingSenderId: '100898239448',
-  appId: '1:100898239448:web:9fab069ba0e816616ef8ad',
+  apiKey:
+    import.meta.env.VITE_FIREBASE_API_KEY ??
+    'AIzaSyCF8BQ6GWKxJRPWENeNR_vnelH3TaJJan4',
+  authDomain:
+    import.meta.env.VITE_FIREBASE_AUTH_DOMAIN ?? 'owanticheat.firebaseapp.com',
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID ?? 'owanticheat',
+  storageBucket:
+    import.meta.env.VITE_FIREBASE_STORAGE_BUCKET ??
+    'owanticheat.firebasestorage.app',
+  messagingSenderId:
+    import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID ?? '100898239448',
+  appId:
+    import.meta.env.VITE_FIREBASE_APP_ID ??
+    '1:100898239448:web:9fab069ba0e816616ef8ad',
 };
 
 const app = initializeApp(firebaseConfig);
