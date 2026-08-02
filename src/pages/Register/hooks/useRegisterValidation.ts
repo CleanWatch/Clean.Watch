@@ -1,6 +1,7 @@
 /* src/pages/Register/hooks/useRegisterValidation.ts */
 
 import {
+  getFieldError,
   isValidEmail,
   isValidUsername,
   isValidPassword,
@@ -21,18 +22,6 @@ type ValidateDuplicateFn = (params: {
   value: string;
 }) => Promise<boolean>;
 
-// 에러 판독기 헬퍼 함수 (공통 사용을 위해 함수 밖으로 분리)
-const validateField = (
-  value: string,
-  emptyMsg: string | null,
-  validator: (val: string) => boolean,
-  invalidMsg: string,
-) => {
-  if (emptyMsg && !value) return emptyMsg;
-  if (value && !validator(value)) return invalidMsg;
-  return '';
-};
-
 export const checkFormatErrors = (formData: RegisterFormData) => {
   // 1. 객체 할당 오타 수정
   const newErrors = {
@@ -42,25 +31,25 @@ export const checkFormatErrors = (formData: RegisterFormData) => {
     battletag: '',
   };
 
-  newErrors.username = validateField(
+  newErrors.username = getFieldError(
     formData.username.trim(),
     '닉네임을 입력해 주세요.',
     isValidUsername,
     '닉네임은 특수문자를 제외한 2~12자여야 합니다.',
   );
-  newErrors.email = validateField(
+  newErrors.email = getFieldError(
     formData.email.trim(),
     '이메일을 입력해 주세요.',
     isValidEmail,
     '이메일 형식이 올바르지 않습니다.',
   );
-  newErrors.password = validateField(
+  newErrors.password = getFieldError(
     formData.password,
     '비밀번호를 입력해 주세요.',
     isValidPassword,
     '비밀번호는 최소 6자리 이상이어야 합니다.',
   );
-  newErrors.battletag = validateField(
+  newErrors.battletag = getFieldError(
     formData.battletag.trim(),
     null,
     isValidBattletag,

@@ -190,15 +190,15 @@ export const PlayerStatsPanel = ({ onNavigateSettings }: Props) => {
         </div>
       ) : (
         // 실패가 아닙니다. 프로필은 멀쩡히 있고 경쟁전 기록만 없는 상태입니다.
+        //
+        // 비공개 프로필은 여기 오지 않습니다. 상류가 /summary 단계에서 404를 내서
+        // PLAYER_NOT_FOUND로 걸러집니다(실측 확인). 그래서 예전에 여기 있던
+        // "비공개 프로필입니다" 문구는 도달하지 않는 안내였습니다.
+        // 공개 설정 안내는 playerStatsErrors.ts의 PLAYER_NOT_FOUND로 옮겼습니다.
         <div className="p-4">
           <div className="bg-bg-input rounded-lg px-4 py-5 text-center">
             <p className="text-text-muted text-sm">
-              경쟁전 기록이 없거나 비공개 프로필입니다.
-            </p>
-            {/* 커리어 공개 설정은 게임 안에 있습니다. 웹사이트로 안내하면
-                그 설정이 없는 곳으로 보내는 셈입니다. */}
-            <p className="text-text-muted/70 mt-2 text-xs leading-relaxed">
-              공개 설정은 게임 안 옵션 → 소셜에서 바꿀 수 있습니다.
+              이번 시즌 경쟁전 기록이 없습니다.
             </p>
           </div>
         </div>

@@ -29,3 +29,26 @@ export const isValidPassword = (password?: string | null): boolean => {
   if (!password) return false;
   return password.length >= 6;
 };
+
+/**
+ * 값 하나를 검사해 **에러 문구**를 돌려줍니다. 문제가 없으면 빈 문자열입니다.
+ *
+ * 반환값이 boolean이 아니라 문구라는 점에 주의하세요. 이름이 validate~였을 때
+ * `if (validateField(...))`처럼 쓰면 "에러가 있을 때 참"이라 의미가 뒤집힙니다.
+ *
+ * emptyMsg에 null을 주면 빈 값을 허용합니다 — 배틀태그처럼 지워서 연동을
+ * 해제하는 것이 정상 동작인 경우에 씁니다.
+ *
+ * 가입 화면과 프로필 설정이 같은 규칙을 각자 구현하다 어긋났기 때문에
+ * (설정 쪽에는 형식 검사가 아예 없었습니다) 여기로 옮겨 공유합니다.
+ */
+export const getFieldError = (
+  value: string,
+  emptyMsg: string | null,
+  validator: (val: string) => boolean,
+  invalidMsg: string,
+): string => {
+  if (emptyMsg && !value) return emptyMsg;
+  if (value && !validator(value)) return invalidMsg;
+  return '';
+};

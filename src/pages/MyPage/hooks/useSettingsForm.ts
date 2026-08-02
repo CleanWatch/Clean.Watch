@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useUpdateProfileMutation, useCheckDuplicate } from '@/hooks';
+import { getFieldError, isValidBattletag, isValidUsername } from '@/utils';
 
 // 훅에서 넘겨받을 인자들 타입 정의
 interface UseSettingsFormProps {
@@ -36,6 +37,47 @@ export const useSettingsForm = ({
     setUsernameError('');
     setBattletagError('');
     let hasError = false;
+
+    // 형식 검사를 중복 검사보다 먼저 합니다.
+    //
+    // 이 화면에는 형식 검사가 아예 없어서, 가입 때는 막히는 값(zzz, 한 글자 닉네임)이
+    // 여기서는 그대로 저장됐습니다. 같은 규칙인데 화면마다 다르게 적용되던 상태입니다.
+    //
+    // 앞에 두는 이유: 형식이 틀린 값은 어차피 저장 못 하므로 중복 검사 요청조차
+    // 보낼 이유가 없습니다.
+    //
+    // 참고: 이건 강제가 아니라 안내입니다. firestore.rules의 users update 규칙은
+    // role·uid·createdAt만 막으므로 개발자도구로는 여전히 아무 값이나 쓸 수 있습니다.
+    if (isUsernameChanged) {
+      const message = getFieldError(
+        username.trim(),
+        '닉네임을 입력해 주세요.',
+        isValidUsername,
+        '닉네임은 특수문자를 제외한 2~12자여야 합니다.',
+      );
+      if (message) {
+        setUsernameError(message);
+        hasError = true;
+      }
+    }
+
+    // 배틀태그는 비우는 것이 정상 동작(연동 해제)이라 emptyMsg를 null로 둡니다.
+    // isBattletagChanged가 false면 검사하지 않습니다 — 과거에 잘못 저장된 값을 가진
+    // 사람이 닉네임만 고치려는데 막히면 안 됩니다.
+    if (isBattletagChanged) {
+      const message = getFieldError(
+        battletag.trim(),
+        null,
+        isValidBattletag,
+        'Battletag 형식이 올바르지 않습니다. (예: 트레이서#1234)',
+      );
+      if (message) {
+        setBattletagError(message);
+        hasError = true;
+      }
+    }
+
+    if (hasError) return;
 
     try {
       if (isUsernameChanged) {
