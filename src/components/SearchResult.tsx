@@ -27,8 +27,8 @@ export const SearchResult = ({
     <div className="mt-6 w-full">
       {/* 1순위: 에러가 발생했을 때 */}
       {searchError && (
-        <div className="flex min-h-25 items-center justify-center rounded-lg border border-red-500/30 bg-red-500/10 p-6">
-          <p className="text-[15px] font-bold text-red-500">{searchError}</p>
+        <div className="border-danger/30 bg-danger/10 flex min-h-25 items-center justify-center rounded-lg border p-6">
+          <p className="text-danger text-[15px] font-bold">{searchError}</p>
         </div>
       )}
 
@@ -47,11 +47,11 @@ export const SearchResult = ({
             <div className="flex flex-col items-center text-center">
               <p className="text-text-main text-[16px]">
                 <span className="mr-2">🚨</span>
-                <strong className="text-red-500">
+                <strong className="text-danger">
                   {searchResult.battletag}
                 </strong>{' '}
                 유저는 현재까지
-                <span className="mx-1 text-[22px] font-black text-red-500">
+                <span className="text-danger mx-1 text-[22px] font-black">
                   {searchResult.reportCount}번
                 </span>
                 신고되었습니다!

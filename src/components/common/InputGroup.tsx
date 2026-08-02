@@ -47,12 +47,12 @@ export const InputGroup = ({
           'border-border-main bg-bg-main text-text-main mb-1 w-full rounded-lg border px-4 py-3 text-[15px] transition-all duration-200 outline-none',
           'placeholder:text-text-muted/70',
           'focus:border-primary focus:ring-primary/20 focus:ring-2',
-          error && 'border-red-500 focus:border-red-500 focus:ring-red-500/20',
+          error && 'border-danger focus:border-danger focus:ring-danger/20',
         )}
       />
       <div className="flex min-h-4.5 items-start">
         {error ? (
-          <p id={messageId} className="m-0 text-xs font-bold text-red-500">
+          <p id={messageId} className="text-danger m-0 text-xs font-bold">
             {' '}
             {error}
           </p>

@@ -47,8 +47,8 @@ export const SettingsTab = ({
           type="button"
           onClick={() => setIsDeleteOpen(true)}
           className={cn(
-            'text-danger rounded-lg border border-red-500/30 bg-red-500/10 px-5 py-2.5 text-sm font-bold transition-all',
-            'hover:bg-red-500 hover:text-white',
+            'text-danger border-danger/30 bg-danger/10 rounded-lg border px-5 py-2.5 text-sm font-bold transition-all',
+            'hover:bg-danger hover:text-white',
           )}
         >
           회원 탈퇴

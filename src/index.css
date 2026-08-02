@@ -18,8 +18,12 @@
   --color-border-main: #27272a; /* (tailwind gray-200) */
 
   /* 4. 에러·위험 */
-  --color-danger: #ff4757; /* 폼 에러 문구, 신고 CTA */
-  --color-danger-hover: #ff6b81;
+  /* 배경이 거의 검정(#09090b)이라, 채도가 꽉 찬 빨강은 작은 글씨에서 눈이 아픕니다.
+     danger는 채도를 한 단계 낮춘 값이고, 밝기는 오히려 조금 올려서
+     대비(카드 배경 기준 5.3:1)는 그대로 유지했습니다. */
+  --color-danger: #f65256; /* 에러 문구·테두리, 신고 CTA, 탈퇴 */
+  /* 호버는 primary·discord와 같이 어두워집니다. 예전 값은 혼자 밝아졌습니다. */
+  --color-danger-hover: #dc464a;
 
   /* 5. 텍스트 가독성 계층 */
   --color-text-main: #f9fafb; /* 찐한 기본 글자 (tailwind gray-900) */

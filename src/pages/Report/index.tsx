@@ -104,7 +104,7 @@ export const Report = () => {
             disabled={isSubmitting || !battleTag.trim() || !reason}
             className={cn(
               'mt-2 flex h-14 w-full items-center justify-center rounded-lg text-[16px] font-bold text-white transition-all duration-200',
-              'bg-red-500 hover:bg-red-600 active:scale-[0.98]',
+              'bg-danger hover:bg-danger-hover active:scale-[0.98]',
               'disabled:cursor-not-allowed disabled:opacity-50',
             )}
           >

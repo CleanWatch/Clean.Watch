@@ -92,9 +92,9 @@ export const DeleteAccountModal = ({
             disabled={!canDelete}
             className={cn(
               'flex-1 rounded-lg border py-3 font-bold transition-all',
-              'text-danger border-red-500/30 bg-red-500/10',
-              'hover:bg-red-500 hover:text-white',
-              'disabled:cursor-not-allowed disabled:border-transparent disabled:bg-red-500/5 disabled:text-red-500/40 disabled:hover:bg-red-500/5',
+              'text-danger border-danger/30 bg-danger/10',
+              'hover:bg-danger hover:text-white',
+              'disabled:bg-danger/5 disabled:text-danger/40 disabled:hover:bg-danger/5 disabled:cursor-not-allowed disabled:border-transparent',
             )}
           >
             {isPending ? '처리 중...' : '탈퇴하기'}

@@ -40,7 +40,7 @@ export const ReportsTab = () => {
               {report.createdAt.toLocaleDateString()}
             </span>
           </div>
-          <span className="w-fit rounded-full bg-red-500/15 px-3 py-1 text-xs font-bold text-red-500">
+          <span className="bg-danger/15 text-danger w-fit rounded-full px-3 py-1 text-xs font-bold">
             {report.reason}
           </span>
           <p className="text-text-main/80 text-sm">{report.details}</p>

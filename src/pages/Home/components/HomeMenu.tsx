@@ -104,7 +104,7 @@ export const HomeMenu = () => {
             to="/admin"
             className={cn(
               'col-span-2 mt-2 flex h-14 items-center justify-center rounded-lg text-[16px] font-bold transition-all duration-200 sm:col-span-3',
-              'bg-danger text-white shadow-[0_4px_12px_rgba(255,71,87,0.2)]',
+              'bg-danger text-white shadow-[0_4px_12px_rgba(246,82,86,0.2)]',
               'hover:bg-danger-hover hover:-translate-y-px active:scale-[0.98]',
             )}
           >

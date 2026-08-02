@@ -71,7 +71,7 @@ export const SearchForm = ({
             'disabled:cursor-not-allowed disabled:opacity-50',
             // 에러가 있을 경우 테두리를 빨간색으로 변경하여 시각적 피드백 제공
             errorMessage &&
-              'border-red-500 focus:border-red-500 focus:ring-red-500',
+              'border-danger focus:border-danger focus:ring-danger',
           )}
         />
 
@@ -91,7 +91,7 @@ export const SearchForm = ({
 
       {/* 에러 메시지 렌더링 영역 */}
       {errorMessage && (
-        <p className="mt-2 pl-1 text-sm font-medium text-red-500">
+        <p className="text-danger mt-2 pl-1 text-sm font-medium">
           {errorMessage}
         </p>
       )}

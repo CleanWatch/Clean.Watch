@@ -69,7 +69,7 @@ export const Ranking = () => {
                   </h2>
                   <p className="text-text-muted mt-1 text-[15px] sm:text-[16px]">
                     🚨 신고{' '}
-                    <span className="font-bold text-red-500">
+                    <span className="text-danger font-bold">
                       {player.reportCount}
                     </span>
                     회
