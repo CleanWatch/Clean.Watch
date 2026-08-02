@@ -70,7 +70,10 @@ export const useRegisterMutation = () => {
           email,
           username,
           battletag: battletag || null,
-          photoUrl: `https://ui-avatars.com/api/?name=${username}&background=random&color=fff`,
+          // 이니셜 아바타는 저장하지 않습니다. 예전에는 이 URL에 가입 시점의
+          // 닉네임이 박혀서, 닉네임을 바꿔도 옛 이름이 계속 보였습니다.
+          // 이제 Avatar 컴포넌트가 현재 닉네임으로 그립니다.
+          photoUrl: null,
           role: 'user' as UserRole,
           createdAt: serverTimestamp(),
         }),

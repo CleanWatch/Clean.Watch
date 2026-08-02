@@ -103,10 +103,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const userRef = db.collection('users').doc(user.id);
     const prev = (await userRef.get()).data();
 
-    // Discord의 avatar는 URL이 아니라 해시라서 CDN 경로로 조립해야 함
+    // Discord의 avatar는 URL이 아니라 해시라서 CDN 경로로 조립해야 함.
+    //
+    // 아바타가 없으면 null입니다. 예전에는 여기서 ui-avatars URL을 만들어
+    // 저장했는데, 그 URL에 가입 시점의 닉네임이 박혀서 닉네임을 바꿔도
+    // 옛 이름이 계속 보였습니다. 이니셜은 이제 Avatar 컴포넌트가
+    // 현재 닉네임으로 그립니다.
     const photoUrl = user.avatar
       ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
-      : `https://ui-avatars.com/api/?name=${encodeURIComponent(user.username)}&background=random&color=fff`;
+      : null;
 
     // 매 로그인마다 갱신되는 필드
     const patch: Record<string, unknown> = {
