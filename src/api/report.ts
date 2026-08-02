@@ -12,11 +12,10 @@ import { auth } from '@/firebase/firebase';
  *
  * 지금은 서버가 검사와 쓰기를 한 트랜잭션으로 처리합니다.
  *
- * reporterUid는 호출부 호환을 위해 남겨두지만 전송하지 않습니다.
- * 서버가 ID 토큰에서 꺼내며, 본문을 믿으면 남의 명의로 신고할 수 있습니다.
+ * 신고자 uid 인자는 없앴습니다. 서버가 ID 토큰에서 꺼냅니다 —
+ * 호출부가 넘긴 값을 믿으면 남의 명의로 신고할 수 있습니다.
  */
 export const submitNewReport = async (
-  _reporterUid: string,
   battletag: string,
   reason: string,
   details: string,

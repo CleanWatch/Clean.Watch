@@ -23,7 +23,8 @@ export const useReport = () => {
   // 서버 통신 Mutation (API 호출과 서버 에러 처리만 담당)
   const mutation = useMutation({
     mutationFn: async () => {
-      await submitNewReport(uid!, battleTag, reason, details);
+      // uid는 서버가 ID 토큰에서 꺼냅니다.
+      await submitNewReport(battleTag, reason, details);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['ranking'] });

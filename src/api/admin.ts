@@ -1,14 +1,11 @@
 // src/api/admin.ts
-import { db } from '@/firebase/firebase';
+import axios from 'axios';
+import { db, auth } from '@/firebase/firebase';
 import {
   collection,
   getDocs,
-  deleteDoc,
-  doc,
   query,
   orderBy,
-  where,
-  updateDoc,
   Timestamp,
 } from 'firebase/firestore';
 
@@ -22,6 +19,8 @@ export interface AdminReport {
 }
 
 // 1. 신고 내역 전체 불러오기
+// 읽기는 클라이언트에 남깁니다. firestore.rules의 isAdmin()이 막고 있어
+// 관리자가 아니면 이 쿼리 자체가 permission-denied로 거부됩니다.
 export const fetchAdminReports = async (): Promise<AdminReport[]> => {
   const q = query(collection(db, 'reports'), orderBy('createdAt', 'desc'));
   const snapshot = await getDocs(q);
@@ -32,32 +31,23 @@ export const fetchAdminReports = async (): Promise<AdminReport[]> => {
   })) as AdminReport[];
 };
 
-// 신고 내역 삭제 및 랭킹 데이터(배틀태그) 동기화 (레거시 핵심 로직 이식)
-export const deleteReportAndSyncRanking = async (
-  reportId: string,
-  targetBattletag: string,
-) => {
-  // 신고 내역 자체를 삭제
-  await deleteDoc(doc(db, 'reports', reportId));
+/**
+ * 신고 삭제 및 랭킹 카운트 동기화.
+ *
+ * 예전에는 여기서 Firestore를 직접 조작했습니다. battletags 클라이언트 쓰기를
+ * 차단하면 이 경로가 깨지므로 서버로 옮겼습니다. 삭제와 카운트 차감이
+ * 트랜잭션으로 묶여 한쪽만 반영되는 일이 없습니다.
+ *
+ * 대상 배틀태그 인자는 없앴습니다. 서버가 신고 문서에서 직접 읽습니다 —
+ * 호출부가 넘긴 값을 믿으면 엉뚱한 배틀태그의 카운트를 깎을 수 있습니다.
+ */
+export const deleteReportAndSyncRanking = async (reportId: string) => {
+  const idToken = await auth.currentUser?.getIdToken();
+  if (!idToken) throw new Error('인증 정보가 없습니다.');
 
-  // 랭킹(배틀태그) 카운트 차감 및 삭제 연동
-  const q = query(
-    collection(db, 'battletags'),
-    where('battletag', '==', targetBattletag),
+  await axios.post(
+    '/api/reports/delete',
+    { reportId },
+    { headers: { Authorization: `Bearer ${idToken}` } },
   );
-  const snapshot = await getDocs(q);
-
-  if (!snapshot.empty) {
-    const tagDoc = snapshot.docs[0];
-    const currentCount = tagDoc.data().count || 1;
-
-    // 카운트가 1이하였다면 배틀태그 자체를 랭킹에서 아예 삭제, 아니면 1 차감
-    if (currentCount <= 1) {
-      await deleteDoc(doc(db, 'battletags', tagDoc.id));
-    } else {
-      await updateDoc(doc(db, 'battletags', tagDoc.id), {
-        count: currentCount - 1,
-      });
-    }
-  }
 };
