@@ -82,7 +82,7 @@ export const SearchForm = ({
           className={cn(
             'h-14 rounded-lg px-7 text-[17px] font-bold whitespace-nowrap transition-all duration-200',
             'bg-primary hover:bg-primary-hover text-white active:scale-[0.96]',
-            'disabled:bg-border-main disabled:text-text-muted disabled:transform-none disabled:cursor-not-allowed',
+            'disabled:transform-none disabled:cursor-not-allowed disabled:opacity-50',
           )}
         >
           {isSearching ? '검색 중...' : '검색'}

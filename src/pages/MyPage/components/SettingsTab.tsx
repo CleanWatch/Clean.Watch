@@ -137,7 +137,9 @@ const SettingsForm = ({
       <button
         type="submit"
         disabled={!hasChanges || isPending || isChecking}
-        className="bg-primary mt-4 rounded-lg py-4 font-bold text-white transition-all hover:bg-orange-600 disabled:cursor-not-allowed disabled:bg-gray-400 disabled:opacity-50"
+        // 예전에는 비활성이 bg-gray-400이라 어두운 배경에서 오히려 밝았습니다.
+        // 로그인 버튼에서 걷어낸 것과 같은 값입니다.
+        className="bg-primary hover:bg-primary-hover mt-4 rounded-lg py-4 font-bold text-white transition-all disabled:cursor-not-allowed disabled:opacity-50"
       >
         {isPending || isChecking ? '저장 중...' : '변경사항 저장'}
       </button>

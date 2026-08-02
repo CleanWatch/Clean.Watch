@@ -19,7 +19,7 @@ export const MyPage = () => {
         <h2 className="text-xl font-bold">로그인이 필요한 페이지입니다.</h2>
         <button
           onClick={() => navigate('/login')}
-          className="bg-primary rounded-lg px-6 py-2 font-bold text-white"
+          className="bg-primary hover:bg-primary-hover rounded-lg px-6 py-2 font-bold text-white transition-all"
         >
           로그인하기
         </button>
