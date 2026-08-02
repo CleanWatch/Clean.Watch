@@ -22,12 +22,7 @@ export const useDeleteReportMutation = () => {
   return useMutation({
     // battletag는 더 이상 넘기지 않습니다. 서버가 신고 문서에서 직접 읽어야
     // 호출부가 엉뚱한 배틀태그의 카운트를 깎는 일을 막을 수 있습니다.
-    mutationFn: async ({
-      reportId,
-    }: {
-      reportId: string;
-      battletag: string;
-    }) => {
+    mutationFn: async ({ reportId }: { reportId: string }) => {
       await deleteReportAndSyncRanking(reportId);
     },
     onSuccess: () => {

@@ -155,11 +155,7 @@ export const Admin = () => {
                           `${report.battletag}의 신고 내역을 삭제하시겠습니까?`,
                         )
                       ) {
-                        // 🚨 수정 포인트: reportId와 battletag를 묶어서 객체로 전송
-                        deleteReport({
-                          reportId: report.id,
-                          battletag: report.battletag,
-                        });
+                        deleteReport({ reportId: report.id });
                       }
                     }}
                     disabled={isDeleting}
