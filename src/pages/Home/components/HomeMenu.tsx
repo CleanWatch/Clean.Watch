@@ -58,7 +58,7 @@ export const HomeMenu = () => {
         {isAdmin ? (
           <div className="flex items-center justify-center gap-2">
             <span className="text-lg">👑</span>
-            <span className="font-extrabold text-[#ff4757]">{userName}</span>
+            <span className="text-danger font-extrabold">{userName}</span>
             <span className="text-text-muted">관리자 계정 작동 중</span>
           </div>
         ) : (
@@ -104,8 +104,8 @@ export const HomeMenu = () => {
             to="/admin"
             className={cn(
               'col-span-2 mt-2 flex h-14 items-center justify-center rounded-lg text-[16px] font-bold transition-all duration-200 sm:col-span-3',
-              'bg-[#ff4757] text-white shadow-[0_4px_12px_rgba(255,71,87,0.2)]',
-              'hover:-translate-y-px hover:bg-[#ff6b81] active:scale-[0.98]',
+              'bg-danger text-white shadow-[0_4px_12px_rgba(255,71,87,0.2)]',
+              'hover:bg-danger-hover hover:-translate-y-px active:scale-[0.98]',
             )}
           >
             관리자 대시보드

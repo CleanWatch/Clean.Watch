@@ -17,7 +17,11 @@
   /* 3. 테두리 질감 */
   --color-border-main: #27272a; /* (tailwind gray-200) */
 
-  /* 4. 텍스트 가독성 계층 */
+  /* 4. 에러·위험 */
+  --color-danger: #ff4757; /* 폼 에러 문구, 신고 CTA */
+  --color-danger-hover: #ff6b81;
+
+  /* 5. 텍스트 가독성 계층 */
   --color-text-main: #f9fafb; /* 찐한 기본 글자 (tailwind gray-900) */
   --color-text-muted: #9ca3af; /* 부가 설명 텍스트 (tailwind gray-500) */
 }

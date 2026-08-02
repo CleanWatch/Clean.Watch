@@ -26,7 +26,7 @@ interface Props {
  * 각각 값이 있을 때만 그립니다. 없어도 역할명과 티어 글자는 남습니다.
  */
 const RankTile = ({ entry }: { entry: PlayerRankEntry }) => (
-  <div className="bg-bg-input flex flex-col items-center gap-2 rounded-xl px-3 py-5">
+  <div className="bg-bg-main flex flex-col items-center gap-2 rounded-xl px-3 py-5">
     <span className="text-text-muted flex items-center gap-1.5 text-xs">
       {entry.roleIcon && (
         <img src={entry.roleIcon} alt="" className="h-4 w-4 opacity-70" />
@@ -196,7 +196,7 @@ export const PlayerStatsPanel = ({ onNavigateSettings }: Props) => {
         // "비공개 프로필입니다" 문구는 도달하지 않는 안내였습니다.
         // 공개 설정 안내는 playerStatsErrors.ts의 PLAYER_NOT_FOUND로 옮겼습니다.
         <div className="p-4">
-          <div className="bg-bg-input rounded-lg px-4 py-5 text-center">
+          <div className="bg-bg-main rounded-lg px-4 py-5 text-center">
             <p className="text-text-muted text-sm">
               이번 시즌 경쟁전 기록이 없습니다.
             </p>

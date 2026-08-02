@@ -98,7 +98,7 @@ export const Admin = () => {
           /* 조회 실패를 "내역 없음"으로 표시하면 DB가 빈 것으로 오인하게 됩니다.
              관리자 권한이 없거나 Firestore 규칙에 막힌 경우가 여기로 옵니다. */
           <div className="py-20 text-center">
-            <p className="mb-2 font-bold text-[#ff4757]">
+            <p className="text-danger mb-2 font-bold">
               신고 내역을 불러오지 못했습니다.
             </p>
             <p className="text-text-muted text-sm">

@@ -37,7 +37,7 @@ export const SettingsTab = ({
 
       {/* 위험 구역. 저장 버튼과 붙여두면 오조작 위험이 있어 선으로 구분합니다. */}
       <div className="border-border-main mx-auto mt-10 max-w-112.5 border-t pt-6">
-        <p className="mb-1.5 text-sm font-bold text-[#ff4757]">회원 탈퇴</p>
+        <p className="text-danger mb-1.5 text-sm font-bold">회원 탈퇴</p>
         <p className="text-text-muted mb-4 text-xs leading-relaxed">
           계정과 프로필이 삭제되며 되돌릴 수 없습니다. 작성하신 신고는 익명으로
           남습니다.
@@ -46,7 +46,7 @@ export const SettingsTab = ({
           type="button"
           onClick={() => setIsDeleteOpen(true)}
           className={cn(
-            'rounded-lg border border-red-500/30 bg-red-500/10 px-5 py-2.5 text-sm font-bold text-[#ff4757] transition-all',
+            'text-danger rounded-lg border border-red-500/30 bg-red-500/10 px-5 py-2.5 text-sm font-bold transition-all',
             'hover:bg-red-500 hover:text-white',
           )}
         >
@@ -126,7 +126,7 @@ const SettingsForm = ({
             if (usernameError) setUsernameError('');
           }}
           className={cn(
-            'bg-bg-input text-text-main w-full rounded-lg border p-4 transition-colors outline-none',
+            'bg-bg-main text-text-main w-full rounded-lg border p-4 transition-colors outline-none',
             usernameError
               ? 'border-red-500 focus:border-red-500'
               : 'border-border-main focus:border-primary',
@@ -157,7 +157,7 @@ const SettingsForm = ({
           }}
           placeholder="예) Justice#1234"
           className={cn(
-            'bg-bg-input text-text-main w-full rounded-lg border p-4 transition-colors outline-none',
+            'bg-bg-main text-text-main w-full rounded-lg border p-4 transition-colors outline-none',
             battletagError
               ? 'border-red-500 focus:border-red-500'
               : 'border-border-main focus:border-primary',

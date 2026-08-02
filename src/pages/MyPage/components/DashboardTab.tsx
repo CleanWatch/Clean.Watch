@@ -62,7 +62,7 @@ export const DashboardTab = ({ onNavigateSettings }: Props) => {
       </div>
 
       {/* 연동 배너 */}
-      <div className="border-border-main bg-bg-input flex items-center justify-between rounded-xl border px-5 py-4">
+      <div className="border-border-main bg-bg-main flex items-center justify-between rounded-xl border px-5 py-4">
         <span className="text-text-muted font-bold">블리자드 연동 계정</span>
         {profile.battletag ? (
           <div className="flex items-center gap-3">

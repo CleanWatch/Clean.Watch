@@ -30,7 +30,7 @@ export const ReportsTab = () => {
       {reports.map((report) => (
         <div
           key={report.id}
-          className="border-border-main bg-bg-input flex flex-col gap-3 rounded-xl border p-5 transition-transform hover:-translate-y-1 hover:shadow-lg"
+          className="border-border-main bg-bg-main flex flex-col gap-3 rounded-xl border p-5 transition-transform hover:-translate-y-1 hover:shadow-lg"
         >
           <div className="flex items-center justify-between border-b border-white/5 pb-3">
             <span className="text-primary text-lg font-black">

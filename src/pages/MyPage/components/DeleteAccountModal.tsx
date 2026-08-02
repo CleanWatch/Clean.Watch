@@ -80,7 +80,7 @@ export const DeleteAccountModal = ({
         />
 
         {error && (
-          <p className="mb-4 text-center text-[13px] font-medium text-[#ff4757]">
+          <p className="text-danger mb-4 text-center text-[13px] font-medium">
             {error}
           </p>
         )}
@@ -92,7 +92,7 @@ export const DeleteAccountModal = ({
             disabled={!canDelete}
             className={cn(
               'flex-1 rounded-lg border py-3 font-bold transition-all',
-              'border-red-500/30 bg-red-500/10 text-[#ff4757]',
+              'text-danger border-red-500/30 bg-red-500/10',
               'hover:bg-red-500 hover:text-white',
               'disabled:cursor-not-allowed disabled:border-transparent disabled:bg-red-500/5 disabled:text-red-500/40 disabled:hover:bg-red-500/5',
             )}

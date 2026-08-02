@@ -44,7 +44,7 @@ export const Report = () => {
               setLocalError(''); // 입력 시 기존 에러 메시지 초기화
             }}
             className={cn(
-              'border-border-main bg-bg-input text-text-main w-full rounded-lg border p-4 text-[16px] transition-all duration-200 outline-none',
+              'border-border-main bg-bg-main text-text-main w-full rounded-lg border p-4 text-[16px] transition-all duration-200 outline-none',
               'placeholder:text-text-muted focus:border-primary focus:ring-primary focus:ring-1',
             )}
           />
@@ -56,7 +56,7 @@ export const Report = () => {
               setLocalError(''); // 선택 시 기존 에러 메시지 초기화
             }}
             className={cn(
-              'border-border-main bg-bg-input text-text-main w-full appearance-none rounded-lg border p-4 text-[16px] transition-all duration-200 outline-none',
+              'border-border-main bg-bg-main text-text-main w-full appearance-none rounded-lg border p-4 text-[16px] transition-all duration-200 outline-none',
               'focus:border-primary focus:ring-primary focus:ring-1',
               reason === '' ? 'text-text-muted' : 'text-text-main',
             )}
@@ -84,14 +84,14 @@ export const Report = () => {
             value={details}
             onChange={(e) => setDetails(e.target.value)}
             className={cn(
-              'border-border-main bg-bg-input text-text-main min-h-30 w-full resize-none rounded-lg border p-4 text-[16px] transition-all duration-200 outline-none',
+              'border-border-main bg-bg-main text-text-main min-h-30 w-full resize-none rounded-lg border p-4 text-[16px] transition-all duration-200 outline-none',
               'placeholder:text-text-muted focus:border-primary focus:ring-primary focus:ring-1',
             )}
           ></textarea>
 
           {/* 빨간색 에러 메시지 UI */}
           {localError && (
-            <p className="mt-1 text-center text-[13px] font-medium text-[#ff4757]">
+            <p className="text-danger mt-1 text-center text-[13px] font-medium">
               {localError}
             </p>
           )}

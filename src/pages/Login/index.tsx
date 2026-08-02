@@ -145,7 +145,7 @@ export const Login = () => {
           )}
 
           {(error || uiState.localError || discordError) && (
-            <p className="mb-4 text-center text-[13px] font-medium text-[#ff4757]">
+            <p className="text-danger mb-4 text-center text-[13px] font-medium">
               {uiState.localError || discordError || errorMessage}
             </p>
           )}
