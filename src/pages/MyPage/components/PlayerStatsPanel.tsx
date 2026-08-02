@@ -22,33 +22,25 @@ interface Props {
 /**
  * 티어 한 칸.
  *
- * 아이콘 URL은 전부 nullable입니다. src에 null을 넣으면 깨진 이미지가 뜨고,
- * 빈 컨테이너를 남겨두면 아이콘 없는 칸에 빈 줄이 생깁니다. 둘 다 있을 때만 그립니다.
+ * 아이콘 URL은 전부 nullable입니다. src에 null을 넣으면 깨진 이미지가 뜨므로
+ * 각각 값이 있을 때만 그립니다. 없어도 역할명과 티어 글자는 남습니다.
  */
-const RankTile = ({ entry }: { entry: PlayerRankEntry }) => {
-  const hasIcon = !!(entry.roleIcon || entry.rankIcon);
-
-  return (
-    <div className="bg-bg-input flex flex-col items-center gap-1.5 rounded-lg p-3">
-      <span className="text-text-muted text-[11px]">
-        {ROLE_LABEL[entry.role]}
-      </span>
-      {hasIcon && (
-        <div className="flex h-7 items-center gap-1">
-          {entry.roleIcon && (
-            <img src={entry.roleIcon} alt="" className="h-5 w-5" />
-          )}
-          {entry.rankIcon && (
-            <img src={entry.rankIcon} alt="" className="h-7 w-7" />
-          )}
-        </div>
+const RankTile = ({ entry }: { entry: PlayerRankEntry }) => (
+  <div className="bg-bg-input flex flex-col items-center gap-2 rounded-xl px-3 py-5">
+    <span className="text-text-muted flex items-center gap-1.5 text-xs">
+      {entry.roleIcon && (
+        <img src={entry.roleIcon} alt="" className="h-4 w-4 opacity-70" />
       )}
-      <span className="text-text-main text-[13px] font-bold">
-        {entry.division.toUpperCase()} {entry.tier}
-      </span>
-    </div>
-  );
-};
+      {ROLE_LABEL[entry.role]}
+    </span>
+    {entry.rankIcon && (
+      <img src={entry.rankIcon} alt="" className="h-14 w-14" />
+    )}
+    <span className="text-text-main text-sm font-bold">
+      {entry.division.toUpperCase()} {entry.tier}
+    </span>
+  </div>
+);
 
 /** 문구 하나와 버튼 하나짜리 상태. 안내와 에러가 같은 껍데기를 씁니다. */
 const Notice = ({
@@ -142,40 +134,40 @@ export const PlayerStatsPanel = ({ onNavigateSettings }: Props) => {
       {/* 배경에 profile.namecard를 깔 수도 있지만 쓰지 않습니다. 밝은 네임카드에서는
           오버레이를 씌워도 오른쪽 글자가 묻히고, 오버레이를 진하게 하면 이미지가
           안 보여 얻는 게 없습니다. 응답에는 남아 있으니 필요해지면 꺼내 쓰세요. */}
-      <div className="border-border-main flex items-center gap-3.5 border-b p-4">
+      <div className="border-border-main flex items-center gap-4 border-b p-5">
         {profile.avatar && (
           <img
             src={profile.avatar}
             alt=""
-            className="border-border-main h-13 w-13 shrink-0 rounded-lg border"
+            className="border-border-main h-16 w-16 shrink-0 rounded-xl border"
           />
         )}
 
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <span className="text-text-main truncate font-bold">
+            <span className="text-text-main truncate text-lg font-bold">
               {profile.username}
             </span>
-            {profile.endorsementLevel !== null && (
-              <span
-                className="border-border-main text-text-muted flex shrink-0 items-center gap-1 rounded-full border py-0.5 pr-2 pl-1 text-[11px]"
+            {/* 아이콘 자체가 레벨을 나타내므로 숫자를 함께 쓰면 같은 말을
+                두 번 하는 셈입니다. 아이콘이 없을 때만 숫자로 대체합니다.
+                레벨은 title 속성으로 남겨 마우스를 올리면 확인됩니다. */}
+            {profile.endorsementIcon ? (
+              <img
+                src={profile.endorsementIcon}
+                alt={`추천 레벨 ${profile.endorsementLevel}`}
                 title={`추천 레벨 ${profile.endorsementLevel}`}
-              >
-                {/* 아이콘 URL은 레벨별로 다른 SVG입니다. 없을 수도 있어
-                    조건부로 그리고, 없으면 숫자만 남습니다. */}
-                {profile.endorsementIcon && (
-                  <img
-                    src={profile.endorsementIcon}
-                    alt=""
-                    className="h-4 w-4"
-                  />
-                )}
-                추천 {profile.endorsementLevel}
-              </span>
+                className="h-6 w-6 shrink-0"
+              />
+            ) : (
+              profile.endorsementLevel !== null && (
+                <span className="border-border-main text-text-muted shrink-0 rounded-full border px-2 py-0.5 text-[11px]">
+                  추천 {profile.endorsementLevel}
+                </span>
+              )
             )}
           </div>
           {profile.title && (
-            <p className="text-text-muted mt-0.5 truncate text-xs">
+            <p className="text-text-muted mt-1 truncate text-sm">
               {profile.title}
             </p>
           )}
@@ -191,7 +183,7 @@ export const PlayerStatsPanel = ({ onNavigateSettings }: Props) => {
       {rank ? (
         // 서버가 기록 없는 역할군을 이미 걸러서 보냅니다. 개수가 1~4개로
         // 가변이라 칸 수를 고정하면 빈 칸이 생기거나 넘칩니다.
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(90px,1fr))] gap-2.5 p-4">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-3 p-5">
           {rank.entries.map((entry) => (
             <RankTile key={entry.role} entry={entry} />
           ))}
