@@ -75,7 +75,6 @@ export const SearchForm = ({
           )}
         />
 
-        {/* 검색 버튼 */}
         <button
           type="submit"
           disabled={isSearching}

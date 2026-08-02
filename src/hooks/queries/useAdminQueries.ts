@@ -15,7 +15,6 @@ export const useAdminReportsQuery = () => {
   });
 };
 
-// 서버 데이터 쓰기 (신고 내역 삭제 및 랭킹 동기화)
 export const useDeleteReportMutation = () => {
   const queryClient = useQueryClient();
 
@@ -26,7 +25,6 @@ export const useDeleteReportMutation = () => {
       await deleteReportAndSyncRanking(reportId);
     },
     onSuccess: () => {
-      // 삭제 후 어드민 내역과 홈 랭킹 데이터를 동시에 최신화
       queryClient.invalidateQueries({ queryKey: ['adminReports'] });
       queryClient.invalidateQueries({ queryKey: ['ranking'] });
       alert('삭제 완료 및 랭킹 데이터 동기화 성공!');

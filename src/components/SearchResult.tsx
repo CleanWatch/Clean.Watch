@@ -57,7 +57,6 @@ export const SearchResult = ({
                 신고되었습니다!
               </p>
 
-              {/* 상세 기록 보기 버튼 */}
               <button
                 onClick={() => setShowNotice(true)}
                 className={cn(
@@ -68,7 +67,6 @@ export const SearchResult = ({
                 🔍 상세 전과 기록 보기
               </button>
 
-              {/* 준비 중 안내 메시지 */}
               {showNotice && (
                 <p className="text-text-muted mt-4 text-[13px] font-medium">
                   🛠️ 상세 신고 기록실 타임라인 준비 중입니다...

@@ -150,7 +150,6 @@ export const Login = () => {
             </p>
           )}
 
-          {/* 로그인 버튼 */}
           <button
             type="submit"
             // 필수 칸이 비어 있으면 잠급니다. 형식 오류는 눌렀을 때 문구로
@@ -176,7 +175,6 @@ export const Login = () => {
             {isPending ? '로그인 중...' : '로그인'}
           </button>
 
-          {/*  디스코드 버튼 */}
           <button
             type="button"
             disabled={isPending}
@@ -218,7 +216,6 @@ export const Login = () => {
           </div>
         </form>
       </div>
-      {/* 비밀번호 찾기 모달창 */}
       <PasswordResetModal
         modalState={modalState}
         setModalState={setModalState}

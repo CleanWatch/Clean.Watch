@@ -41,7 +41,7 @@ export const Report = () => {
             value={battleTag}
             onChange={(e) => {
               setBattleTag(e.target.value);
-              setLocalError(''); // 입력 시 기존 에러 메시지 초기화
+              setLocalError('');
             }}
             className={cn(
               'border-border-main bg-bg-main text-text-main w-full rounded-lg border p-4 text-[16px] transition-all duration-200 outline-none',
@@ -53,7 +53,7 @@ export const Report = () => {
             value={reason}
             onChange={(e) => {
               setReason(e.target.value);
-              setLocalError(''); // 선택 시 기존 에러 메시지 초기화
+              setLocalError('');
             }}
             className={cn(
               'border-border-main bg-bg-main text-text-main w-full appearance-none rounded-lg border p-4 text-[16px] transition-all duration-200 outline-none',
@@ -89,7 +89,6 @@ export const Report = () => {
             )}
           ></textarea>
 
-          {/* 빨간색 에러 메시지 UI */}
           {localError && (
             <p className="text-danger mt-1 text-center text-[13px] font-medium">
               {localError}
