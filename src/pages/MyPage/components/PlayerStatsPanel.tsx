@@ -157,7 +157,19 @@ export const PlayerStatsPanel = ({ onNavigateSettings }: Props) => {
               {profile.username}
             </span>
             {profile.endorsementLevel !== null && (
-              <span className="border-border-main text-text-muted shrink-0 rounded-full border px-2 py-0.5 text-[11px]">
+              <span
+                className="border-border-main text-text-muted flex shrink-0 items-center gap-1 rounded-full border py-0.5 pr-2 pl-1 text-[11px]"
+                title={`추천 레벨 ${profile.endorsementLevel}`}
+              >
+                {/* 아이콘 URL은 레벨별로 다른 SVG입니다. 없을 수도 있어
+                    조건부로 그리고, 없으면 숫자만 남습니다. */}
+                {profile.endorsementIcon && (
+                  <img
+                    src={profile.endorsementIcon}
+                    alt=""
+                    className="h-4 w-4"
+                  />
+                )}
                 추천 {profile.endorsementLevel}
               </span>
             )}
