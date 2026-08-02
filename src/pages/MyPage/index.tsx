@@ -1,29 +1,32 @@
 // src/pages/MyPage.tsx
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { cn } from '@/utils';
 import { useAuthStore } from '@/store';
+import { ErrorState, ErrorAction } from '@/components';
 import { DashboardTab, ReportsTab, SettingsTab } from './components';
 
 type TabType = 'dashboard' | 'reports' | 'settings';
 
 export const MyPage = () => {
-  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<TabType>('dashboard');
 
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
 
   if (!isLoggedIn) {
     return (
-      <div className="flex min-h-[calc(100dvh-160px)] flex-col items-center justify-center gap-4 text-white">
-        <h2 className="text-xl font-bold">로그인이 필요한 페이지입니다.</h2>
-        <button
-          onClick={() => navigate('/login')}
-          className="bg-primary hover:bg-primary-hover rounded-lg px-6 py-2 font-bold text-white transition-all"
-        >
-          로그인하기
-        </button>
-      </div>
+      <ErrorState
+        label="로그인"
+        title="로그인이 필요한 페이지입니다"
+        description="마이페이지는 로그인 후 이용할 수 있습니다."
+        actions={
+          <>
+            <ErrorAction to="/login">로그인하기</ErrorAction>
+            <ErrorAction to="/" variant="secondary">
+              홈으로
+            </ErrorAction>
+          </>
+        }
+      />
     );
   }
 
