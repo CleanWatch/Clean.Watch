@@ -32,17 +32,24 @@ const app = initializeApp(firebaseConfig);
  * getFirestore/getAuth보다 먼저 호출해야 이후 요청에 토큰이 실립니다.
  */
 if (import.meta.env.DEV) {
-  // localhost는 reCAPTCHA 검증을 통과할 수 없습니다. true로 두면 SDK가
-  // 디버그 토큰을 만들어 콘솔에 출력하고, 그 값을 Firebase 콘솔의
-  // App Check > 앱 > 디버그 토큰 관리에 등록하면 로컬에서도 통과합니다.
+  // localhost는 reCAPTCHA 검증을 통과할 수 없어 디버그 토큰이 필요합니다.
+  //
+  // .env에 VITE_APPCHECK_DEBUG_TOKEN이 있으면 그 값을 씁니다. 팀이 하나를
+  // 공유하면 콘솔에 한 번만 등록하면 되고, 새로 합류한 사람도 .env만 받으면
+  // 됩니다(어차피 다른 비밀 값들 때문에 .env는 받아야 합니다).
+  //
+  // 없으면 true로 두어 SDK가 브라우저마다 토큰을 만들고 콘솔에 출력합니다.
+  // 그 경우 사람마다, 브라우저마다 따로 등록해야 하고 브라우저 데이터를
+  // 지우면 토큰이 새로 생겨 다시 등록해야 합니다.
   //
   // 반드시 initializeAppCheck보다 먼저 설정해야 합니다.
   // import.meta.env.DEV는 빌드 시점에 false로 치환되므로 이 블록은
   // 프로덕션 번들에 포함되지 않습니다. 조건 없이 두면 누구나 디버그
   // 토큰으로 App Check를 우회할 수 있게 됩니다.
   (
-    self as unknown as { FIREBASE_APPCHECK_DEBUG_TOKEN?: boolean }
-  ).FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+    self as unknown as { FIREBASE_APPCHECK_DEBUG_TOKEN?: boolean | string }
+  ).FIREBASE_APPCHECK_DEBUG_TOKEN =
+    import.meta.env.VITE_APPCHECK_DEBUG_TOKEN || true;
 }
 
 try {
