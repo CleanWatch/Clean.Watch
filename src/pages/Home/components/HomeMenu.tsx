@@ -56,9 +56,6 @@ export const HomeMenu = () => {
       <div className="text-text-main text-center text-[15px]">
         {isAdmin ? (
           <div className="flex items-center justify-center gap-2">
-            <span className="text-lg" aria-hidden="true">
-              👑
-            </span>
             <span className="text-danger font-extrabold">{userName}</span>
             <span className="text-text-muted">관리자 계정 작동 중</span>
           </div>

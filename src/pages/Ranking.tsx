@@ -74,9 +74,8 @@ export const Ranking = () => {
                   <p className="text-text-muted mt-1 text-[15px] sm:text-[16px]">
                     <span aria-hidden="true">🚨</span>&nbsp;신고{' '}
                     <span className="text-danger font-bold">
-                      {player.reportCount}
+                      {player.reportCount}회
                     </span>
-                    회
                   </p>
                 </div>
               </div>
