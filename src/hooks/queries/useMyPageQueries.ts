@@ -2,7 +2,6 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import {
   collection,
   doc,
@@ -13,6 +12,7 @@ import {
 } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
 import { auth, db } from '@/firebase/firebase';
+import { api } from '@/api';
 import { useAuthStore } from '@/store';
 
 // 신고 내역 타입 정의
@@ -103,18 +103,11 @@ export const useDeleteAccountMutation = () => {
 
   return useMutation({
     mutationFn: async () => {
-      const user = auth.currentUser;
-      if (!user) throw new Error('인증 정보가 없습니다.');
+      if (!auth.currentUser) throw new Error('인증 정보가 없습니다.');
 
-      // 서버가 이 토큰에서 uid를 꺼내 씁니다.
-      // 본문으로 uid를 보내면 남의 계정을 지울 수 있어 헤더로만 전달합니다.
-      const idToken = await user.getIdToken();
-
-      await axios.post(
-        '/api/account/delete',
-        {},
-        { headers: { Authorization: `Bearer ${idToken}` } },
-      );
+      // 서버가 ID 토큰에서 uid를 꺼내 씁니다. 본문으로 uid를 보내면
+      // 남의 계정을 지울 수 있으므로, 인터셉터가 붙이는 헤더로만 전달합니다.
+      await api.post('/api/account/delete', {});
     },
     onSuccess: async () => {
       // alert이 JS 실행을 멈추므로, 사용자가 확인을 누른 뒤에 이동합니다.

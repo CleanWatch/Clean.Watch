@@ -1,7 +1,6 @@
 /* src/api/users.ts */
 
-import axios from 'axios';
-import { auth } from '@/firebase/firebase';
+import { api } from './axios';
 
 interface CheckDuplicateParams {
   field: 'username' | 'battletag';
@@ -24,13 +23,11 @@ export const checkDuplicate = async ({
 }: CheckDuplicateParams): Promise<boolean> => {
   if (!value) return false;
 
-  // 로그인 상태면 토큰을 실어 보냅니다. 회원가입 시점에는 없으므로 생략됩니다.
-  const idToken = await auth.currentUser?.getIdToken();
-
-  const { data } = await axios.post<{ isDuplicate: boolean }>(
+  // 로그인 상태면 인터셉터가 토큰을 붙입니다.
+  // 회원가입 시점에는 계정이 없어 토큰 없이 나가고, 서버도 그것을 허용합니다.
+  const { data } = await api.post<{ isDuplicate: boolean }>(
     '/api/users/check-duplicate',
     { field, value },
-    idToken ? { headers: { Authorization: `Bearer ${idToken}` } } : undefined,
   );
 
   return data.isDuplicate;

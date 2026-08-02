@@ -9,7 +9,7 @@ import {
 import { useEmailLoginMutation } from '@/hooks';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '@/firebase/firebase';
-import axios from 'axios';
+import { api } from '@/api';
 
 // 캡챠가 뜨기 시작하는 실패 횟수
 const CAPTCHA_THRESHOLD = 5;
@@ -164,7 +164,7 @@ export const useLoginForm = () => {
     setModalState((prev) => ({ ...prev, isResetting: true, error: '' }));
 
     try {
-      await axios.post('/api/verify-captcha', {
+      await api.post('/api/verify-captcha', {
         captchaToken: modalState.captchaToken,
       });
       await sendPasswordResetEmail(auth, modalState.email);

@@ -1,7 +1,7 @@
 /* src/api/report.ts */
 
 import axios from 'axios';
-import { auth } from '@/firebase/firebase';
+import { api } from './axios';
 
 /**
  * 신고 접수.
@@ -14,21 +14,17 @@ import { auth } from '@/firebase/firebase';
  *
  * 신고자 uid 인자는 없앴습니다. 서버가 ID 토큰에서 꺼냅니다 —
  * 호출부가 넘긴 값을 믿으면 남의 명의로 신고할 수 있습니다.
+ *
+ * 로그인하지 않은 상태면 토큰이 없어 서버가 401을 돌려줍니다.
  */
 export const submitNewReport = async (
   battletag: string,
   reason: string,
   details: string,
 ) => {
-  const idToken = await auth.currentUser?.getIdToken();
-  if (!idToken) throw new Error('인증 정보가 없습니다.');
-
   try {
-    await axios.post(
-      '/api/reports/create',
-      { battletag, reason, details },
-      { headers: { Authorization: `Bearer ${idToken}` } },
-    );
+    // 토큰은 api 인스턴스의 인터셉터가 붙입니다.
+    await api.post('/api/reports/create', { battletag, reason, details });
   } catch (error) {
     // 호출부(useReport)가 이 메시지로 중복 신고를 구분하므로 형태를 유지합니다.
     if (axios.isAxiosError(error) && error.response?.status === 409) {

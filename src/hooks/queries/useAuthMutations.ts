@@ -2,7 +2,6 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
@@ -17,7 +16,7 @@ import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 
 import { auth, db } from '@/firebase/firebase';
 import { useAuthStore } from '@/store';
-import { checkDuplicate } from '@/api';
+import { checkDuplicate, api } from '@/api';
 import { withTimeout } from '@/utils';
 import type { UserRole } from '@/types';
 
@@ -40,7 +39,7 @@ export const useRegisterMutation = () => {
       captchaToken,
     }: Record<string, string>) => {
       // 1. 캡챠 검증 (BFF 서버리스 통신)
-      await axios.post('/api/verify-captcha', { captchaToken });
+      await api.post('/api/verify-captcha', { captchaToken });
 
       // 2. 닉네임 중복 체크 (서버 조회)
       // 폼 검증에서 이미 한 번 확인하지만, 그 사이에 남이 같은 닉네임으로
@@ -118,7 +117,7 @@ export const useEmailLoginMutation = () => {
       // 우리 서버는 그 경로에 없습니다. 로그인 자체를 지키려면
       // Firebase Auth 쪽 봇 방어를 켜야 합니다.
       if (captchaToken) {
-        await axios.post('/api/verify-captcha', { captchaToken });
+        await api.post('/api/verify-captcha', { captchaToken });
       }
 
       // 로그인 유지 여부에 따른 세션 지속성 설정

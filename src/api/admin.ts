@@ -1,6 +1,6 @@
 // src/api/admin.ts
-import axios from 'axios';
-import { db, auth } from '@/firebase/firebase';
+import { db } from '@/firebase/firebase';
+import { api } from './axios';
 import {
   collection,
   getDocs,
@@ -42,12 +42,6 @@ export const fetchAdminReports = async (): Promise<AdminReport[]> => {
  * 호출부가 넘긴 값을 믿으면 엉뚱한 배틀태그의 카운트를 깎을 수 있습니다.
  */
 export const deleteReportAndSyncRanking = async (reportId: string) => {
-  const idToken = await auth.currentUser?.getIdToken();
-  if (!idToken) throw new Error('인증 정보가 없습니다.');
-
-  await axios.post(
-    '/api/reports/delete',
-    { reportId },
-    { headers: { Authorization: `Bearer ${idToken}` } },
-  );
+  // 토큰은 api 인스턴스의 인터셉터가 붙입니다. 권한 검사는 서버가 합니다.
+  await api.post('/api/reports/delete', { reportId });
 };
