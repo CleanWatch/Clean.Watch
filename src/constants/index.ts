@@ -31,3 +31,20 @@
 export const TURNSTILE_SITE_KEY = import.meta.env.DEV
   ? '1x00000000000000000000AA' // 항상 통과하는 테스트 위젯
   : '0x4AAAAAADwlrxyiGsogdlgW';
+
+/**
+ * Firebase App Check용 reCAPTCHA v3 사이트 키.
+ *
+ * Turnstile 사이트 키와 마찬가지로 브라우저에 노출되는 공개값입니다.
+ * 짝이 되는 비밀 키는 우리가 갖고 있지 않습니다 — Firebase 콘솔에 등록해 두면
+ * 구글이 자기 서버끼리 대조하므로, 이 프로젝트 코드에는 비밀이 없습니다.
+ *
+ * 이 키가 막는 것은 Firestore 규칙이나 Turnstile과 다릅니다.
+ * 규칙은 "누가" 요청했는지, App Check는 "어디서" 요청했는지를 봅니다.
+ * 로그인은 브라우저에서 구글로 직접 가서 우리 서버를 거치지 않으므로
+ * Turnstile로는 막을 수 없는데, App Check는 그 경로에 붙습니다.
+ *
+ * 개발 환경 분기가 없는 이유: localhost는 디버그 토큰으로 통과합니다.
+ * src/firebase/firebase.ts 참고.
+ */
+export const RECAPTCHA_SITE_KEY = '6Lc-wHEtAAAAAGidLUY3csG5h0f0a3XM3fUEn_Fg';
