@@ -1,64 +1,40 @@
-// src/api/report.ts
-import { db } from '@/firebase/firebase';
-import {
-  collection,
-  addDoc,
-  query,
-  where,
-  getDocs,
-  doc,
-  getDoc,
-  setDoc,
-  updateDoc,
-  increment,
-  Timestamp,
-} from 'firebase/firestore';
+/* src/api/report.ts */
 
+import axios from 'axios';
+import { auth } from '@/firebase/firebase';
+
+/**
+ * 신고 접수.
+ *
+ * 예전에는 여기서 중복 검사와 Firestore 쓰기를 모두 수행했습니다. 검사가
+ * 클라이언트에만 있어 강제되지 않았고, battletags 카운트를 직접 올릴 수 있어
+ * 신고 없이 숫자만 부풀리는 조작이 가능했습니다.
+ *
+ * 지금은 서버가 검사와 쓰기를 한 트랜잭션으로 처리합니다.
+ *
+ * reporterUid는 호출부 호환을 위해 남겨두지만 전송하지 않습니다.
+ * 서버가 ID 토큰에서 꺼내며, 본문을 믿으면 남의 명의로 신고할 수 있습니다.
+ */
 export const submitNewReport = async (
-  reporterUid: string,
+  _reporterUid: string,
   battletag: string,
   reason: string,
-  Details: string,
+  details: string,
 ) => {
-  // 중복 신고 검사 (동일 유저가 동일 배틀태그를 또 신고했는지)
-  const reportQuery = query(
-    collection(db, 'reports'),
-    where('reporterUid', '==', reporterUid),
-    where('battletag', '==', battletag),
-  );
-  const existingReports = await getDocs(reportQuery);
+  const idToken = await auth.currentUser?.getIdToken();
+  if (!idToken) throw new Error('인증 정보가 없습니다.');
 
-  if (!existingReports.empty) {
-    throw new Error('ALREADY_REPORTED');
-  }
-
-  const now = Timestamp.now();
-
-  // 파이어베이스에 신고 내역 추가
-  await addDoc(collection(db, 'reports'), {
-    battletag,
-    reason,
-    details: Details,
-    reporterUid,
-    createdAt: now,
-  });
-
-  // 배틀태그 누적 카운트 및 랭킹 데이터 업데이트
-  const battletagRef = doc(db, 'battletags', battletag);
-  const battletagSnap = await getDoc(battletagRef);
-
-  if (!battletagSnap.exists()) {
-    // 최초 신고 시 새 문서 생성
-    await setDoc(battletagRef, {
-      battletag,
-      count: 1,
-      lastReportedAt: now,
-    });
-  } else {
-    // 기존 누적 신고 시 카운트 증가
-    await updateDoc(battletagRef, {
-      count: increment(1),
-      lastReportedAt: now,
-    });
+  try {
+    await axios.post(
+      '/api/reports/create',
+      { battletag, reason, details },
+      { headers: { Authorization: `Bearer ${idToken}` } },
+    );
+  } catch (error) {
+    // 호출부(useReport)가 이 메시지로 중복 신고를 구분하므로 형태를 유지합니다.
+    if (axios.isAxiosError(error) && error.response?.status === 409) {
+      throw new Error('ALREADY_REPORTED', { cause: error });
+    }
+    throw error;
   }
 };
