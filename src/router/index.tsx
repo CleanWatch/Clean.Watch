@@ -1,6 +1,10 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { Suspense } from 'react';
 import { Layout, LoadingFallback } from '@/components';
+// 404는 lazy로 두지 않습니다. 잘못된 주소로 들어온 사람에게 청크를 한 번 더
+// 받게 할 이유가 없고, 그 요청이 실패하면 없는 페이지 대신 빈 화면이 남습니다.
+// 무언가 잘못됐을 때 뜨는 화면은 네트워크에 기대지 않아야 합니다.
+import { NotFound } from '@/pages/NotFound';
 import {
   Home,
   Login,
@@ -39,6 +43,9 @@ export const router = createBrowserRouter([
       { path: 'mypage', element: withLoading(MyPage) },
       { path: 'admin', element: withLoading(Admin) },
       // {path: 'path', element: withLoading(component) }.
+
+      // 위 어느 것과도 맞지 않는 주소. 반드시 맨 마지막에 둡니다.
+      { path: '*', element: <NotFound /> },
     ],
   },
 ]);
