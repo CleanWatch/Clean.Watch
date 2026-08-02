@@ -6,11 +6,12 @@
 
 ## 🎮 주요 기능
 
-- 🔥 **배틀태그 전과 조회 (Killer Feature):** 배틀태그(예: 트레이서#1234) 검색 한 번으로 해당 유저의 누적 신고 횟수와 상세 전적(트롤링, 비인가 프로그램 사용 등)을 실시간으로 추적 및 조회하는 강력한 검색 시스템
-- **신고 접수 및 방어 로직:** 카테고리별 세부 신고 기능 및 무분별한 중복 허위 신고를 막기 위한 검증 로직 구현
-- **디스코드 연동 로그인:** Discord OAuth2를 활용한 간편 로그인 및 유저 프로필 자동 동기화
-- **다이내믹 프로필:** 접속자 권한(본인/타인/관리자)에 따라 유동적으로 UI가 변하는 마이페이지 (마이 리포트, 프로필 기능 통합)
-- **관리자 대시보드:** 악성 빌런 강제 제재 및 플랫폼 관리를 위한 전용 관리 시스템
+- 🔥 **배틀태그 전과 조회 (Killer Feature):** 배틀태그(예: 트레이서#1234) 검색 한 번으로 해당 유저의 누적 신고 횟수와 신고 사유(트롤링, 비인가 프로그램 사용 등)를 조회하는 검색 시스템
+- **신고 접수 및 방어 로직:** 카테고리별 세부 신고 기능. 중복 신고 검사와 랭킹 카운트 갱신을 서버 트랜잭션으로 묶어, 검사를 건너뛴 신고나 카운트만 오른 상태가 생기지 않도록 처리
+- **오버워치 전적 연동:** 등록한 배틀태그의 프로필과 경쟁전 티어를 마이페이지에 표시. OverFast API를 서버에서 대신 호출해 CORS와 레이트 리밋을 사용자에게 떠넘기지 않음
+- **디스코드 연동 로그인:** Discord OAuth2 기반 간편 로그인. 인가 코드 교환을 서버에서 처리하고 `state` 파라미터로 CSRF 방어
+- **마이페이지:** 대시보드(프로필·전적), 내 신고 내역, 프로필 설정(닉네임·배틀태그·회원 탈퇴)
+- **관리자 대시보드:** 신고 내역 열람 및 삭제. 권한 검사는 서버와 보안 규칙 양쪽에서 수행
 
 <br>
 
@@ -35,33 +36,74 @@
 
 ![Firebase](https://img.shields.io/badge/firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)
 
-**Deployment**
+Firebase Authentication · Cloud Firestore · **App Check** · Admin SDK (서버리스 함수)
+
+**Deployment & CI**
 
 ![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
+![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white)
+
+Vercel Serverless Functions · 푸시마다 린트·타입체크·빌드, 배포 후 실제 엔드포인트를 때리는 스모크 테스트
 
 **3rd Party API & Libraries**
 
-<!-- - ![OverFast API](https://img.shields.io/badge/OverFast_API-F99E1A?style=for-the-badge&logo=overwatch&logoColor=white) 오버워치 2 유저 배틀태그 유효성 검증 및 전적 데이터 실시간 스크래핑 -->
-
+![OverFast API](https://img.shields.io/badge/OverFast_API-F99E1A?style=for-the-badge&logo=overwatch&logoColor=white)
 ![Discord OAuth2](https://img.shields.io/badge/Discord_OAuth2-5865F2?style=for-the-badge&logo=discord&logoColor=white)
 ![Cloudflare Turnstile](https://img.shields.io/badge/Cloudflare_Turnstile-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)
-![UI Avatars API](https://img.shields.io/badge/UI_Avatars_API-333333?style=for-the-badge)
+
+- **OverFast API** — 오버워치 프로필·경쟁전 티어 조회. 서버리스 함수를 통해서만 호출합니다
+- **Discord OAuth2** — 소셜 로그인. 토큰 교환은 서버에서 처리합니다
+- **Cloudflare Turnstile** — 회원가입·비밀번호 재설정 봇 방어
 
 <br>
 
-## 📂 핵심 아키텍처 (Architecture)
-
-프로젝트의 관심사 분리와 Vercel Serverless 환경을 고려하여,
-백엔드 API와 프론트엔드 클라이언트 영역을 물리적으로 격리하여 설계했습니다.
+## 📂 아키텍처 (Architecture)
 
 ```text
 📦 project-root
-├── 📂 api/             # Vercel Serverless Function (디스코드 콜백, 캡챠 검증 등 백엔드 격리)
-└── 📂 src/             # 프론트엔드 (React + TS)
-    ├── 📂 api/         # 클라이언트 통신 계층 (Axios 및 엔드포인트 관리)
-    ├── 📂 router/      # 라우터 설정 (AsyncBoundary 기반 에러/서스펜스 처리)
-    └── 📂 store/       # Zustand 클라이언트 전역 상태 관리
+├── 📂 api/                  # Vercel Serverless Functions — DB 쓰기와 외부 API 호출을 전담
+│   ├── 📂 _lib/             #   공용: Admin SDK 초기화, 토큰 검증, OverFast 클라이언트
+│   ├── 📂 auth/discord/     #   OAuth 인가·콜백 (토큰 교환, 커스텀 토큰 발급)
+│   ├── 📂 reports/          #   신고 접수·삭제 (중복 검사 + 카운트 갱신을 트랜잭션으로)
+│   ├── 📂 stats/            #   OverFast 프록시 (본인 전적 조회)
+│   ├── 📂 users/            #   닉네임·배틀태그 중복 검사
+│   └── 📂 account/          #   회원 탈퇴 (신고 익명화 → 문서 삭제 → 계정 삭제)
+├── 📂 src/                  # 프론트엔드 (React + TS)
+│   ├── 📂 api/              #   통신 계층. 인터셉터가 ID 토큰을 자동으로 첨부
+│   ├── 📂 hooks/queries/    #   React Query 훅 (서버 상태)
+│   ├── 📂 store/            #   Zustand (클라이언트 전역 상태)
+│   └── 📂 router/           #   AsyncBoundary 기반 에러/서스펜스 처리
+└── 📄 firestore.rules       # 보안 규칙 (버전 관리 대상)
 ```
+
+**왜 쓰기를 서버로 몰았나** — 브라우저에서 Firestore를 직접 쓰면, 보안 규칙이 유일한
+방어선이 됩니다. 그런데 규칙은 **문서 하나만** 보기 때문에 "이 쓰기가 중복 검사를 거쳤는지",
+"짝이 되는 문서가 함께 생겼는지"를 표현할 수 없습니다.
+
+그래서 여러 문서에 걸치거나 선행 검사가 필요한 작업은 전부 `api/`로 옮기고,
+클라이언트 쓰기는 규칙에서 차단했습니다. 서버는 Admin SDK를 쓰므로 규칙을 우회합니다.
+
+## 🔒 보안 설계
+
+세 겹이 각각 다른 질문에 답합니다. 하나로는 못 막는 것들이 있어서 겹쳤습니다.
+
+| 층                 | 확인하는 것       | 구현                                                                                                           |
+| ------------------ | ----------------- | -------------------------------------------------------------------------------------------------------------- |
+| **Firestore 규칙** | **누가** 요청했나 | 기본 전체 차단, 본인 문서만 읽기·수정, `role` 자가 승격 차단, `reports`·`battletags` 클라이언트 쓰기 전면 차단 |
+| **서버 이관**      | 검사를 **거쳤나** | 중복 검사와 쓰기를 한 트랜잭션으로. `uid`는 항상 검증된 ID 토큰에서만                                          |
+| **App Check**      | **어디서** 왔나   | reCAPTCHA v3로 앱 증명. Firestore와 Auth 모두 적용                                                             |
+
+**규칙만으로 부족한 이유** — 정상 로그인한 사용자가 정상적인 형태의 쓰기를 반복하는 것은
+규칙 입장에서 전부 합법입니다. 그래서 순서와 짝을 강제하는 일은 서버가, 요청 출처를
+가리는 일은 App Check가 맡습니다.
+
+그 밖에:
+
+- 인증 상태에 따라 갈리는 실패(토큰 없음 / 권한 없음 / 상류 장애 / 상류 없음)는
+  **서로 다른 상태 코드와 문구**로 내려보냅니다. 하나로 뭉치면 "잠시 후 다시 시도"라는
+  누구에게도 도움이 안 되는 안내만 남습니다
+- 브라우저에 노출되는 공개값(Firebase 웹 설정, 사이트 키)과 진짜 비밀(Admin SDK 개인 키,
+  OAuth 시크릿)을 분리해 관리합니다. `.env.example`에 어느 쪽인지 명시해 두었습니다
 
 ## 👥 팀원 역할 분담
 
@@ -82,7 +124,23 @@
       • 기존 스파게티 코드 리팩토링 및 Custom Hook 패턴 도입을 통한 비즈니스 로직 분리<br>
       • Zustand(<code>useAuthStore</code> 등) 기반 전역 상태 관리 및 Firestore 통신 렌더링 최적화<br>
       • Discord OAuth 및 Firebase Auth 전역 인증 파이프라인 최종 연동<br>
-      • Cloudflare 및 Vercel 기반 배포 파이프라인 안정화 및 Tailwind CSS 전역 고도화
+      • Cloudflare 및 Vercel 기반 배포 파이프라인 안정화 및 Tailwind CSS 전역 고도화<br>
+      <br>
+      <strong>보안 아키텍처 재설계</strong><br>
+      • DB 쓰기를 전량 서버리스 함수로 이관. 중복 검사와 카운트 갱신을 트랜잭션으로 묶어,
+        검사를 건너뛴 신고나 한쪽만 반영된 상태가 생길 수 없도록 재구성<br>
+      • Firestore 보안 규칙 재작성 및 버전 관리 편입. 전체 공개였던 <code>users</code> 읽기를
+        본인 문서로 제한하고, <code>role</code> 자가 승격과 클라이언트 쓰기를 차단<br>
+      • Firebase App Check(reCAPTCHA v3) 도입. 규칙과 서버 검사로는 막을 수 없는
+        "우리 앱을 거치지 않은 요청"을 차단<br>
+      • 인증 헬퍼(<code>requireUid</code>/<code>requireAdmin</code>)와 Axios 인터셉터로
+        토큰 처리를 단일 지점에 집약<br>
+      <br>
+      <strong>기능 및 안정화</strong><br>
+      • OverFast API 프록시 및 마이페이지 전적 카드 구현<br>
+      • 회원 탈퇴(신고 익명화 → 문서 삭제 → 계정 삭제) 및 Turnstile 캡챠 정상화<br>
+      • 배포 후 실제 엔드포인트를 검증하는 스모크 테스트 도입 —
+        빌드는 통과하는데 배포에서만 죽는 문제를 잡기 위해
     </td>
     <td><a href="https://github.com/pandemoniummm">@pandemoniummm</a></td>
   </tr>
