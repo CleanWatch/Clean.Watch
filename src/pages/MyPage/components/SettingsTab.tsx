@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { cn } from '@/utils';
 import { useUser, useMyReportsQuery, useDeleteAccountMutation } from '@/hooks';
 import { useSettingsForm } from '../hooks';
+import { InputGroup } from '@/components';
 import { DeleteAccountModal } from './DeleteAccountModal';
 
 export const SettingsTab = ({
@@ -110,66 +111,28 @@ const SettingsForm = ({
       onSubmit={handleSave}
       className="mx-auto flex max-w-112.5 flex-col gap-5"
     >
-      <div>
-        <label
-          htmlFor="settings-username"
-          className="text-text-muted mb-2 block text-sm font-bold"
-        >
-          유저네임
-        </label>
-        <input
-          id="settings-username"
-          type="text"
-          value={username}
-          onChange={(e) => {
-            setUsername(e.target.value);
-            if (usernameError) setUsernameError('');
-          }}
-          className={cn(
-            'bg-bg-main text-text-main w-full rounded-lg border p-4 transition-colors outline-none',
-            usernameError
-              ? 'border-red-500 focus:border-red-500'
-              : 'border-border-main focus:border-primary',
-          )}
-        />
-        {usernameError && (
-          <p className="mt-2 text-xs font-bold text-red-500">
-            {' '}
-            {usernameError}
-          </p>
-        )}
-      </div>
+      {/* 라벨 연결(useId)과 aria-describedby·aria-invalid를 InputGroup이 처리합니다.
+          직접 쓰던 때는 그게 없어 스크린리더가 에러 문구를 읽어주지 못했습니다. */}
+      <InputGroup
+        label="유저네임"
+        value={username}
+        onChange={(val) => {
+          setUsername(val);
+          if (usernameError) setUsernameError('');
+        }}
+        error={usernameError}
+      />
 
-      <div>
-        <label
-          htmlFor="settings-battletag"
-          className="text-text-muted mb-2 block text-sm font-bold"
-        >
-          오버워치 배틀태그
-        </label>
-        <input
-          id="settings-battletag"
-          type="text"
-          value={battletag}
-          onChange={(e) => {
-            setBattletag(e.target.value);
-            if (battletagError) setBattletagError('');
-          }}
-          placeholder="예) Justice#1234"
-          className={cn(
-            'bg-bg-main text-text-main w-full rounded-lg border p-4 transition-colors outline-none',
-            battletagError
-              ? 'border-red-500 focus:border-red-500'
-              : 'border-border-main focus:border-primary',
-          )}
-        />
-        {battletagError && (
-          <p className="mt-2 text-xs font-bold text-red-500">
-            {' '}
-            {battletagError}
-          </p>
-        )}
-      </div>
+      <InputGroup
+        label="오버워치 배틀태그"
+        placeholder="예) Justice#1234"
+        value={battletag}
+        onChange={(val) => {
+          setBattletag(val);
+          if (battletagError) setBattletagError('');
+        }}
+        error={battletagError}
+      />
 
       <button
         type="submit"
