@@ -18,6 +18,7 @@ export const Login = () => {
     setFormData,
     uiState,
     setUiState,
+    needsCaptcha,
     modalState,
     setModalState,
     onSubmit,
@@ -126,17 +127,23 @@ export const Login = () => {
             </label>
           </div>
 
-          {uiState.failedAttempts >= 5 && (
+          {needsCaptcha && (
             <div className="mb-4 flex min-h-16.25 justify-center">
+              {/* key가 바뀌면 위젯이 새로 마운트되어 새 토큰을 받습니다.
+                  Turnstile 토큰은 1회용이라 로그인 시도마다 새로 필요합니다. */}
               <Turnstile
+                key={uiState.captchaKey}
                 sitekey={TURNSTILE_SITE_KEY}
                 onVerify={(token) => {
                   setUiState((prev) => ({
                     ...prev,
-                    turnstileToken: token,
+                    captchaToken: token,
                     localError: '',
                   }));
                 }}
+                onExpire={() =>
+                  setUiState((prev) => ({ ...prev, captchaToken: null }))
+                }
               />
             </div>
           )}
@@ -150,10 +157,7 @@ export const Login = () => {
           {/* 로그인 버튼 */}
           <button
             type="submit"
-            disabled={
-              isPending ||
-              (uiState.failedAttempts >= 5 && !uiState.turnstileToken)
-            }
+            disabled={isPending || (needsCaptcha && !uiState.captchaToken)}
             className={cn(
               'mt-1 w-full rounded-lg py-3.5 text-[16px] font-bold transition-all duration-200',
               'bg-bg-main border-border-main text-text-muted border',
@@ -211,7 +215,6 @@ export const Login = () => {
       <PasswordResetModal
         modalState={modalState}
         setModalState={setModalState}
-        setUiState={setUiState}
         handlePasswordReset={handlePasswordReset}
       />
     </div>

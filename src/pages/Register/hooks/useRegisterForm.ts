@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRegisterMutation, useCheckDuplicate } from '@/hooks';
+import { getCaptchaErrorMessage } from '@/utils';
 import {
   checkFormatErrors,
   checkDuplicateErrors,
@@ -15,6 +16,9 @@ export const useRegisterForm = () => {
     useRegisterMutation();
   const { validateDuplicate, isChecking } = useCheckDuplicate();
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  // 위젯을 다시 그리게 하는 값. Turnstile 토큰은 1회용이라 실패하면
+  // 같은 토큰으로 재시도해도 계속 거부됩니다.
+  const [captchaKey, setCaptchaKey] = useState(0);
 
   // 폼 상태 관리 (타입 지정)
   const [formData, setFormData] = useState<RegisterFormData>({
@@ -80,7 +84,16 @@ export const useRegisterForm = () => {
       // 통과했던 에러 바구니를 복사해와서 API 에러 메시지만 추가
       const finalErrors = { ...duplicateResult.newErrors };
 
-      if (err.code === 'auth/email-already-in-use') {
+      // 캡챠가 거절되면 예전에는 여기서 걸리는 분기가 없어, 화면에 아무
+      // 변화가 없었습니다. 사용자는 가입 버튼이 먹통이라고 느낍니다.
+      const captchaMessage = getCaptchaErrorMessage(error);
+
+      if (captchaMessage) {
+        alert(captchaMessage);
+        // 소모된 토큰을 비우고 위젯을 새로 띄웁니다.
+        setCaptchaToken(null);
+        setCaptchaKey((prev) => prev + 1);
+      } else if (err.code === 'auth/email-already-in-use') {
         finalErrors.email = '이미 가입된 이메일입니다.';
       } else if (err.message === 'already-in-use-username') {
         finalErrors.username = '이미 사용 중인 닉네임입니다 😭';
@@ -96,6 +109,7 @@ export const useRegisterForm = () => {
     handleSubmit,
     captchaToken,
     setCaptchaToken,
+    captchaKey,
     isRegistering,
     isChecking,
   };

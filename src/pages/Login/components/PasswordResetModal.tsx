@@ -5,32 +5,29 @@ import { Turnstile } from 'react-turnstile';
 import { TURNSTILE_SITE_KEY } from '@/constants';
 
 // 모달 상태 설계도
+//
+// 캡챠 토큰을 여기에 둡니다. 예전에는 로그인 폼의 uiState.turnstileToken을
+// 같이 썼는데, 그러면 모달에서 캡챠를 풀고 닫는 것만으로 로그인 폼의
+// 관문이 열려 있었습니다.
 interface ModalStateType {
   isOpen: boolean;
   email: string;
   isResetting: boolean;
   error: string;
-}
-
-// UI 상태 설계도
-interface UiStateType {
-  failedAttempts: number;
-  localError: string;
-  turnstileToken: string | null;
+  captchaToken: string | null;
+  captchaKey: number;
 }
 
 // 부모(로그인페이지)에서 넘겨줄 프롭스의 타입 선언
 interface ModalProps {
   modalState: ModalStateType;
   setModalState: React.Dispatch<React.SetStateAction<ModalStateType>>;
-  setUiState: React.Dispatch<React.SetStateAction<UiStateType>>;
   handlePasswordReset: () => void;
 }
 
 export const PasswordResetModal = ({
   modalState,
   setModalState,
-  setUiState,
   handlePasswordReset,
 }: ModalProps) => {
   // 모달이 닫혀있으면 화면에 아무것도 안 그림 (return null)
@@ -87,19 +84,28 @@ export const PasswordResetModal = ({
         )}
 
         <div className="mb-4 flex min-h-16.25 justify-center">
+          {/* key가 바뀌면 위젯이 새로 마운트되어 새 토큰을 받습니다.
+              Turnstile 토큰은 1회용이라 한 번 보내고 나면 재사용할 수 없습니다. */}
           <Turnstile
+            key={modalState.captchaKey}
             sitekey={TURNSTILE_SITE_KEY}
-            onVerify={(token) => {
-              setUiState((prev) => ({ ...prev, turnstileToken: token }));
-              setModalState((prev) => ({ ...prev, error: '' }));
-            }}
+            onVerify={(token) =>
+              setModalState((prev) => ({
+                ...prev,
+                captchaToken: token,
+                error: '',
+              }))
+            }
+            onExpire={() =>
+              setModalState((prev) => ({ ...prev, captchaToken: null }))
+            }
           />
         </div>
 
         <div className="flex gap-3">
           <button
             onClick={handlePasswordReset}
-            disabled={modalState.isResetting}
+            disabled={modalState.isResetting || !modalState.captchaToken}
             className={cn(
               'bg-primary hover:bg-primary-hover flex-1 rounded-lg py-3 font-bold text-white transition-all',
             )}

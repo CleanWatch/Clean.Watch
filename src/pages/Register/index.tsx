@@ -13,6 +13,7 @@ export const Register = () => {
     handleChange,
     handleSubmit,
     setCaptchaToken,
+    captchaKey,
     isRegistering,
     isChecking,
   } = useRegisterForm();
@@ -61,9 +62,13 @@ export const Register = () => {
           />
 
           <div className="mt-4 mb-5 flex justify-center">
+            {/* key가 바뀌면 위젯이 새로 마운트되어 새 토큰을 받습니다.
+                Turnstile 토큰은 1회용이라 거절된 뒤 재시도하려면 필요합니다. */}
             <Turnstile
+              key={captchaKey}
               sitekey={TURNSTILE_SITE_KEY}
               onVerify={(token) => setCaptchaToken(token)}
+              onExpire={() => setCaptchaToken(null)}
             />
           </div>
 

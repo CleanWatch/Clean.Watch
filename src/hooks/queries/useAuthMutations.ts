@@ -103,11 +103,24 @@ export const useEmailLoginMutation = () => {
       email,
       password,
       keepLoggedIn,
+      captchaToken,
     }: {
       email: string;
       password: string;
       keepLoggedIn: boolean;
+      captchaToken?: string | null;
     }) => {
+      // 캡챠 검증. 예전에는 useLoginForm이 토큰의 존재 여부만 보고
+      // 서버로는 보내지 않아, 콘솔에서 아무 문자열이나 채워 넣으면 통과했습니다.
+      //
+      // 다만 이 검증은 우리 화면을 쓰는 사람에게만 유효합니다.
+      // signInWithEmailAndPassword는 브라우저에서 구글 서버로 직접 가므로
+      // 우리 서버는 그 경로에 없습니다. 로그인 자체를 지키려면
+      // Firebase Auth 쪽 봇 방어를 켜야 합니다.
+      if (captchaToken) {
+        await axios.post('/api/verify-captcha', { captchaToken });
+      }
+
       // 로그인 유지 여부에 따른 세션 지속성 설정
       const persistenceType = keepLoggedIn
         ? browserLocalPersistence
