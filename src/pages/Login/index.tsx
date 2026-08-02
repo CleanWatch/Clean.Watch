@@ -19,6 +19,10 @@ export const Login = () => {
     uiState,
     setUiState,
     needsCaptcha,
+    handleCaptchaVerify,
+    handleCaptchaExpire,
+    handleModalCaptchaVerify,
+    handleModalCaptchaExpire,
     modalState,
     setModalState,
     onSubmit,
@@ -134,16 +138,8 @@ export const Login = () => {
               <Turnstile
                 key={uiState.captchaKey}
                 sitekey={TURNSTILE_SITE_KEY}
-                onVerify={(token) => {
-                  setUiState((prev) => ({
-                    ...prev,
-                    captchaToken: token,
-                    localError: '',
-                  }));
-                }}
-                onExpire={() =>
-                  setUiState((prev) => ({ ...prev, captchaToken: null }))
-                }
+                onVerify={handleCaptchaVerify}
+                onExpire={handleCaptchaExpire}
               />
             </div>
           )}
@@ -215,6 +211,8 @@ export const Login = () => {
       <PasswordResetModal
         modalState={modalState}
         setModalState={setModalState}
+        onCaptchaVerify={handleModalCaptchaVerify}
+        onCaptchaExpire={handleModalCaptchaExpire}
         handlePasswordReset={handlePasswordReset}
       />
     </div>

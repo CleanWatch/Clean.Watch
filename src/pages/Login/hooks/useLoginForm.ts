@@ -15,6 +15,17 @@ import axios from 'axios';
 const CAPTCHA_THRESHOLD = 5;
 
 /**
+ * 캡챠를 아직 풀지 않았을 때의 안내 문구.
+ *
+ * 캡챠가 풀리면 이 문구는 지워야 하지만, 실패 사유까지 함께 지우면 안 됩니다.
+ * 실패 후에는 소모된 토큰 대신 위젯을 새로 띄우는데, 위젯이 자동으로 통과하면
+ * onVerify가 바로 불려 방금 띄운 실패 문구를 덮어버리기 때문입니다.
+ * 그래서 이 문구일 때만 지웁니다.
+ */
+const CAPTCHA_PROMPT = '안전한 환경인지 확인 중입니다..';
+const MODAL_CAPTCHA_PROMPT = '로봇이 아님을 인증해 주세요.';
+
+/**
  * 실패 횟수를 sessionStorage에 둡니다.
  *
  * 컴포넌트 state로 두면 새로고침 한 번에 0으로 돌아가 캡챠가 사라졌습니다.
@@ -69,7 +80,7 @@ export const useLoginForm = () => {
     if (needsCaptcha && !uiState.captchaToken) {
       return setUiState((prev) => ({
         ...prev,
-        localError: '안전한 환경인지 확인 중입니다..',
+        localError: CAPTCHA_PROMPT,
       }));
     }
 
@@ -146,7 +157,7 @@ export const useLoginForm = () => {
     if (!modalState.captchaToken) {
       return setModalState((prev) => ({
         ...prev,
-        error: '로봇이 아님을 인증해 주세요.',
+        error: MODAL_CAPTCHA_PROMPT,
       }));
     }
 
@@ -183,6 +194,28 @@ export const useLoginForm = () => {
     }
   };
 
+  // 캡챠 위젯 핸들러.
+  // 상태 모양을 컴포넌트가 직접 만지지 않도록 여기서 감쌉니다.
+  const handleCaptchaVerify = (token: string) =>
+    setUiState((prev) => ({
+      ...prev,
+      captchaToken: token,
+      localError: prev.localError === CAPTCHA_PROMPT ? '' : prev.localError,
+    }));
+
+  const handleCaptchaExpire = () =>
+    setUiState((prev) => ({ ...prev, captchaToken: null }));
+
+  const handleModalCaptchaVerify = (token: string) =>
+    setModalState((prev) => ({
+      ...prev,
+      captchaToken: token,
+      error: prev.error === MODAL_CAPTCHA_PROMPT ? '' : prev.error,
+    }));
+
+  const handleModalCaptchaExpire = () =>
+    setModalState((prev) => ({ ...prev, captchaToken: null }));
+
   // 로그인 실패 원인을 에러 코드에 맞는 문구로 변환.
   // 컴포넌트는 화면에 뿌리기만 하도록 여기서 파생시킵니다.
   const errorMessage = error ? getAuthErrorMessage(error) : '';
@@ -196,6 +229,10 @@ export const useLoginForm = () => {
     uiState,
     setUiState,
     needsCaptcha,
+    handleCaptchaVerify,
+    handleCaptchaExpire,
+    handleModalCaptchaVerify,
+    handleModalCaptchaExpire,
     modalState,
     setModalState,
     handlePasswordReset,

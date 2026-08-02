@@ -22,12 +22,16 @@ interface ModalStateType {
 interface ModalProps {
   modalState: ModalStateType;
   setModalState: React.Dispatch<React.SetStateAction<ModalStateType>>;
+  onCaptchaVerify: (token: string) => void;
+  onCaptchaExpire: () => void;
   handlePasswordReset: () => void;
 }
 
 export const PasswordResetModal = ({
   modalState,
   setModalState,
+  onCaptchaVerify,
+  onCaptchaExpire,
   handlePasswordReset,
 }: ModalProps) => {
   // 모달이 닫혀있으면 화면에 아무것도 안 그림 (return null)
@@ -89,16 +93,8 @@ export const PasswordResetModal = ({
           <Turnstile
             key={modalState.captchaKey}
             sitekey={TURNSTILE_SITE_KEY}
-            onVerify={(token) =>
-              setModalState((prev) => ({
-                ...prev,
-                captchaToken: token,
-                error: '',
-              }))
-            }
-            onExpire={() =>
-              setModalState((prev) => ({ ...prev, captchaToken: null }))
-            }
+            onVerify={onCaptchaVerify}
+            onExpire={onCaptchaExpire}
           />
         </div>
 
