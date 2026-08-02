@@ -20,14 +20,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  const { reportId } = req.body ?? {};
-
-  if (typeof reportId !== 'string' || !reportId) {
-    return res.status(400).json({ error: 'Bad Request: Missing reportId' });
-  }
-
   try {
+    // 인증·권한을 먼저 봅니다. stats/me와 같은 순서입니다.
     await requireAdmin(req);
+
+    const { reportId } = req.body ?? {};
+
+    if (typeof reportId !== 'string' || !reportId) {
+      return res.status(400).json({ error: 'Bad Request: Missing reportId' });
+    }
     const db = getAdminFirestore();
 
     const reportRef = db.collection('reports').doc(reportId);

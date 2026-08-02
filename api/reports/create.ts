@@ -20,18 +20,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  const { battletag, reason, details } = req.body ?? {};
-
-  if (typeof battletag !== 'string' || !battletag.trim()) {
-    return res.status(400).json({ error: 'Bad Request: Missing battletag' });
-  }
-  if (typeof reason !== 'string' || !reason.trim()) {
-    return res.status(400).json({ error: 'Bad Request: Missing reason' });
-  }
-
   try {
-    // 신고자는 검증된 토큰에서만. 본문을 믿으면 남의 명의로 신고할 수 있습니다.
+    // 인증을 먼저 봅니다. 비인증 요청에는 본문을 들여다볼 이유도 없고,
+    // 그렇게 해야 401이 나올 자리에 400이 나오지 않습니다.
     const reporterUid = await requireUid(req);
+
+    const { battletag, reason, details } = req.body ?? {};
+
+    if (!battletag || typeof battletag !== 'string') {
+      return res.status(400).json({ error: 'Bad Request: Missing battletag' });
+    }
+    if (!reason || typeof reason !== 'string') {
+      return res.status(400).json({ error: 'Bad Request: Missing reason' });
+    }
     const db = getAdminFirestore();
 
     const tag = battletag.trim();
