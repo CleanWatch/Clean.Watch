@@ -18,12 +18,13 @@ export function useSearch() {
     setSearchQuery(value);
     if (searchedTag) setSearchedTag('');
   };
-  // 검색 실패 문구. 지금은 채우는 곳이 없고, 다음 단계에서 조회 실패를 여기에 담습니다.
-  const [searchError] = useState('');
-
   // React Query 적용 (데이터 통신 및 상태 자동 관리)
   // searchedTag가 변경되면 fetchSearchResult 호출
-  const { data: searchResult = null, isFetching: isSearching } = useQuery({
+  const {
+    data,
+    isFetching: isSearching,
+    isError,
+  } = useQuery({
     queryKey: ['searchResult', searchedTag],
     queryFn: () => fetchSearchResult(searchedTag),
     // 핵심: searchedTag가 빈 값이 아닐 때만 쿼리를 실행하도록 방어막 설정
@@ -32,6 +33,14 @@ export function useSearch() {
     staleTime: 1000 * 60 * 5,
     retry: 0, // 검색 실패 시 재시도하지 않음
   });
+
+  // 조회에 실패하면 data가 비어 "신고 내역이 없습니다"가 됩니다.
+  // 못 불러온 것과 기록이 없는 것은 정반대인데 화면에는 같게 나오므로,
+  // 실패일 때는 결과를 지우고 에러 쪽으로 보냅니다.
+  const searchError = isError
+    ? '검색에 실패했습니다. 잠시 후 다시 시도해 주세요.'
+    : '';
+  const searchResult = isError ? null : (data ?? null);
 
   // 3. 폼 제출(Submit) 핸들러
   //
