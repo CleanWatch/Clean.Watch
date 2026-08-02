@@ -13,18 +13,11 @@ import {
   signOut,
 } from 'firebase/auth';
 
-import {
-  doc,
-  setDoc,
-  getDocs,
-  query,
-  collection,
-  where,
-  serverTimestamp,
-} from 'firebase/firestore';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 
 import { auth, db } from '@/firebase/firebase';
 import { useAuthStore } from '@/store';
+import { checkDuplicate } from '@/api';
 import { withTimeout } from '@/utils';
 import type { UserRole } from '@/types';
 
@@ -49,11 +42,17 @@ export const useRegisterMutation = () => {
       // 1. 캡챠 검증 (BFF 서버리스 통신)
       await axios.post('/api/verify-captcha', { captchaToken });
 
-      // 2. 닉네임 중복 체크 (Firestore 쿼리)
-      const usersRef = collection(db, 'users');
-      const q = query(usersRef, where('username', '==', username));
-      const querySnapshot = await getDocs(q);
-      if (!querySnapshot.empty) {
+      // 2. 닉네임 중복 체크 (서버 조회)
+      // 폼 검증에서 이미 한 번 확인하지만, 그 사이에 남이 같은 닉네임으로
+      // 가입했을 수 있어 제출 직전에 다시 봅니다.
+      // 예전에는 여기서 users 컬렉션을 직접 쿼리했습니다. 그러려면 규칙에서
+      // users 읽기를 열어야 했고, 규칙은 필드를 가릴 수 없어 email까지 함께
+      // 노출됐습니다. 지금은 서버가 boolean만 돌려줍니다.
+      const isNameTaken = await checkDuplicate({
+        field: 'username',
+        value: username,
+      });
+      if (isNameTaken) {
         throw new Error('already-in-use-username'); // 커스텀 에러 던지기
       }
 

@@ -6,7 +6,6 @@ import { auth } from '@/firebase/firebase';
 interface CheckDuplicateParams {
   field: 'username' | 'battletag';
   value: string;
-  currentUid?: string | null;
 }
 
 /**
@@ -16,9 +15,8 @@ interface CheckDuplicateParams {
  * users 읽기를 열어야 했고, 규칙은 필드 단위 제한이 안 되므로 email까지 함께
  * 노출됐습니다. 지금은 서버가 조회하고 boolean만 돌려줍니다.
  *
- * currentUid 파라미터는 호출부 호환을 위해 남겨두지만 사용하지 않습니다.
- * 본인 문서 제외는 서버가 ID 토큰으로 판단합니다 — 클라이언트가 보낸 uid를
- * 믿으면 남의 닉네임을 "본인 것"이라고 우길 수 있습니다.
+ * 본인 문서 제외는 서버가 ID 토큰으로 판단합니다. 클라이언트가 보낸 uid를
+ * 믿으면 남의 닉네임을 "본인 것"이라고 우길 수 있어, currentUid 인자는 없앴습니다.
  */
 export const checkDuplicate = async ({
   field,
