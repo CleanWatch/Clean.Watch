@@ -13,7 +13,7 @@ interface AsyncBoundaryProps {
   rejectedFallback?: ComponentType<FallbackProps>;
 }
 
-export default function AsyncBoundary({
+export function AsyncBoundary({
   children,
   pendingFallback = <LoadingFallback />,
   rejectedFallback = ErrorFallback,

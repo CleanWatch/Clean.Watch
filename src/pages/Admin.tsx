@@ -1,37 +1,14 @@
 /* src/pages/Admin.tsx */
 
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { cn } from '@/utils';
 import { useAuthStore } from '@/store';
+import { ErrorState } from '@/components';
 import {
   useAdminReportsQuery,
   useDeleteReportMutation,
   useUser,
 } from '@/hooks';
-
-// 접근이 막혔을 때 보여줄 안내. 비로그인과 권한 부족 양쪽에서 씁니다.
-const AccessDenied = ({
-  title,
-  description,
-}: {
-  title: string;
-  description?: string;
-}) => {
-  const navigate = useNavigate();
-
-  return (
-    <div className="flex min-h-[calc(100dvh-160px)] flex-col items-center justify-center gap-4 text-white">
-      <h2 className="text-xl font-bold">{title}</h2>
-      {description && <p className="text-text-muted text-sm">{description}</p>}
-      <button
-        onClick={() => navigate('/')}
-        className="bg-border-main rounded-lg px-6 py-2 font-bold text-white transition-all hover:bg-white/10"
-      >
-        홈으로 돌아가기
-      </button>
-    </div>
-  );
-};
 
 export const Admin = () => {
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
@@ -47,7 +24,13 @@ export const Admin = () => {
 
   // 인증 가드
   if (!isLoggedIn) {
-    return <AccessDenied title="관리자 전용 페이지입니다." />;
+    return (
+      <ErrorState
+        label="접근 불가"
+        title="관리자 전용 페이지입니다"
+        description="접근 권한이 없습니다."
+      />
+    );
   }
 
   // 권한 조회가 끝나기 전에 판정하면 실제 관리자도 거부 화면을 봅니다.
@@ -63,8 +46,10 @@ export const Admin = () => {
   // 네트워크 문제와 실제 권한 부족은 반드시 구분해야 합니다.
   if (isUserError) {
     return (
-      <AccessDenied
-        title="권한을 확인하지 못했습니다."
+      <ErrorState
+        label="오류"
+        tone="danger"
+        title="권한을 확인하지 못했습니다"
         description="네트워크 상태를 확인한 뒤 새로고침해 주세요."
       />
     );
@@ -72,7 +57,13 @@ export const Admin = () => {
 
   // 권한 가드. 로그인 여부는 따로 알려주지 않아 비로그인과 같은 문구를 씁니다.
   if (user?.role !== 'admin') {
-    return <AccessDenied title="관리자 전용 페이지입니다." />;
+    return (
+      <ErrorState
+        label="접근 불가"
+        title="관리자 전용 페이지입니다"
+        description="접근 권한이 없습니다."
+      />
+    );
   }
 
   return (
