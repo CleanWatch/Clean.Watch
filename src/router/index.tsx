@@ -1,8 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { AsyncBoundary, Layout } from '@/components';
-// 404는 lazy로 두지 않습니다. 잘못된 주소로 들어온 사람에게 청크를 한 번 더
-// 받게 할 이유가 없고, 그 요청이 실패하면 없는 페이지 대신 빈 화면이 남습니다.
-// 무언가 잘못됐을 때 뜨는 화면은 네트워크에 기대지 않아야 합니다.
+// 404만 lazyPages를 거치지 않습니다. 이유는 lazyPages.ts의 <예외> 주석 참고.
 import { NotFound } from '@/pages/NotFound';
 import {
   Home,
