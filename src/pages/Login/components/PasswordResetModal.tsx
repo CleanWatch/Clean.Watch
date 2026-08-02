@@ -104,6 +104,8 @@ export const PasswordResetModal = ({
             disabled={modalState.isResetting || !modalState.captchaToken}
             className={cn(
               'bg-primary hover:bg-primary-hover flex-1 rounded-lg py-3 font-bold text-white transition-all',
+              // 잠긴 동안 색이 그대로면 눌러도 되는 것처럼 보입니다.
+              'disabled:hover:bg-primary disabled:cursor-not-allowed disabled:opacity-50',
             )}
           >
             {modalState.isResetting ? '발송 중...' : '이메일 받기'}

@@ -159,7 +159,10 @@ export const Login = () => {
               'bg-bg-main border-border-main text-text-muted border',
               'hover:border-primary hover:text-primary hover:-translate-y-px',
               'active:scale-[0.98]',
-              'disabled:transform-none disabled:bg-gray-400 disabled:text-white',
+              // 예전에는 비활성이 bg-gray-400 + 흰 글자라 평소(어두운 배경)보다
+              // 오히려 밝아서, 잠긴 상태가 활성처럼 보였습니다.
+              'disabled:transform-none disabled:cursor-not-allowed disabled:opacity-50',
+              'disabled:hover:border-border-main disabled:hover:text-text-muted',
             )}
           >
             {isPending ? '로그인 중...' : '로그인'}
