@@ -1,6 +1,8 @@
 /* src/hooks/queries/useMyPageQueries.ts */
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import {
   collection,
   doc,
@@ -9,7 +11,8 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
-import { db } from '@/firebase/firebase';
+import { signOut } from 'firebase/auth';
+import { auth, db } from '@/firebase/firebase';
 import { useAuthStore } from '@/store';
 
 // 신고 내역 타입 정의
@@ -84,6 +87,49 @@ export const useUpdateProfileMutation = () => {
     onError: (error) => {
       console.error('프로필 업데이트 에러:', error);
       alert('프로필 변경 중 오류가 발생했습니다.');
+    },
+  });
+};
+
+// 회원 탈퇴
+//
+// 클라이언트에서는 처리할 수 없습니다. firestore.rules가 users 삭제를 막고 있고
+// (allow delete: if false), reports 수정은 관리자만 가능합니다. 그 제한은 옳으므로
+// 규칙을 여는 대신 Admin SDK를 쓰는 서버리스 함수에 위임합니다.
+export const useDeleteAccountMutation = () => {
+  const queryClient = useQueryClient();
+  const { logout: clearAuthStore } = useAuthStore();
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: async () => {
+      const user = auth.currentUser;
+      if (!user) throw new Error('인증 정보가 없습니다.');
+
+      // 서버가 이 토큰에서 uid를 꺼내 씁니다.
+      // 본문으로 uid를 보내면 남의 계정을 지울 수 있어 헤더로만 전달합니다.
+      const idToken = await user.getIdToken();
+
+      await axios.post(
+        '/api/account/delete',
+        {},
+        { headers: { Authorization: `Bearer ${idToken}` } },
+      );
+    },
+    onSuccess: async () => {
+      // alert이 JS 실행을 멈추므로, 사용자가 확인을 누른 뒤에 이동합니다.
+      // 바로 홈으로 보내면 탈퇴가 됐는지 알 수 없습니다.
+      alert('회원 탈퇴가 완료되었습니다.\n그동안 이용해 주셔서 감사합니다.');
+
+      // 계정은 이미 서버에서 삭제됐습니다. 여기서는 브라우저에 남은 흔적을 지웁니다.
+      // useLogoutMutation과 같은 순서를 따릅니다.
+      await signOut(auth);
+      clearAuthStore();
+      queryClient.clear();
+      navigate('/', { replace: true });
+    },
+    onError: (error) => {
+      console.error('회원 탈퇴 실패:', error);
     },
   });
 };

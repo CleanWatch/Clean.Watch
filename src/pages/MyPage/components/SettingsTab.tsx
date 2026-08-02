@@ -1,8 +1,10 @@
 // src/pages/MyPage/components/SettingsTab.tsx
 
+import { useState } from 'react';
 import { cn } from '@/utils';
-import { useUser } from '@/hooks';
+import { useUser, useMyReportsQuery, useDeleteAccountMutation } from '@/hooks';
 import { useSettingsForm } from '../hooks';
+import { DeleteAccountModal } from './DeleteAccountModal';
 
 export const SettingsTab = ({
   onNavigateDashboard,
@@ -10,6 +12,13 @@ export const SettingsTab = ({
   onNavigateDashboard: () => void;
 }) => {
   const { data: profile, isLoading } = useUser();
+  const { data: myReports } = useMyReportsQuery();
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const {
+    mutate: deleteAccount,
+    isPending: isDeleting,
+    error: deleteError,
+  } = useDeleteAccountMutation();
 
   if (isLoading || !profile) {
     return (
@@ -20,10 +29,48 @@ export const SettingsTab = ({
   }
 
   return (
-    <SettingsForm
-      initialProfile={profile}
-      onNavigateDashboard={onNavigateDashboard}
-    />
+    <>
+      <SettingsForm
+        initialProfile={profile}
+        onNavigateDashboard={onNavigateDashboard}
+      />
+
+      {/* 위험 구역. 저장 버튼과 붙여두면 오조작 위험이 있어 선으로 구분합니다. */}
+      <div className="border-border-main mx-auto mt-10 max-w-112.5 border-t pt-6">
+        <p className="mb-1.5 text-sm font-bold text-[#ff4757]">회원 탈퇴</p>
+        <p className="text-text-muted mb-4 text-xs leading-relaxed">
+          계정과 프로필이 삭제되며 되돌릴 수 없습니다. 작성하신 신고는 익명으로
+          남습니다.
+        </p>
+        <button
+          type="button"
+          onClick={() => setIsDeleteOpen(true)}
+          className={cn(
+            'rounded-lg border border-red-500/30 bg-red-500/10 px-5 py-2.5 text-sm font-bold text-[#ff4757] transition-all',
+            'hover:bg-red-500 hover:text-white',
+          )}
+        >
+          회원 탈퇴
+        </button>
+      </div>
+
+      {/* key가 바뀌면 리마운트되어 입력값이 초기화됩니다.
+          effect로 비우면 렌더 중 setState가 되어 연쇄 렌더를 유발합니다. */}
+      <DeleteAccountModal
+        key={String(isDeleteOpen)}
+        isOpen={isDeleteOpen}
+        username={profile.username}
+        reportCount={myReports?.length ?? 0}
+        isPending={isDeleting}
+        error={
+          deleteError
+            ? '탈퇴 처리에 실패했습니다. 잠시 후 다시 시도해 주세요.'
+            : ''
+        }
+        onClose={() => setIsDeleteOpen(false)}
+        onConfirm={() => deleteAccount()}
+      />
+    </>
   );
 };
 

@@ -102,7 +102,10 @@ service cloud.firestore {
       allow update: if isOwner(userId)
                     && !changedKeys().hasAny(['role', 'uid', 'createdAt']);
 
-      // 삭제: 현재 회원 탈퇴 기능이 없으므로 차단
+      // 삭제: 클라이언트에서는 차단합니다.
+      // 회원 탈퇴는 api/account/delete.ts가 Admin SDK로 처리하며,
+      // Admin SDK는 이 규칙을 우회하므로 여기를 열어줄 필요가 없습니다.
+      // 열어두면 세션만 있으면 아무 문서나 지울 수 있게 됩니다.
       allow delete: if false;
     }
 
