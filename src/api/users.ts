@@ -1,7 +1,7 @@
 /* src/api/users.ts */
 
-import { collection, query, where, getDocs, limit } from 'firebase/firestore';
-import { db } from '@/firebase/firebase';
+import axios from 'axios';
+import { auth } from '@/firebase/firebase';
 
 interface CheckDuplicateParams {
   field: 'username' | 'battletag';
@@ -9,25 +9,31 @@ interface CheckDuplicateParams {
   currentUid?: string | null;
 }
 
-// 훅에서 호출할 파이어베이스 통신 함수
+/**
+ * 닉네임·배틀태그 중복 검사.
+ *
+ * 예전에는 여기서 Firestore users 컬렉션을 직접 조회했습니다. 그러려면 규칙에서
+ * users 읽기를 열어야 했고, 규칙은 필드 단위 제한이 안 되므로 email까지 함께
+ * 노출됐습니다. 지금은 서버가 조회하고 boolean만 돌려줍니다.
+ *
+ * currentUid 파라미터는 호출부 호환을 위해 남겨두지만 사용하지 않습니다.
+ * 본인 문서 제외는 서버가 ID 토큰으로 판단합니다 — 클라이언트가 보낸 uid를
+ * 믿으면 남의 닉네임을 "본인 것"이라고 우길 수 있습니다.
+ */
 export const checkDuplicate = async ({
   field,
   value,
-  currentUid = null,
 }: CheckDuplicateParams): Promise<boolean> => {
   if (!value) return false;
 
-  // limit(1): 중복을 하나라도 찾으면 즉시 탐색 종료 (과금 방지 최적화)
-  const q = query(collection(db, 'users'), where(field, '==', value), limit(1));
+  // 로그인 상태면 토큰을 실어 보냅니다. 회원가입 시점에는 없으므로 생략됩니다.
+  const idToken = await auth.currentUser?.getIdToken();
 
-  const querySnapshot = await getDocs(q);
+  const { data } = await axios.post<{ isDuplicate: boolean }>(
+    '/api/users/check-duplicate',
+    { field, value },
+    idToken ? { headers: { Authorization: `Bearer ${idToken}` } } : undefined,
+  );
 
-  if (querySnapshot.empty) return false;
-
-  // 검색된 문서가 현재 로그인한 본인의 것이라면 중복이 아닌 것으로 처리
-  if (currentUid && querySnapshot.docs[0].id === currentUid) {
-    return false;
-  }
-
-  return true; // 중복됨
+  return data.isDuplicate;
 };
