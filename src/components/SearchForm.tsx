@@ -5,6 +5,8 @@ interface SearchFormProps {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   executeSearch: (e: SyntheticEvent<HTMLFormElement>) => void;
+  /** 제출을 막았을 때 이전 결과를 내립니다. */
+  clearResult: () => void;
   isSearching?: boolean;
 }
 
@@ -12,6 +14,7 @@ export const SearchForm = ({
   searchQuery,
   setSearchQuery,
   executeSearch,
+  clearResult,
   isSearching = false,
 }: SearchFormProps) => {
   // 폼 내부 UI 전용 에러 상태 관리
@@ -23,13 +26,17 @@ export const SearchForm = ({
 
     const query = searchQuery.trim();
 
+    // 막을 때는 이전 결과도 같이 내립니다. 여기서 return하면 executeSearch가
+    // 호출되지 않아, 내리지 않으면 새 에러 밑에 다른 배틀태그의 결과가 남습니다.
     if (!query) {
       setErrorMessage('배틀태그를 입력해주세요.');
+      clearResult();
       return;
     }
 
     if (!isValidBattletag(query)) {
       setErrorMessage('올바른 배틀태그 형식(예: 닉네임#1234)을 입력해주세요.');
+      clearResult();
       return;
     }
 

@@ -13,6 +13,7 @@ export const Home = () => {
   const {
     searchQuery,
     setSearchQuery,
+    clearResult,
     searchResult,
     isSearching,
     executeSearch,
@@ -47,6 +48,7 @@ export const Home = () => {
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           executeSearch={executeSearch}
+          clearResult={clearResult}
           isSearching={isSearching}
         />
 
