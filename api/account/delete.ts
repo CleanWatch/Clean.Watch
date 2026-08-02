@@ -2,6 +2,7 @@
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { getAdminAuth, getAdminFirestore } from '../_lib/firebaseAdmin.js';
+import { requireUid, toErrorResponse } from '../_lib/auth.js';
 
 /**
  * 탈퇴한 유저의 신고에 남길 값.
@@ -19,19 +20,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  // 요청 본문의 uid를 신뢰하면 남의 계정을 지울 수 있습니다.
-  // 반드시 검증된 토큰에서 꺼낸 uid만 사용합니다.
-  const authHeader = req.headers.authorization;
-  if (!authHeader?.startsWith('Bearer ')) {
-    return res.status(401).json({ error: 'Unauthorized: Missing token' });
-  }
-
   try {
+    // 요청 본문의 uid를 신뢰하면 남의 계정을 지울 수 있습니다.
+    // 반드시 검증된 토큰에서 꺼낸 uid만 사용합니다.
+    const uid = await requireUid(req);
+
     const adminAuth = getAdminAuth();
     const db = getAdminFirestore();
-
-    const decoded = await adminAuth.verifyIdToken(authHeader.slice(7));
-    const uid = decoded.uid;
 
     // Step A: 신고 익명화
     // reports 문서는 남기고 reporterUid만 바꿉니다. 문서를 지우면
@@ -63,13 +58,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
   } catch (error) {
     console.error('[Account Delete Error]:', error);
-
-    // 토큰 검증 실패는 인증 문제로 구분해 돌려줍니다.
-    const code = (error as { code?: string }).code ?? '';
-    if (code.startsWith('auth/')) {
-      return res.status(401).json({ error: 'Unauthorized: Invalid token' });
-    }
-
-    return res.status(500).json({ error: 'Internal Server Error' });
+    const { status, body } = toErrorResponse(error);
+    return res.status(status).json(body);
   }
 }
