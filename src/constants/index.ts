@@ -13,7 +13,18 @@
  * 실제로 회원가입 페이지가 이 상태(sitekey: void 0)로 배포되어
  * 이메일 회원가입이 차단되어 있었습니다.
  *
- * 환경별로 다른 키(테스트 키 등)가 필요해지면 그때 env로 옮깁니다.
- * 사용처가 이 한 곳으로 모여 있어 교체가 쉽습니다.
+ * 로컬 개발에서만 Cloudflare 테스트 키를 씁니다. 위젯의 허용 호스트 목록에
+ * localhost가 없어 실제 키로는 도메인 미등록 오류(110200)로 위젯이 죽습니다.
+ * 호스트 목록은 Cloudflare 대시보드에서만 바꿀 수 있어 코드로는 해결이 안 됩니다.
+ *
+ * env가 아니라 import.meta.env.DEV로 가르는 이유:
+ * 위와 같은 이유로 VITE_ 변수는 배포 환경에서 누락될 수 있는데,
+ * DEV는 Vite가 빌드 시점에 false로 치환하므로 그 위험이 없습니다.
+ * 죽은 가지는 제거되어 프로덕션 번들에 테스트 키 문자열이 남지 않습니다.
+ *
+ * 짝이 되는 TURNSTILE_SECRET_KEY도 로컬 .env에서 테스트 시크릿으로 맞춰야
+ * 합니다. 한쪽만 테스트 키면 검증이 전부 실패합니다.
  */
-export const TURNSTILE_SITE_KEY = '0x4AAAAAADwlrxyiGsogdlgW';
+export const TURNSTILE_SITE_KEY = import.meta.env.DEV
+  ? '1x00000000000000000000AA' // 항상 통과하는 테스트 위젯
+  : '0x4AAAAAADwlrxyiGsogdlgW';
