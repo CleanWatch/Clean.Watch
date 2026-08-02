@@ -4,5 +4,10 @@
       "source": "/((?!api/|@|src/|node_modules/).*)",
       "destination": "/index.html"
     }
-  ]
+  ],
+  "functions": {
+    "api/stats/me.ts": {
+      "maxDuration": 15
+    }
+  }
 }
