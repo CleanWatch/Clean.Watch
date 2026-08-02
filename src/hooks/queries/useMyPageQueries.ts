@@ -82,6 +82,9 @@ export const useUpdateProfileMutation = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user', uid] });
+      // 배틀태그를 바꿨을 수 있습니다. 이걸 빠뜨리면 staleTime(10분) 동안
+      // 이전 배틀태그의 전적이 그대로 남습니다.
+      queryClient.invalidateQueries({ queryKey: ['myPlayerSummary', uid] });
       alert('프로필이 성공적으로 변경되었습니다.');
     },
     onError: (error) => {

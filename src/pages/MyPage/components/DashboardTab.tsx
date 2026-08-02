@@ -1,8 +1,13 @@
 /* src/pages/MyPage/components/DashboardTab.tsx */
 
 import { useUser } from '@/hooks';
+import { PlayerStatsPanel } from './PlayerStatsPanel';
 
-export const DashboardTab = () => {
+interface Props {
+  onNavigateSettings: () => void;
+}
+
+export const DashboardTab = ({ onNavigateSettings }: Props) => {
   const { data: profile, isLoading } = useUser(); // ✨ useMyProfileQuery -> useUser 교체
 
   if (isLoading)
@@ -48,6 +53,10 @@ export const DashboardTab = () => {
           <span className="text-text-muted">연동된 계정이 없습니다.</span>
         )}
       </div>
+
+      {/* 배틀태그가 없어도 그립니다. "등록하면 볼 수 있어요" 안내를 패널이
+          담당하고, 훅의 enabled가 네트워크 호출 자체를 막습니다. */}
+      <PlayerStatsPanel onNavigateSettings={onNavigateSettings} />
     </div>
   );
 };

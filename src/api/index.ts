@@ -5,3 +5,4 @@ export * from './ranking';
 export * from './admin';
 export * from './report';
 export * from './users';
+export * from './playerStats';

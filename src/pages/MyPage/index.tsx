@@ -52,7 +52,9 @@ export const MyPage = () => {
 
         {/* 탭 내용 렌더링 컨테이너 */}
         <div className="p-6 sm:p-10">
-          {activeTab === 'dashboard' && <DashboardTab />}
+          {activeTab === 'dashboard' && (
+            <DashboardTab onNavigateSettings={() => setActiveTab('settings')} />
+          )}
           {activeTab === 'reports' && <ReportsTab />}
           {activeTab === 'settings' && (
             <SettingsTab
