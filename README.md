@@ -116,30 +116,25 @@ Vercel Serverless Functions · 푸시마다 린트·타입체크·빌드, 배포
   <tr>
     <td><strong>변지환</strong></td>
     <td>
-      <strong>프론트엔드 리드 및 아키텍처 총괄</strong><br>
-      • 기존 JavaScript 레거시 코드의 구조적 한계 파악 및 마이그레이션 주도<br>
-      • 자체 TypeScript/Vite 보일러플레이트 구축 및 아키텍처(라우터, 상태 관리, API) 전면 재설계<br>
-      • Husky, ESLint, Prettier 도입을 통한 엄격한 코드 컨벤션 표준화 및 협업 환경 세팅<br>
-      • <code>AsyncBoundary</code>, <code>ErrorFallback</code> 패턴을 활용한 선언적 에러/로딩 처리(Suspense) 구현<br>
-      • 기존 스파게티 코드 리팩토링 및 Custom Hook 패턴 도입을 통한 비즈니스 로직 분리<br>
-      • Zustand(<code>useAuthStore</code> 등) 기반 전역 상태 관리 및 Firestore 통신 렌더링 최적화<br>
-      • Discord OAuth 및 Firebase Auth 전역 인증 파이프라인 최종 연동<br>
-      • Cloudflare 및 Vercel 기반 배포 파이프라인 안정화 및 Tailwind CSS 전역 고도화<br>
+      <strong>프론트엔드 리드 · 아키텍처 총괄</strong><br>
       <br>
-      <strong>보안 아키텍처 재설계</strong><br>
-      • DB 쓰기를 전량 서버리스 함수로 이관. 중복 검사와 카운트 갱신을 트랜잭션으로 묶어,
-        검사를 건너뛴 신고나 한쪽만 반영된 상태가 생길 수 없도록 재구성<br>
-      • Firestore 보안 규칙 재작성 및 버전 관리 편입. 전체 공개였던 <code>users</code> 읽기를
-        본인 문서로 제한하고, <code>role</code> 자가 승격과 클라이언트 쓰기를 차단<br>
-      • Firebase App Check(reCAPTCHA v3) 도입. 규칙과 서버 검사로는 막을 수 없는
-        "우리 앱을 거치지 않은 요청"을 차단<br>
-      • 인증 헬퍼(<code>requireUid</code>/<code>requireAdmin</code>)와 Axios 인터셉터로
-        토큰 처리를 단일 지점에 집약<br>
+      <strong>1. 레거시 JS → TypeScript 전환</strong><br>
+      • 자체 TS/Vite 보일러플레이트 구축, 라우터·상태 관리·API 계층 재설계<br>
+      • 페이지에 뭉쳐 있던 로직을 Custom Hook으로 분리 (Login · Register · MyPage · Report)<br>
+      • Husky · ESLint · Prettier로 컨벤션 고정, <code>React.lazy</code> + 청크 분할로 초기 로딩 최적화<br>
       <br>
-      <strong>기능 및 안정화</strong><br>
-      • OverFast API 프록시 및 마이페이지 전적 카드 구현<br>
-      • 회원 탈퇴(신고 익명화 → 문서 삭제 → 계정 삭제) 및 Turnstile 캡챠 정상화<br>
-      • 배포 후 실제 엔드포인트를 검증하는 스모크 테스트 도입 —
+      <strong>2. 보안 아키텍처 재설계</strong><br>
+      • DB 쓰기를 전량 서버리스로 이관. 중복 검사와 카운트 갱신을 <strong>한 트랜잭션</strong>으로 묶어,
+        검사를 건너뛴 신고나 한쪽만 반영된 상태가 생길 수 없게 재구성<br>
+      • Firestore 보안 규칙 재작성 및 버전 관리 편입 —
+        전체 공개였던 <code>users</code> 읽기 차단, <code>role</code> 자가 승격 차단<br>
+      • Firebase App Check(reCAPTCHA v3) 도입. 규칙·서버 검사로는 판별할 수 없는
+        <strong>요청 출처</strong>를 검증<br>
+      <br>
+      <strong>3. 기능 및 안정화</strong><br>
+      • OverFast API 프록시 및 마이페이지 전적 카드<br>
+      • Discord OAuth 파이프라인 완성(<code>state</code> CSRF 방어), 회원 탈퇴, Turnstile 캡챠 정상화<br>
+      • 배포 후 실제 엔드포인트를 호출하는 스모크 테스트 —
         빌드는 통과하는데 배포에서만 죽는 문제를 잡기 위해
     </td>
     <td><a href="https://github.com/pandemoniummm">@pandemoniummm</a></td>
