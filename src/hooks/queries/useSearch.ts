@@ -3,13 +3,13 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { fetchSearchResult } from '@/api';
-import { isValidBattletag } from '@/utils';
 
 export function useSearch() {
   // Form UI 관련 상태 관리
   const [searchQuery, setSearchQuery] = useState('');
   const [searchedTag, setSearchedTag] = useState('');
-  const [searchError, setSearchError] = useState('');
+  // 검색 실패 문구. 지금은 채우는 곳이 없고, 다음 단계에서 조회 실패를 여기에 담습니다.
+  const [searchError] = useState('');
 
   // React Query 적용 (데이터 통신 및 상태 자동 관리)
   // searchedTag가 변경되면 fetchSearchResult 호출
@@ -24,22 +24,15 @@ export function useSearch() {
   });
 
   // 3. 폼 제출(Submit) 핸들러
+  //
+  // 형식 검사는 하지 않습니다. SearchForm이 제출 전에 같은 isValidBattletag로
+  // 걸러내고 return하므로, 여기에 있던 검사는 실행될 수 없었습니다.
+  // 검사를 한 곳에만 두면 에러 문구가 어디에 뜨는지도 하나로 정해집니다.
   const executeSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const targetTag = searchQuery.trim();
     if (!targetTag) return;
-
-    // 새로운 검색 시작 시 에러 초기화
-    setSearchError('');
-
-    // 유효성 검사
-    if (!isValidBattletag(targetTag)) {
-      setSearchError(
-        `⚠️ '${targetTag}' 은(는) 올바른 배틀태그 형식이 아닙니다.`,
-      );
-      return;
-    }
 
     // 검증을 통과 시 searchedTag 상태만 업데이트합니다.
     // 상태가 업데이트되면 React Query의 `queryKey`가 변하면서 자동으로 검색 API(통신) 실행
