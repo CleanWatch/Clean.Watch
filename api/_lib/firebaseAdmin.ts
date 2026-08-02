@@ -23,27 +23,33 @@ if (!projectId || !clientEmail || !privateKey) {
   );
 }
 
-// Singleton 패턴 적용: Vercel 서버리스 환경에서 중복 초기화로 인한 에러 및 과금 방지
-let app: App;
+/**
+ * Singleton 패턴: Vercel 서버리스 환경에서 중복 초기화로 인한 에러 및 과금 방지.
+ *
+ * getAdminAuth와 getAdminFirestore 양쪽이 이 함수를 거칩니다.
+ * 예전에는 초기화가 getAdminAuth 안에만 있어서, Firestore만 쓰는 경로나
+ * Auth 호출 전에 예외가 나는 경로에서 "default Firebase app does not exist"로
+ * 터졌습니다. 호출 순서에 의존하지 않도록 여기로 모았습니다.
+ */
+function getAdminApp(): App {
+  if (getApps().length > 0) return getApp();
+
+  const initialized = initializeApp({
+    credential: cert({
+      projectId: projectId,
+      clientEmail: clientEmail,
+      // Vercel 환경 변수에 등록된 문자열 형태의 줄바꿈(\\n)을 실제 이스케이프 개행(\n)으로 변환
+      privateKey: privateKey ? privateKey.replace(/\\n/g, '\n') : '',
+    }),
+  });
+  console.log('[Firebase Admin] 초기화 완료 및 격리 활성화');
+  return initialized;
+}
 
 export function getAdminAuth(): Auth {
-  // getApps().length 검사를 통해 앱이 이미 초기화되어 있다면 기존 앱을 재사용
-  if (getApps().length === 0) {
-    app = initializeApp({
-      credential: cert({
-        projectId: projectId,
-        clientEmail: clientEmail,
-        // Vercel 환경 변수에 등록된 문자열 형태의 줄바꿈(\\n)을 실제 이스케이프 개행(\n)으로 변환
-        privateKey: privateKey ? privateKey.replace(/\\n/g, '\n') : '',
-      }),
-    });
-    console.log('[Firebase Admin] 초기화 완료 및 격리 활성화');
-  } else {
-    app = getApp();
-  }
-  return getAuth(app);
+  return getAuth(getAdminApp());
 }
 
 export function getAdminFirestore(): Firestore {
-  return getFirestore(app);
+  return getFirestore(getAdminApp());
 }
