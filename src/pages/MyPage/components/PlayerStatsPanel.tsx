@@ -1,7 +1,8 @@
 /* src/pages/MyPage/components/PlayerStatsPanel.tsx */
 
+import type { ReactNode } from 'react';
 import { cn, getPlayerStatsError } from '@/utils';
-import { useMyPlayerSummary } from '@/hooks';
+import { useMyPlayerSummary, useUser } from '@/hooks';
 import type { PlayerRankEntry, PlayerRole } from '@/types';
 
 const ROLE_LABEL: Record<PlayerRole, string> = {
@@ -49,8 +50,57 @@ const RankTile = ({ entry }: { entry: PlayerRankEntry }) => {
   );
 };
 
+/** 문구 하나와 버튼 하나짜리 상태. 안내와 에러가 같은 껍데기를 씁니다. */
+const Notice = ({
+  message,
+  children,
+}: {
+  message: string;
+  children?: ReactNode;
+}) => (
+  <div className={cn(CARD, 'flex flex-col items-center gap-4 px-6 py-8')}>
+    <p className="text-text-muted max-w-md text-center text-sm leading-relaxed">
+      {message}
+    </p>
+    {children}
+  </div>
+);
+
 export const PlayerStatsPanel = ({ onNavigateSettings }: Props) => {
+  const { data: user, isLoading: isUserLoading } = useUser();
   const { data, isLoading, isFetching, error, refetch } = useMyPlayerSummary();
+
+  const settingsButton = (
+    <button
+      type="button"
+      onClick={onNavigateSettings}
+      className="bg-primary hover:bg-primary-hover rounded-lg px-4 py-2 text-[13px] font-bold text-white transition-colors"
+    >
+      프로필 설정으로
+    </button>
+  );
+
+  if (isUserLoading) {
+    return (
+      <div className={cn(CARD, 'text-text-muted py-10 text-center text-sm')}>
+        전적 불러오는 중...
+      </div>
+    );
+  }
+
+  // 배틀태그가 없으면 화면에서 바로 안내합니다.
+  //
+  // 서버도 BATTLETAG_NOT_SET을 돌려주지만 그 코드는 여기 도달하지 않습니다.
+  // 훅이 enabled: false로 요청 자체를 막기 때문입니다(호출 한 번과 Firestore
+  // 읽기 한 번을 아끼려고 일부러 그렇게 뒀습니다). 서버 코드에만 의존하면
+  // 요청이 없으니 에러도 없고, 결국 아무것도 그리지 않게 됩니다.
+  if (!user?.battletag) {
+    return (
+      <Notice message="배틀태그를 등록하면 전적을 볼 수 있어요.">
+        {settingsButton}
+      </Notice>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -64,20 +114,8 @@ export const PlayerStatsPanel = ({ onNavigateSettings }: Props) => {
     const info = getPlayerStatsError(error);
 
     return (
-      <div className={cn(CARD, 'flex flex-col items-center gap-4 px-6 py-8')}>
-        <p className="text-text-muted max-w-md text-center text-sm leading-relaxed">
-          {info?.message ?? '전적을 불러오지 못했습니다.'}
-        </p>
-
-        {info?.action === 'settings' && (
-          <button
-            type="button"
-            onClick={onNavigateSettings}
-            className="bg-primary hover:bg-primary-hover rounded-lg px-4 py-2 text-[13px] font-bold text-white transition-colors"
-          >
-            프로필 설정으로
-          </button>
-        )}
+      <Notice message={info?.message ?? '전적을 불러오지 못했습니다.'}>
+        {info?.action === 'settings' && settingsButton}
 
         {/* 갱신 버튼은 여기에만 둡니다. 정상 상태에서 눌러도 상류가 1시간
             캐시라 같은 값이 와서, "갱신"이라 써놓고 안 바뀌면 거짓말이 됩니다. */}
@@ -91,7 +129,7 @@ export const PlayerStatsPanel = ({ onNavigateSettings }: Props) => {
             {isFetching ? '불러오는 중...' : '다시 시도'}
           </button>
         )}
-      </div>
+      </Notice>
     );
   }
 
