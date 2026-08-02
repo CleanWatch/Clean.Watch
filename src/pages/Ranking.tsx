@@ -13,7 +13,7 @@ export const Ranking = () => {
       {/* 상단 헤더 및 홈 버튼 영역 */}
       <div className="mb-12 text-center">
         <h1 className="text-text-main mb-2 text-[2.5rem] font-black tracking-tight sm:text-[3rem]">
-          🏆 신고 랭킹
+          <span aria-hidden="true">🏆</span>&nbsp;신고 랭킹
         </h1>
         <p className="text-text-muted mb-8 text-[16px] sm:text-[18px]">
           가장 많이 신고된 배틀태그 순위
@@ -28,7 +28,7 @@ export const Ranking = () => {
             'hover:bg-border-main hover:text-white active:scale-95',
           )}
         >
-          ← 홈으로
+          <span aria-hidden="true">←</span>&nbsp;홈으로
         </Link>
       </div>
 
@@ -50,25 +50,29 @@ export const Ranking = () => {
                   'hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/50',
                 )}
               >
-                {/* 🥇 등수 (메달) 영역 */}
                 <div className="flex w-15 justify-center text-[2.2rem] sm:w-20 sm:text-[2.8rem]">
-                  {index === 0 && '🥇'}
-                  {index === 1 && '🥈'}
-                  {index === 2 && '🥉'}
-                  {index > 2 && (
+                  {/* 1~3위는 메달만, 4위부터는 숫자입니다. 메달을 그냥 숨기면
+                      상위 3명만 순위가 없는 목록이 되므로 순위를 글로 같이 줍니다. */}
+                  {index < 3 ? (
+                    <>
+                      <span aria-hidden="true">
+                        {['🥇', '🥈', '🥉'][index]}
+                      </span>
+                      <span className="sr-only">{index + 1}위</span>
+                    </>
+                  ) : (
                     <span className="text-text-muted text-[1.4rem] font-bold sm:text-[1.8rem]">
                       #{index + 1}
                     </span>
                   )}
                 </div>
 
-                {/* 👤 유저 정보 영역 */}
                 <div className="ml-4 flex flex-col sm:ml-6">
                   <h2 className="text-text-main text-[1.2rem] font-bold sm:text-[1.5rem]">
                     {player.battletag}
                   </h2>
                   <p className="text-text-muted mt-1 text-[15px] sm:text-[16px]">
-                    🚨 신고{' '}
+                    <span aria-hidden="true">🚨</span>&nbsp;신고{' '}
                     <span className="text-danger font-bold">
                       {player.reportCount}
                     </span>

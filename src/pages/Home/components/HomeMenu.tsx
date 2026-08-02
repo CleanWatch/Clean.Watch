@@ -31,7 +31,7 @@ export const HomeMenu = () => {
             'border-border-main bg-bg-card text-text-main hover:border-primary hover:text-primary border active:scale-[0.96]',
           )}
         >
-          🏆 신고 랭킹
+          <span aria-hidden="true">🏆</span>&nbsp;신고 랭킹
         </Link>
       </div>
     );
@@ -53,11 +53,12 @@ export const HomeMenu = () => {
   // 로그인 상태 (유저 or 관리자)
   return (
     <div className="mt-8 flex flex-col gap-5">
-      {/* 👋 환영 인사 영역 */}
       <div className="text-text-main text-center text-[15px]">
         {isAdmin ? (
           <div className="flex items-center justify-center gap-2">
-            <span className="text-lg">👑</span>
+            <span className="text-lg" aria-hidden="true">
+              👑
+            </span>
             <span className="text-danger font-extrabold">{userName}</span>
             <span className="text-text-muted">관리자 계정 작동 중</span>
           </div>
@@ -69,7 +70,6 @@ export const HomeMenu = () => {
         )}
       </div>
 
-      {/* 🎛️ 메뉴 버튼 그룹 */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         <Link
           to="/report"
@@ -78,7 +78,7 @@ export const HomeMenu = () => {
             'bg-primary hover:bg-primary-hover text-white active:scale-[0.96]',
           )}
         >
-          🚨 신고하기
+          <span aria-hidden="true">🚨</span>&nbsp;신고하기
         </Link>
         <Link
           to="/ranking"
@@ -87,7 +87,7 @@ export const HomeMenu = () => {
             'border-border-main bg-bg-card text-text-main hover:border-primary hover:text-primary border active:scale-[0.96]',
           )}
         >
-          🏆 신고 랭킹
+          <span aria-hidden="true">🏆</span>&nbsp;신고 랭킹
         </Link>
         <Link
           to="/mypage"
@@ -96,7 +96,7 @@ export const HomeMenu = () => {
             'border-border-main bg-bg-card text-text-main hover:border-primary hover:text-primary border active:scale-[0.96]',
           )}
         >
-          👤 마이페이지
+          <span aria-hidden="true">👤</span>&nbsp;마이페이지
         </Link>
 
         {isAdmin && (

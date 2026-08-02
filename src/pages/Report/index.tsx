@@ -27,7 +27,7 @@ export const Report = () => {
         )}
       >
         <h1 className="text-text-main mb-8 text-center text-[2rem] font-black tracking-tight">
-          🚨 핵 사용자 신고
+          <span aria-hidden="true">🚨</span>&nbsp;핵 사용자 신고
         </h1>
 
         <div className="flex flex-col gap-5">

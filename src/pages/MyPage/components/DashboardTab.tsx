@@ -68,7 +68,7 @@ export const DashboardTab = ({ onNavigateSettings }: Props) => {
           <div className="flex items-center gap-3">
             <span className="text-primary font-black">{profile.battletag}</span>
             <span className="rounded-full bg-green-500/10 px-3 py-1 text-xs font-bold text-green-500">
-              ✅ 연동됨
+              <span aria-hidden="true">✅</span>&nbsp;연동됨
             </span>
           </div>
         ) : (

@@ -57,7 +57,7 @@ export const Register = () => {
             placeholder="트레이서#1234"
             value={formData.battletag}
             onChange={(val) => handleChange('battletag', val)}
-            tip="💡 가입 후 마이페이지에서도 등록/수정할 수 있습니다."
+            tip="가입 후 마이페이지에서도 등록/수정할 수 있습니다."
             error={errors.battletag}
           />
 

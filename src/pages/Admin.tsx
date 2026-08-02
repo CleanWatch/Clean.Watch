@@ -47,7 +47,7 @@ export const Admin = () => {
 
   // 인증 가드
   if (!isLoggedIn) {
-    return <AccessDenied title="🚨 관리자 전용 페이지입니다." />;
+    return <AccessDenied title="관리자 전용 페이지입니다." />;
   }
 
   // 권한 조회가 끝나기 전에 판정하면 실제 관리자도 거부 화면을 봅니다.
@@ -64,7 +64,7 @@ export const Admin = () => {
   if (isUserError) {
     return (
       <AccessDenied
-        title="⚠️ 권한을 확인하지 못했습니다."
+        title="권한을 확인하지 못했습니다."
         description="네트워크 상태를 확인한 뒤 새로고침해 주세요."
       />
     );
@@ -72,7 +72,7 @@ export const Admin = () => {
 
   // 권한 가드. 로그인 여부는 따로 알려주지 않아 비로그인과 같은 문구를 씁니다.
   if (user?.role !== 'admin') {
-    return <AccessDenied title="🚨 관리자 전용 페이지입니다." />;
+    return <AccessDenied title="관리자 전용 페이지입니다." />;
   }
 
   return (
@@ -80,7 +80,7 @@ export const Admin = () => {
       <div className="w-full max-w-200">
         <div className="border-border-main mb-8 flex items-center justify-between border-b pb-6">
           <h1 className="text-text-main text-2xl font-black sm:text-3xl">
-            🛠️ 관리자 대시보드
+            <span aria-hidden="true">🛠️</span>&nbsp;관리자 대시보드
           </h1>
           <Link
             to="/"
@@ -135,7 +135,7 @@ export const Admin = () => {
                 {report.details && (
                   <div className="border-text-muted mt-2 rounded-lg border-l-4 bg-black/20 p-4">
                     <span className="text-text-muted mb-2 block text-xs font-bold">
-                      📝 세부사항
+                      <span aria-hidden="true">📝</span>&nbsp;세부사항
                     </span>
                     <p className="text-text-main/90 text-sm leading-relaxed break-all whitespace-pre-wrap">
                       {report.details}

@@ -30,9 +30,7 @@ export const Footer = () => {
                 : 'text-text-muted hover:text-primary font-medium'
             }`}
           >
-            {isCopied
-              ? '✅ 이메일 복사 완료!'
-              : '✉️ 관리자 이메일 (클릭해서 복사)'}
+            {isCopied ? '이메일 복사 완료!' : '관리자 이메일 (클릭해서 복사)'}
           </button>
 
           <span className="text-border-main text-[0.8rem]">|</span>
