@@ -98,7 +98,10 @@ export const Report = () => {
 
           <button
             type="submit"
-            disabled={isSubmitting}
+            // 필수 칸이 비어 있으면 잠급니다. 형식 오류는 눌렀을 때 문구로
+            // 알려주지만(타이핑 중 버튼이 깜빡이면 불편), 빈 칸은 "입력 중"이
+            // 아니라 "보낼 게 없음"입니다.
+            disabled={isSubmitting || !battleTag.trim() || !reason}
             className={cn(
               'mt-2 flex h-14 w-full items-center justify-center rounded-lg text-[16px] font-bold text-white transition-all duration-200',
               'bg-red-500 hover:bg-red-600 active:scale-[0.98]',

@@ -101,7 +101,15 @@ export const PasswordResetModal = ({
         <div className="flex gap-3">
           <button
             onClick={handlePasswordReset}
-            disabled={modalState.isResetting || !modalState.captchaToken}
+            // 이메일이 비어 있으면 보낼 것이 없으므로 잠급니다.
+            // 형식 오류는 눌렀을 때 문구로 알려주지만(타이핑 중에 버튼이
+            // 깜빡이면 불편하므로), 빈 칸은 "입력 중"이 아니라 "보낼 게 없음"입니다.
+            // 캡챠 미완료로 이미 잠그고 있는 것과 같은 성격입니다.
+            disabled={
+              modalState.isResetting ||
+              !modalState.captchaToken ||
+              !modalState.email.trim()
+            }
             className={cn(
               'bg-primary hover:bg-primary-hover flex-1 rounded-lg py-3 font-bold text-white transition-all',
               // 잠긴 동안 색이 그대로면 눌러도 되는 것처럼 보입니다.

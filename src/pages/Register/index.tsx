@@ -74,7 +74,16 @@ export const Register = () => {
 
           <button
             type="submit"
-            disabled={isRegistering || isChecking}
+            // 필수 칸이 비어 있으면 잠급니다. 형식 오류는 눌렀을 때 문구로
+            // 알려주지만(타이핑 중 버튼이 깜빡이면 불편), 빈 칸은 "입력 중"이
+            // 아니라 "보낼 게 없음"입니다.
+            disabled={
+              isRegistering ||
+              isChecking ||
+              !formData.username.trim() ||
+              !formData.email.trim() ||
+              !formData.password
+            }
             className={cn(
               'bg-primary mt-2.5 w-full rounded-lg p-3.5 text-base font-bold text-white shadow-[0_4px_12px_rgba(255,136,0,0.2)] transition-all duration-200',
               'hover:brightness-110 active:-translate-y-px',

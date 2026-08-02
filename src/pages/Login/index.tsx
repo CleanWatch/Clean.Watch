@@ -153,7 +153,15 @@ export const Login = () => {
           {/* 로그인 버튼 */}
           <button
             type="submit"
-            disabled={isPending || (needsCaptcha && !uiState.captchaToken)}
+            // 필수 칸이 비어 있으면 잠급니다. 형식 오류는 눌렀을 때 문구로
+            // 알려주지만(타이핑 중 버튼이 깜빡이면 불편), 빈 칸은 "입력 중"이
+            // 아니라 "보낼 게 없음"입니다.
+            disabled={
+              isPending ||
+              (needsCaptcha && !uiState.captchaToken) ||
+              !formData.email.trim() ||
+              !formData.password
+            }
             className={cn(
               'mt-1 w-full rounded-lg py-3.5 text-[16px] font-bold transition-all duration-200',
               'bg-bg-main border-border-main text-text-muted border',
