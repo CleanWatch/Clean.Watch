@@ -22,21 +22,45 @@ import { RECAPTCHA_SITE_KEY } from '@/constants';
  * 값이 같아서 번들만 봐서는 구분되지 않으니, 폴백 없는 버전을 프리뷰 배포에
  * 올려 동작하는지 보는 것이 확인 방법입니다(변수는 Preview 스코프에도 있습니다).
  */
+/**
+ * 빈 문자열도 "값 없음"으로 취급합니다.
+ *
+ * ??는 undefined와 null만 걸러냅니다. Vercel에 변수를 만들어 두고 값을 비우거나
+ * 붙여넣기가 잘못되면 빈 문자열이 그대로 들어오는데, ??는 그것을 통과시킵니다.
+ * 실제로 VITE_FIREBASE_APP_ID가 빈 값으로 배포되어 App Check가 appId 없이
+ * 토큰을 요청했고, Firestore 읽기가 전부 permission-denied로 막혔습니다.
+ * 폴백이 있는데도 사이트가 죽은 이유가 이것이었습니다.
+ *
+ * 앞뒤 공백도 함께 제거합니다. 대시보드에 값을 붙여넣을 때 섞이기 쉬운데,
+ * appId처럼 정확히 일치해야 하는 값은 공백 하나로 무효가 됩니다.
+ */
+const envOr = (value: string | undefined, fallback: string): string => {
+  const trimmed = value?.trim();
+  return trimmed ? trimmed : fallback;
+};
+
 const firebaseConfig = {
-  apiKey:
-    import.meta.env.VITE_FIREBASE_API_KEY ??
+  apiKey: envOr(
+    import.meta.env.VITE_FIREBASE_API_KEY,
     'AIzaSyCF8BQ6GWKxJRPWENeNR_vnelH3TaJJan4',
-  authDomain:
-    import.meta.env.VITE_FIREBASE_AUTH_DOMAIN ?? 'owanticheat.firebaseapp.com',
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID ?? 'owanticheat',
-  storageBucket:
-    import.meta.env.VITE_FIREBASE_STORAGE_BUCKET ??
+  ),
+  authDomain: envOr(
+    import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    'owanticheat.firebaseapp.com',
+  ),
+  projectId: envOr(import.meta.env.VITE_FIREBASE_PROJECT_ID, 'owanticheat'),
+  storageBucket: envOr(
+    import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
     'owanticheat.firebasestorage.app',
-  messagingSenderId:
-    import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID ?? '100898239448',
-  appId:
-    import.meta.env.VITE_FIREBASE_APP_ID ??
+  ),
+  messagingSenderId: envOr(
+    import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+    '100898239448',
+  ),
+  appId: envOr(
+    import.meta.env.VITE_FIREBASE_APP_ID,
     '1:100898239448:web:9fab069ba0e816616ef8ad',
+  ),
 };
 
 const app = initializeApp(firebaseConfig);
