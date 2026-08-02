@@ -117,7 +117,7 @@ export const HomeMenu = () => {
           className={cn(
             'col-span-2 flex h-13 items-center justify-center rounded-lg text-[14px] font-bold transition-all duration-200 sm:col-span-3',
             'border-border-main text-text-muted border bg-transparent',
-            'hover:bg-bg-main hover:text-text-main active:scale-[0.98]',
+            'hover:border-primary hover:text-primary active:scale-[0.98]',
           )}
         >
           로그아웃

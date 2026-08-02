@@ -86,8 +86,8 @@ export const Register = () => {
             }
             className={cn(
               'bg-primary mt-2.5 w-full rounded-lg p-3.5 text-base font-bold text-white shadow-[0_4px_12px_rgba(255,136,0,0.2)] transition-all duration-200',
-              'hover:brightness-110 active:-translate-y-px',
-              'disabled:cursor-not-allowed disabled:opacity-50 hover:disabled:brightness-100 active:disabled:translate-y-0',
+              'hover:bg-primary-hover active:-translate-y-px',
+              'disabled:hover:bg-primary disabled:cursor-not-allowed disabled:opacity-50 active:disabled:translate-y-0',
             )}
           >
             {isRegistering || isChecking ? '가입 처리 중...' : '회원가입'}
