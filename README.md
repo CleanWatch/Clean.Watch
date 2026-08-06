@@ -2,11 +2,13 @@
 
 > 오버워치 유저들의 건전한 게임 환경을 위한 배틀태그 기반 악성 유저 신고 및 전적 조회 서비스입니다.
 
+### 🔗 [cleanwatch.cloud](https://cleanwatch.cloud)
+
 <br>
 
 ## 🎮 주요 기능
 
-- 🔥 **배틀태그 전과 조회 (Killer Feature):** 배틀태그(예: 트레이서#1234) 검색 한 번으로 해당 유저의 누적 신고 횟수와 신고 사유(트롤링, 비인가 프로그램 사용 등)를 조회하는 검색 시스템
+- 🔥 **배틀태그 전과 조회 (Killer Feature):** 배틀태그(예: 홍길동#1234) 검색 한 번으로 해당 유저의 누적 신고 횟수와 신고 사유(트롤링, 비인가 프로그램 사용 등)를 조회하는 검색 시스템
 - **신고 접수 및 방어 로직:** 카테고리별 세부 신고 기능. 중복 신고 검사와 랭킹 카운트 갱신을 서버 트랜잭션으로 묶어, 검사를 건너뛴 신고나 카운트만 오른 상태가 생기지 않도록 처리
 - **오버워치 전적 연동:** 등록한 배틀태그의 프로필과 경쟁전 티어를 마이페이지에 표시. OverFast API를 서버에서 대신 호출해 CORS와 레이트 리밋을 사용자에게 떠넘기지 않음
 - **디스코드 연동 로그인:** Discord OAuth2 기반 간편 로그인. 인가 코드 교환을 서버에서 처리하고 `state` 파라미터로 CSRF 방어
@@ -50,10 +52,12 @@ Vercel Serverless Functions · 푸시마다 린트·타입체크·빌드, 배포
 ![OverFast API](https://img.shields.io/badge/OverFast_API-F99E1A?style=for-the-badge&logo=overwatch&logoColor=white)
 ![Discord OAuth2](https://img.shields.io/badge/Discord_OAuth2-5865F2?style=for-the-badge&logo=discord&logoColor=white)
 ![Cloudflare Turnstile](https://img.shields.io/badge/Cloudflare_Turnstile-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)
+![Sonner](https://img.shields.io/badge/Sonner-000000?style=for-the-badge&logo=react&logoColor=white)
 
 - **OverFast API** — 오버워치 프로필·경쟁전 티어 조회. 서버리스 함수를 통해서만 호출합니다
 - **Discord OAuth2** — 소셜 로그인. 토큰 교환은 서버에서 처리합니다
 - **Cloudflare Turnstile** — 회원가입·비밀번호 재설정 봇 방어
+- **Sonner** — 토스트 알림. 화면을 막고 맥락을 지우는 `alert()`를 전부 걷어냈습니다
 
 <br>
 
@@ -70,10 +74,13 @@ Vercel Serverless Functions · 푸시마다 린트·타입체크·빌드, 배포
 │   └── 📂 account/          #   회원 탈퇴 (신고 익명화 → 문서 삭제 → 계정 삭제)
 ├── 📂 src/                  # 프론트엔드 (React + TS)
 │   ├── 📂 api/              #   통신 계층. 인터셉터가 ID 토큰을 자동으로 첨부
+│   ├── 📂 pages/            #   화면 단위. 로직은 페이지별 hooks/로 분리
+│   ├── 📂 components/       #   공용 UI (common/) · 머리말·꼬리말 (Layout/)
 │   ├── 📂 hooks/queries/    #   React Query 훅 (서버 상태)
 │   ├── 📂 store/            #   Zustand (클라이언트 전역 상태)
 │   └── 📂 router/           #   AsyncBoundary 기반 에러/서스펜스 처리
-└── 📄 firestore.rules       # 보안 규칙 (버전 관리 대상)
+├── 📄 firestore.rules       # 보안 규칙 (버전 관리 대상)
+└── 📄 vercel.json           # 배포 설정 (보안 헤더)
 ```
 
 **왜 쓰기를 서버로 몰았나** — 브라우저에서 Firestore를 직접 쓰면, 보안 규칙이 유일한
@@ -104,17 +111,18 @@ Vercel Serverless Functions · 푸시마다 린트·타입체크·빌드, 배포
   누구에게도 도움이 안 되는 안내만 남습니다
 - 브라우저에 노출되는 공개값(Firebase 웹 설정, 사이트 키)과 진짜 비밀(Admin SDK 개인 키,
   OAuth 시크릿)을 분리해 관리합니다. `.env.example`에 어느 쪽인지 명시해 두었습니다
+- 응답 헤더로 `X-Frame-Options: DENY`(피싱용 iframe 삽입 차단)와
+  `X-Content-Type-Options: nosniff`(MIME 스니핑 차단)를 내려보냅니다 — `vercel.json`
 
 ## 👥 팀원 역할 분담
 
 <table>
   <tr>
-    <th>이름</th>
-    <th>담당 역할 및 구현 내용</th>
     <th>GitHub</th>
+    <th>담당 역할 및 구현 내용</th>
   </tr>
   <tr>
-    <td><strong>변지환</strong></td>
+    <td valign="top"><a href="https://github.com/pandemoniummm">@pandemoniummm</a></td>
     <td>
       <strong>프론트엔드 리드 · 아키텍처 총괄</strong><br>
       <br>
@@ -135,28 +143,33 @@ Vercel Serverless Functions · 푸시마다 린트·타입체크·빌드, 배포
       • OverFast API 프록시 및 마이페이지 전적 카드<br>
       • Discord OAuth 파이프라인 완성(<code>state</code> CSRF 방어), 회원 탈퇴, Turnstile 캡챠 정상화<br>
       • 배포 후 실제 엔드포인트를 호출하는 스모크 테스트 —
-        빌드는 통과하는데 배포에서만 죽는 문제를 잡기 위해
+        빌드는 통과하는데 배포에서만 죽는 문제를 잡기 위해<br>
+      <br>
+      <strong>4. 서비스 공개 및 마감</strong><br>
+      • 커스텀 도메인 <code>cleanwatch.cloud</code> 연결 —
+        DNS·OAuth 콜백·App Check 도메인까지 이관<br>
+      • 실패 화면 체계화 — 404·401·403·렌더 에러를 공용 <code>ErrorState</code>로 통합하고,
+        에러 경계를 라우트별로 분리해 페이지를 옮기면 저절로 복구되게<br>
+      • 화면을 막고 맥락을 지우던 <code>alert()</code> 15곳을 토스트로 교체, 공용 헤더 도입<br>
+      • 파비콘·OG 이미지·<code>lang</code>·응답 헤더 등 공개 전 마감
     </td>
-    <td><a href="https://github.com/pandemoniummm">@pandemoniummm</a></td>
   </tr>
   <tr>
-    <td><strong>권량현</strong></td>
+    <td valign="top"><a href="https://github.com/Ryanghyeon">@Ryanghyeon</a></td>
     <td>
       <strong>백엔드/인프라 초기 세팅</strong><br>
       • 프로젝트 초기 환경 구성 및 Firebase Admin SDK 아키텍처 설계<br>
       • Discord OAuth 콜백 API 라우팅 및 인증 서버 연동 초기 뼈대 작성<br>
       • Vercel 초기 배포 환경 설정 및 환경변수 관리
     </td>
-    <td><a href="https://github.com/Ryanghyeon">@Ryanghyeon</a></td>
   </tr>
   <tr>
-    <td><strong>김동인</strong></td>
+    <td valign="top"><a href="https://github.com/ininin0423">@ininin0423</a></td>
     <td>
       <strong>프론트엔드 UI 서포트 및 보안 설정</strong><br>
       • 주요 도메인(Login, Ranking, Admin) 초기 UI 컴포넌트 구성<br>
       • Firebase App Check(ReCaptcha V3) 연동을 통한 클라이언트 보안 설정 보조<br>
       • 프로젝트 패키지 의존성 및 Firebase 설정 파일 관리
     </td>
-    <td><a href="https://github.com/ininin0423">@ininin0423</a></td>
   </tr>
 </table>

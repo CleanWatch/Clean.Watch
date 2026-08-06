@@ -1,6 +1,6 @@
-# 🛠️ OW Watch 팀 기여 가이드 (Contributing Guide)
+# 🛠️ CleanWatch 팀 기여 가이드 (Contributing Guide)
 
-새로운 TypeScript + Vite 환경에 오신 것을 환영합니다!
+TypeScript + Vite 환경입니다.
 원활한 협업과 일관된 코드 품질을 유지하기 위해 아래 가이드를 읽고 작업을 진행해 주세요.
 
 ## 🚀 로컬 개발 환경 실행 (Getting Started)
@@ -28,6 +28,10 @@ vercel dev
 
 ⚠️ 주의: npm run dev로 실행하면 프론트엔드 화면만 구동되어 API 서버 통신이 불가능합니다. 무조건 vercel dev 명령어를 사용해 주세요! (최초 실행 시 Vercel 계정 로그인 및 프로젝트 Link 과정이 필요할 수 있습니다.)
 
+🔥 **로컬도 프로덕션 Firebase를 그대로 씁니다.** 별도의 개발용 프로젝트가 없어서,
+로컬에서 회원가입 폼을 제출하면 **운영 DB에 진짜 계정이 생깁니다.** 화면 확인용으로
+폼을 채울 때 주의하고, 만들었다면 마이페이지의 회원 탈퇴로 지워 주세요.
+
 ---
 
 ## 📁 상세 폴더 구조 및 역할 (Directory Structure)
@@ -43,6 +47,10 @@ vercel dev
  ├── 📂 .vscode/         # 팀 공통 에디터 설정 (추천 확장 프로그램 및 세팅)
  ├── 📂 api/             # Vercel Serverless Functions (백엔드 로직)
  ├── 📂 src/             # 프론트엔드 소스 코드 (React + TypeScript)
+ ├── 📂 public/          # 그대로 배포되는 정적 파일 (파비콘, OG 이미지)
+ ├── 📜 index.html       # SPA 진입점 (title, meta, OG 태그)
+ ├── 📜 firestore.rules  # Firestore 보안 규칙 (콘솔이 아닌 여기서 관리)
+ ├── 📜 vercel.json      # 배포 설정 (보안 헤더, 함수 옵션)
  ├── 📜 eslint.config.js # 팀 공통 린트(Lint) 규칙
  ├── 📜 .prettierrc      # 팀 공통 코드 포맷팅 규칙
  ├── 📜 tsconfig.*.json  # TypeScript 환경 분리 설정 (app: 프론트, node: 빌드/서버)
@@ -53,8 +61,15 @@ vercel dev
 
 ### 1. `api/` (Vercel Serverless Functions)
 
-- **역할:** 프론트엔드에서 직접 처리할 수 없는 서버 로직을 담당합니다.
-- **포함 내용:** Discord OAuth 콜백 로직, Cloudflare 캡챠 검증, Firebase Admin SDK 초기화.
+여러 문서에 걸치거나 선행 검사가 필요해서 브라우저에 맡길 수 없는 작업을 담당합니다. **DB 쓰기는 전부 여기를 거칩니다.**
+
+- `_lib/`: 공용 모듈 (Admin SDK 초기화, ID 토큰 검증, OverFast 클라이언트).
+- `auth/discord/`: Discord OAuth 인가·콜백 (토큰 교환, 커스텀 토큰 발급).
+- `reports/`: 신고 접수·삭제 (중복 검사 + 랭킹 카운트 갱신을 한 트랜잭션으로).
+- `stats/`: OverFast API 프록시 (프로필·경쟁전 티어 조회).
+- `users/`: 닉네임·배틀태그 중복 검사.
+- `account/`: 회원 탈퇴 (신고 익명화 → 문서 삭제 → 계정 삭제).
+- `verify-captcha.ts`: Cloudflare Turnstile 토큰 검증.
 
 ### 2. `src/` (Frontend React App)
 
@@ -68,6 +83,27 @@ vercel dev
 - `utils/`: 공통 유틸리티 함수 (`cn.ts`, 정규식 유효성 검사 등).
 
 **Tip**: _자잘한 설정 파일(package-lock.json, .gitignore 등)은 생략되었으며, 코드 작성 시 eslint.config.js와 .prettierrc의 룰이 .husky를 통해 커밋 단계에서 강제 적용됩니다._
+
+---
+
+## 🌿 브랜치 전략 (Branching)
+
+**무조건 브랜치 → PR → CI → 머지.** `main` 직행은 하지 않습니다.
+
+`cleanwatch.cloud`가 붙으면서 **`main`이 곧 공개 서비스**가 됐습니다. 게다가 배포 후
+스모크 테스트는 **프로덕션 배포가 끝난 뒤에** 돌기 때문에, `main`에 바로 푸시하면
+순서가 이렇게 됩니다.
+
+```
+푸시 → 배포 → 사용자가 봄 → 그다음 스모크가 "깨졌다"고 알려줌
+```
+
+브랜치를 파면 CI가 **머지 전에** 걸러 줍니다. 브랜치·푸시·PR·머지까지 2분이면 됩니다.
+
+- 브랜치 이름은 커밋 컨벤션과 같은 접두어를 씁니다 — `feat/`, `fix/`, `chore/`, `docs/`
+- 유일한 예외는 **프로덕션이 이미 깨져 있을 때의 핫픽스**입니다. 사이트가 죽어 있는데
+  절차를 지키느라 망설이는 건 본말전도라, 그때는 `main` 직행이 맞습니다
+
 ---
 
 ## 🛡️ 개발 컨벤션 (Conventions)
@@ -93,4 +129,5 @@ vercel dev
 ## ⚙️ 코드 품질 (Code Quality)
 
 - **Husky & Lint-staged:** 커밋(`git commit`) 시 자동으로 ESLint와 Prettier 검사가 실행됩니다. 코드 포맷팅 에러가 있다면 커밋이 거절될 수 있습니다.
-- **GitHub Actions (CI):** 메인 브랜치로 Pull Request를 생성하면 자동으로 CI 워크플로우가 돌아가며 타입 검사와 빌드 테스트를 수행합니다. 에러나 노란 줄(Warning)은 로컬에서 미리 해결 후 푸시해 주세요.
+- **GitHub Actions (CI):** `main`으로 Pull Request를 열거나 `main`에 푸시되면 `ci.yml`이 돌면서 린트 → 타입 검사 → 빌드를 수행합니다. 에러나 노란 줄(Warning)은 로컬에서 미리 해결 후 푸시해 주세요.
+- **스모크 테스트:** 프로덕션 배포가 **성공한 뒤에** `smoke.yml`이 실제 엔드포인트를 호출합니다. 빌드는 통과하는데 배포에서만 죽는 문제(`.ts` 확장자 import, ESM 호환, SPA 폴백 등)를 잡기 위한 것으로, CI가 전부 초록이어도 여기서 빨간불이 날 수 있습니다.
