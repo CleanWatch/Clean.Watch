@@ -31,7 +31,7 @@ export const MyPage = () => {
   }
 
   return (
-    <div className="flex min-h-[calc(100dvh-160px)] w-full justify-center px-4 py-10 sm:px-6">
+    <div className="flex w-full grow justify-center px-4 py-10 sm:px-6">
       <div className="border-border-main bg-bg-card flex w-full max-w-212.5 flex-col overflow-hidden rounded-2xl border shadow-2xl">
         {/* 상단 탭 (Tab) 내비게이션 */}
         <div className="border-border-main bg-bg-main/50 flex border-b">

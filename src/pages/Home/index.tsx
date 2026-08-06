@@ -23,7 +23,7 @@ export const Home = () => {
 
   return (
     // 모바일 브라우저 주소창 꿀렁임 방지 (100dvh) 완벽 이식
-    <div className="flex min-h-[calc(100dvh-160px)] items-center justify-center p-5">
+    <div className="flex grow items-center justify-center p-5">
       <div
         className={cn(
           // 공통 스타일 (다크 테마 카드)

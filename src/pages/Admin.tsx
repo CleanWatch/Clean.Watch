@@ -36,7 +36,7 @@ export const Admin = () => {
   // 권한 조회가 끝나기 전에 판정하면 실제 관리자도 거부 화면을 봅니다.
   if (isUserLoading) {
     return (
-      <div className="text-text-muted flex min-h-[calc(100dvh-160px)] items-center justify-center">
+      <div className="text-text-muted flex grow items-center justify-center">
         권한을 확인하는 중...
       </div>
     );
@@ -67,7 +67,7 @@ export const Admin = () => {
   }
 
   return (
-    <div className="flex min-h-[calc(100dvh-160px)] w-full flex-col items-center px-4 py-10 sm:px-6">
+    <div className="flex w-full grow flex-col items-center px-4 py-10 sm:px-6">
       <div className="w-full max-w-200">
         <div className="border-border-main mb-8 flex items-center justify-between border-b pb-6">
           <h1 className="text-text-main text-2xl font-black sm:text-3xl">

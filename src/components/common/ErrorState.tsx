@@ -74,7 +74,7 @@ export const ErrorState = ({
   actions,
   children,
 }: Props) => (
-  <div className="flex min-h-[calc(100dvh-160px)] flex-col items-center justify-center gap-1.5 px-5 text-center">
+  <div className="flex grow flex-col items-center justify-center gap-1.5 px-5 text-center">
     {label && (
       <p
         className={cn(

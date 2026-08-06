@@ -17,7 +17,7 @@ export const Report = () => {
   } = useReport();
 
   return (
-    <div className="flex min-h-[calc(100dvh-160px)] items-center justify-center p-5">
+    <div className="flex grow items-center justify-center p-5">
       <form
         onSubmit={submitReport}
         noValidate // 브라우저 기본 말풍선 툴팁 끄기
