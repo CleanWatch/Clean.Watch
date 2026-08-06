@@ -3,12 +3,18 @@
 import { useMyReportsQuery } from '@/hooks';
 
 export const ReportsTab = () => {
-  const { data: reports, isLoading } = useMyReportsQuery();
+  const { data: reports, isLoading, isError } = useMyReportsQuery();
 
   if (isLoading)
     return (
       <div className="text-text-muted py-20 text-center">
         신고 내역 불러오는 중...
+      </div>
+    );
+  if (isError)
+    return (
+      <div className="text-danger py-20 text-center">
+        신고 내역을 불러오지 못했습니다.
       </div>
     );
   if (!reports?.length)
