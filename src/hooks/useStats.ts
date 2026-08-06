@@ -13,8 +13,8 @@ export const useStats = () => {
 
   return {
     // data가 없으면(로딩중) 기본값 0
-    reportCount: data?.reportCount ?? 0,
-    battleTagCount: data?.battleTagCount ?? 0,
+    reportCount: data?.reportCount,
+    battleTagCount: data?.battleTagCount,
     isLoading,
     isError,
   };

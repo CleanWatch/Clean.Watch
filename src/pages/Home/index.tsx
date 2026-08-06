@@ -8,8 +8,6 @@ import { SearchForm, SearchResult } from '@/components';
 import { HomeMenu, HomeStats } from './components';
 
 export const Home = () => {
-  // 비즈니스 로직 훅 (View와 완전히 분리됨)
-  // [!] 더 이상 useAuth를 여기서 부를 필요 없음. (HomeMenu 담당)
   const {
     searchQuery,
     setSearchQuery,
@@ -21,9 +19,8 @@ export const Home = () => {
     searchError,
   } = useSearch();
 
-  const { reportCount, battleTagCount } = useStats();
+  const { reportCount, battleTagCount, isLoading } = useStats();
 
-  // 순수 선언적 렌더링 (UI 껍데기)
   return (
     // 모바일 브라우저 주소창 꿀렁임 방지 (100dvh) 완벽 이식
     <div className="flex min-h-[calc(100dvh-160px)] items-center justify-center p-5">
@@ -37,7 +34,7 @@ export const Home = () => {
       >
         {/* 상단 타이틀 영역 */}
         <h1 className="text-primary mb-1 text-[2.2rem] font-black tracking-tight sm:text-[3rem]">
-          OW Watch
+          CleanWatch
         </h1>
         <p className="text-text-muted mb-10 text-[15px] sm:text-base">
           오버워치 커뮤니티 신고 플랫폼
@@ -63,7 +60,11 @@ export const Home = () => {
         <HomeMenu />
 
         {/* 하단 통계 구역 */}
-        <HomeStats reportCount={reportCount} battleTagCount={battleTagCount} />
+        <HomeStats
+          reportCount={reportCount}
+          battleTagCount={battleTagCount}
+          isLoading={isLoading}
+        />
       </div>
     </div>
   );
