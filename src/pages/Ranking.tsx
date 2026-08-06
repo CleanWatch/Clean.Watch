@@ -38,6 +38,14 @@ export const Ranking = () => {
           <div className="text-text-muted flex min-h-75 items-center justify-center text-[16px] sm:text-[18px]">
             랭킹 데이터를 불러오는 중입니다...
           </div>
+        ) : !ranking ? (
+          <div className="text-danger flex min-h-75 items-center justify-center text-[16px] sm:text-[18px]">
+            랭킹을 불러오지 못했습니다.
+          </div>
+        ) : ranking.length === 0 ? (
+          <div className="text-text-muted flex min-h-75 items-center justify-center text-[16px] sm:text-[18px]">
+            아직 신고된 배틀태그가 없습니다.
+          </div>
         ) : (
           <div className="flex flex-col gap-4 sm:gap-5">
             {ranking.map((player, index) => (
@@ -46,7 +54,6 @@ export const Ranking = () => {
                 className={cn(
                   'border-border-main bg-bg-card flex items-center rounded-2xl border shadow-lg transition-all duration-300',
                   'px-5 py-6 sm:px-8 sm:py-7',
-                  // ✨ 기존 CSS의 .ranking-card:hover 효과를 Tailwind로 이식
                   'hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/50',
                 )}
               >
