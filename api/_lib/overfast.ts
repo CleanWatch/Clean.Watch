@@ -26,7 +26,7 @@ const UPSTREAM_TIMEOUT_MS = 8_000;
  * 차단당하는 대신 조정할 기회가 생깁니다.
  */
 const USER_AGENT =
-  'CleanWatch/1.0 (+https://overwatch-anithack-otzm.vercel.app)';
+  'CleanWatch/1.0 (+https://cleanwatch.cloud)';
 
 /** 경쟁전 역할군. Object.entries로 순회하면 안 되는 이유는 아래 참고. */
 const ROLES = ['tank', 'damage', 'support', 'open'] as const;
