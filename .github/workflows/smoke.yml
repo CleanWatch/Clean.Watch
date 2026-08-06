@@ -30,7 +30,7 @@ jobs:
           # 실제 서비스 주소인 프로덕션 별칭을 직접 지정합니다.
           #
           # ⚠️ 커스텀 도메인으로 이전하면 이 값을 바꿔야 합니다.
-          URL: https://overwatch-anithack-otzm.vercel.app
+          URL: https://cleanwatch.cloud
         run: |
           set -u
           fail=0
