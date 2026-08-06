@@ -1,6 +1,7 @@
 /* src/hooks/useReport.ts */
 
 import { useState, type SyntheticEvent } from 'react';
+import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '@/store';
@@ -31,7 +32,7 @@ export const useReport = () => {
       queryClient.invalidateQueries({ queryKey: ['adminReports'] });
       if (uid) queryClient.invalidateQueries({ queryKey: ['myReports', uid] });
 
-      alert(`${battleTag} 신고가 정상적으로 접수되었습니다.`);
+      toast.success(`${battleTag} 신고가 접수되었습니다`);
 
       setBattleTag('');
       setReason('');

@@ -1,6 +1,7 @@
 /* src/hooks/queries/useAuthMutations.ts */
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import {
   createUserWithEmailAndPassword,
@@ -84,12 +85,14 @@ export const useRegisterMutation = () => {
     onError: (error: AuthError) => {
       console.error('회원가입 에러:', error);
       if (error.response?.status === 403) {
-        alert('비정상적인 접근으로 의심되어 차단되었습니다.');
+        toast.error('비정상적인 접근으로 의심되어 차단되었습니다');
       } else if (
         error.code !== 'auth/email-already-in-use' &&
         error.message !== 'already-in-use-username'
       ) {
-        alert('회원가입 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+        toast.error('회원가입 중 오류가 발생했습니다', {
+          description: '잠시 후 다시 시도해 주세요.',
+        });
       }
     },
   });

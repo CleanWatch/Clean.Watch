@@ -1,6 +1,7 @@
 /* src/hooks/useAutoLogout.ts */
 
 import { useEffect } from 'react';
+import { toast } from 'sonner';
 import { useAuthStore } from '@/store';
 import { useLogoutMutation } from '@/hooks';
 
@@ -15,7 +16,7 @@ export const useAutoLogout = () => {
     let inactivityTimer: number;
 
     const performLogout = () => {
-      alert('장시간 움직임이 없어 자동 로그아웃 되었습니다.');
+      toast.info('장시간 움직임이 없어 자동 로그아웃 되었습니다');
       logout(); // 캐시 소각 후 로그인 페이지로
     };
 

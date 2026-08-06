@@ -7,6 +7,7 @@ import {
   isValidPassword,
   isValidBattletag,
 } from '@/utils';
+import { toast } from 'sonner';
 
 // 폼 데이터 타입 정의
 export interface RegisterFormData {
@@ -97,7 +98,9 @@ export const checkDuplicateErrors = async (
     return { newErrors, hasError };
   } catch (error) {
     console.error('중복 검사 중 오류 발생:', error);
-    alert('서버와 통신 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.');
+    toast.error('서버와 통신 중 문제가 발생했습니다', {
+      description: '잠시 후 다시 시도해 주세요.',
+    });
     return { newErrors, hasError: true };
   }
 };

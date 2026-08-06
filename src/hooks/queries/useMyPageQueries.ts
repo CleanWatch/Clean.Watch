@@ -1,6 +1,7 @@
 /* src/hooks/queries/useMyPageQueries.ts */
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import {
   collection,
@@ -85,11 +86,11 @@ export const useUpdateProfileMutation = () => {
       // 배틀태그를 바꿨을 수 있습니다. 이걸 빠뜨리면 staleTime(10분) 동안
       // 이전 배틀태그의 전적이 그대로 남습니다.
       queryClient.invalidateQueries({ queryKey: ['myPlayerSummary', uid] });
-      alert('프로필이 성공적으로 변경되었습니다.');
+      toast.success('프로필이 변경되었습니다');
     },
     onError: (error) => {
       console.error('프로필 업데이트 에러:', error);
-      alert('프로필 변경 중 오류가 발생했습니다.');
+      toast.error('프로필 변경에 실패했습니다');
     },
   });
 };
@@ -113,9 +114,9 @@ export const useDeleteAccountMutation = () => {
       await api.post('/api/account/delete', {});
     },
     onSuccess: async () => {
-      // alert이 JS 실행을 멈추므로, 사용자가 확인을 누른 뒤에 이동합니다.
-      // 바로 홈으로 보내면 탈퇴가 됐는지 알 수 없습니다.
-      alert('회원 탈퇴가 완료되었습니다.\n그동안 이용해 주셔서 감사합니다.');
+      toast.success('회원 탈퇴가 완료되었습니다', {
+        description: '그동안 이용해 주셔서 감사합니다.',
+      });
 
       // 계정은 이미 서버에서 삭제됐습니다. 여기서는 브라우저에 남은 흔적을 지웁니다.
       // useLogoutMutation과 같은 순서를 따릅니다.
