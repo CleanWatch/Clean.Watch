@@ -8,8 +8,8 @@ export const Footer = () => {
       <div className="w-full max-w-200">
         <p className="text-text-main mb-3 text-[0.95rem] font-semibold">
           © 2026{' '}
-          <span className="text-primary font-black tracking-tight">
-            OW Watch
+          <span className="font-black tracking-tight">
+            Clean<span className="text-primary">Watch</span>
           </span>
           . All rights reserved.
         </p>

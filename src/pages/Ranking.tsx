@@ -9,7 +9,7 @@ export const Ranking = () => {
 
   return (
     // 모바일 주소창 꿀렁임 방지 및 세로 배치 레이아웃
-    <div className="flex min-h-[calc(100dvh-160px)] w-full flex-col items-center px-5 py-12 sm:px-10">
+    <div className="flex w-full grow flex-col items-center px-5 py-12 sm:px-10">
       {/* 상단 헤더 및 홈 버튼 영역 */}
       <div className="mb-12 text-center">
         <h1 className="text-text-main mb-2 text-[2.5rem] font-black tracking-tight sm:text-[3rem]">
