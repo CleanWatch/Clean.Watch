@@ -1,6 +1,7 @@
 /* src/pages/MyPage/hooks/useSettingsForm.ts */
 
 import { useState } from 'react';
+import { toast } from 'sonner';
 import { useUpdateProfileMutation, useCheckDuplicate } from '@/hooks';
 import { getFieldError, isValidBattletag, isValidUsername } from '@/utils';
 
@@ -112,7 +113,9 @@ export const useSettingsForm = ({
       );
     } catch (error) {
       console.error('중복 검사 중 오류 발생:', error);
-      alert('서버와 통신 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.');
+      toast.error('서버와 통신 중 문제가 발생했습니다', {
+        description: '잠시 후 다시 시도해 주세요.',
+      });
     }
   };
 

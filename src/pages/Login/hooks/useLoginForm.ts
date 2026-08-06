@@ -1,6 +1,7 @@
 /* src/hooks/useLoginForm.ts */
 
 import { useState } from 'react';
+import { toast } from 'sonner';
 import {
   getAuthErrorMessage,
   getCaptchaErrorMessage,
@@ -168,9 +169,9 @@ export const useLoginForm = () => {
         captchaToken: modalState.captchaToken,
       });
       await sendPasswordResetEmail(auth, modalState.email);
-      alert(
-        '비밀번호 재설정 링크가 이메일로 발송되었습니다!\n메일함을 확인해 주세요.',
-      );
+      toast.success('비밀번호 재설정 링크를 보냈습니다', {
+        description: '메일함을 확인해 주세요.',
+      });
       setModalState({
         isOpen: false,
         email: '',

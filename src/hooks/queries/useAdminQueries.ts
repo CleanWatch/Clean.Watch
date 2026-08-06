@@ -1,6 +1,7 @@
 /* src/hooks/queries/useAdminQueries.ts */
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import { useAuthStore } from '@/store';
 import { fetchAdminReports, deleteReportAndSyncRanking } from '@/api';
 
@@ -27,11 +28,11 @@ export const useDeleteReportMutation = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['adminReports'] });
       queryClient.invalidateQueries({ queryKey: ['ranking'] });
-      alert('삭제 완료 및 랭킹 데이터 동기화 성공!');
+      toast.success('신고 내역을 삭제했습니다');
     },
     onError: (error) => {
       console.error('신고 내역 삭제 에러:', error);
-      alert('삭제 중 오류가 발생했습니다.');
+      toast.error('삭제에 실패했습니다');
     },
   });
 };

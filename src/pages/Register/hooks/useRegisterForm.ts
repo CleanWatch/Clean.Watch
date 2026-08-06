@@ -1,6 +1,7 @@
 /* src/pages/Register/hooks/useRegisterForm.ts */
 
 import { useState } from 'react';
+import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { useRegisterMutation, useCheckDuplicate } from '@/hooks';
 import { getCaptchaErrorMessage } from '@/utils';
@@ -62,7 +63,7 @@ export const useRegisterForm = () => {
 
     // 관문 3: 봇 검사
     if (!captchaToken) {
-      alert('로봇이 아님을 인증해 주세요!');
+      toast.warning('로봇이 아님을 인증해 주세요');
       return;
     }
 
@@ -75,7 +76,7 @@ export const useRegisterForm = () => {
         battletag: formData.battletag.trim(),
         captchaToken,
       });
-      alert('회원가입이 완료되었습니다! 로그인 페이지로 이동합니다.');
+      toast.success('회원가입이 완료되었습니다');
       navigate('/login');
     } catch (error) {
       const err = error as { code?: string; message?: string };
@@ -89,7 +90,7 @@ export const useRegisterForm = () => {
       const captchaMessage = getCaptchaErrorMessage(error);
 
       if (captchaMessage) {
-        alert(captchaMessage);
+        toast.error(captchaMessage);
         // 소모된 토큰을 비우고 위젯을 새로 띄웁니다.
         setCaptchaToken(null);
         setCaptchaKey((prev) => prev + 1);
