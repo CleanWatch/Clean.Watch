@@ -64,11 +64,8 @@ export const Report = () => {
             <option value="" disabled>
               신고 사유 선택 (필수)
             </option>
-            <option value="비인가 프로그램 (자동 조준/격발)">
-              비인가 프로그램 (자동 조준/격발)
-            </option>
-            <option value="비인가 프로그램 (위치 투시/ESP)">
-              비인가 프로그램 (위치 투시/ESP)
+            <option value="비인가 프로그램">
+              비인가 프로그램
             </option>
             <option value="고의적 게임 진행 방해 (패작/트롤링)">
               고의적 게임 진행 방해 (패작/트롤링)
@@ -80,7 +77,7 @@ export const Report = () => {
           </select>
 
           <textarea
-            placeholder="핵 사용 정황이나 발생 시간 등 세부사항을 적어주세요. (선택)"
+            placeholder="비인가 프로그램 사용 정황이나 발생 시간 등 세부사항을 적어주세요.(리플레이 코드 등)"
             value={details}
             onChange={(e) => setDetails(e.target.value)}
             className={cn(
