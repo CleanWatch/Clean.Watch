@@ -1,11 +1,6 @@
 import { useState } from 'react';
 import { cn } from '@/utils';
-
-// 검색 결과 객체 형태 정의
-interface SearchResultData {
-  battletag: string;
-  reportCount: number;
-}
+import type { SearchResultData } from '@/types';
 
 // 레거시의 3단 상태(null, false, object)를 TS로 방어
 interface SearchResultProps {
