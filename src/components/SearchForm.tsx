@@ -1,5 +1,10 @@
 import { useState, type SyntheticEvent } from 'react';
-import { cn, isValidBattletag } from '@/utils';
+import {
+  BATTLETAG_EXAMPLE,
+  BATTLETAG_FORMAT_ERROR,
+  cn,
+  isValidBattletag,
+} from '@/utils';
 
 interface SearchFormProps {
   searchQuery: string;
@@ -35,7 +40,7 @@ export const SearchForm = ({
     }
 
     if (!isValidBattletag(query)) {
-      setErrorMessage('올바른 배틀태그 형식(예: 닉네임#1234)을 입력해주세요.');
+      setErrorMessage(BATTLETAG_FORMAT_ERROR);
       clearResult();
       return;
     }
@@ -67,7 +72,7 @@ export const SearchForm = ({
           type="text"
           value={searchQuery}
           onChange={handleInputChange}
-          placeholder="배틀태그 검색 (예: 홍길동#1234)"
+          placeholder={`배틀태그 검색 (예: ${BATTLETAG_EXAMPLE})`}
           maxLength={20}
           disabled={isSearching}
           className={cn(

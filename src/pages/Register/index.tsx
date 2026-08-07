@@ -1,5 +1,5 @@
 import { Turnstile } from 'react-turnstile';
-import { cn } from '@/utils';
+import { BATTLETAG_EXAMPLE, cn } from '@/utils';
 import { useRegisterForm } from './hooks';
 import { InputGroup } from '@/components';
 import { TURNSTILE_SITE_KEY } from '@/constants';
@@ -54,7 +54,7 @@ export const Register = () => {
 
           <InputGroup
             label="Battletag (선택)"
-            placeholder="트레이서#1234"
+            placeholder={BATTLETAG_EXAMPLE}
             value={formData.battletag}
             onChange={(val) => handleChange('battletag', val)}
             tip="가입 후 마이페이지에서도 등록/수정할 수 있습니다."

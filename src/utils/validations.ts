@@ -9,6 +9,22 @@ export const isValidBattletag = (tag?: string | null): boolean => {
   return regex.test(cleanTag);
 };
 
+/**
+ * 배틀태그 예시와 형식 오류 문구.
+ *
+ * 정규식 바로 밑에 두는 이유는 **문구가 위 규칙을 말로 옮긴 것**이기 때문입니다.
+ * "4~5자리"는 위 `{4,5}`에서 온 값이라, 규칙을 고치면 이 문장도 같이 고쳐야 합니다.
+ * 멀리 떨어뜨리면 한쪽만 바뀝니다.
+ *
+ * 상수로 묶은 이유: 검색·가입·설정·신고 네 화면이 각자 예시를 하드코딩한 결과
+ * 여섯 종류(트레이서·홍길동·Justice·Hacker·비매너유저·닉네임)로 갈렸고,
+ * **같은 입력창의 안내와 오류가 서로 다른 예시를 보여주고** 있었습니다.
+ */
+export const BATTLETAG_EXAMPLE = 'Player#1234';
+
+export const BATTLETAG_FORMAT_ERROR =
+  '배틀태그 형식이 올바르지 않습니다. # 뒤는 숫자 4~5자리입니다.';
+
 // 2. 이메일 형식 검사
 export const isValidEmail = (email?: string | null): boolean => {
   if (!email) return false;

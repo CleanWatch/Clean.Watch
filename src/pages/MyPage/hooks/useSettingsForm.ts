@@ -3,7 +3,12 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { useUpdateProfileMutation, useCheckDuplicate } from '@/hooks';
-import { getFieldError, isValidBattletag, isValidUsername } from '@/utils';
+import {
+  BATTLETAG_FORMAT_ERROR,
+  getFieldError,
+  isValidBattletag,
+  isValidUsername,
+} from '@/utils';
 
 // 훅에서 넘겨받을 인자들 타입 정의
 interface UseSettingsFormProps {
@@ -70,7 +75,7 @@ export const useSettingsForm = ({
         battletag.trim(),
         null,
         isValidBattletag,
-        'Battletag 형식이 올바르지 않습니다. (예: 트레이서#1234)',
+        BATTLETAG_FORMAT_ERROR,
       );
       if (message) {
         setBattletagError(message);
