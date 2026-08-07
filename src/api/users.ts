@@ -30,5 +30,12 @@ export const checkDuplicate = async ({
     { field, value },
   );
 
+  // 모양을 확인하지 않으면 undefined가 그대로 falsy로 읽혀 **중복이 아닌 것으로
+  // 통과**합니다. 200이어도 본문이 우리 것이 아닐 수 있으므로(SPA 폴백 등) 여기서
+  // 던져야 호출부의 catch가 받아 가입을 막습니다. 모르면 통과가 아니라 막는 쪽으로.
+  if (typeof data?.isDuplicate !== 'boolean') {
+    throw new Error('중복 검사 응답 형식이 올바르지 않습니다.');
+  }
+
   return data.isDuplicate;
 };
