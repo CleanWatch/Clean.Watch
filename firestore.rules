@@ -165,6 +165,16 @@ service cloud.firestore {
       //
       // 지금은 서버가 중복 검사와 두 쓰기를 한 트랜잭션으로 처리합니다.
       allow write: if false;
+
+      // ⚠️ 하위 컬렉션 battletags/{tag}/reporters/{uid} — 규칙을 추가하지 마세요.
+      //
+      // 재신고 쿨다운을 재는 마커 문서입니다. 문서 id가 신고자 uid라서,
+      // 열리는 순간 **누가 누구를 신고했는지**가 그대로 드러납니다.
+      //
+      // 위의 `allow read: if true`는 이 문서 하나에만 걸리고 하위로 내려가지
+      // 않습니다. 파일 상단의 `match /{document=**} { allow read, write: if false }`가
+      // 기본 차단하므로 **아무것도 안 하는 것이 맞습니다.** 서버는 Admin SDK를
+      // 쓰므로 규칙을 우회합니다.
     }
   }
 }

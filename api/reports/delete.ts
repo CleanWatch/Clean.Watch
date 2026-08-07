@@ -69,6 +69,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       tx.delete(reportRef);
 
+      // 마커도 함께 지웁니다. 남겨두면 신고가 하나도 없는데 쿨다운만 걸린
+      // 상태가 됩니다. 태그 문서가 이미 없어도 하위 컬렉션은 남을 수 있어
+      // tagSnap 존재 여부와 무관하게 처리합니다.
+      if (tagRef && reporterUid && isReportersLast) {
+        tx.delete(tagRef.collection('reporters').doc(reporterUid));
+      }
+
       if (tagRef && tagSnap?.exists && isReportersLast) {
         const count = (tagSnap.data()?.count as number) ?? 1;
         if (count <= 1) {
