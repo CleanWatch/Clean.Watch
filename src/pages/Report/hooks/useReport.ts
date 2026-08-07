@@ -5,7 +5,12 @@ import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '@/store';
-import { BATTLETAG_FORMAT_ERROR, isValidBattletag } from '@/utils';
+import {
+  AlreadyReportedRecentlyError,
+  BATTLETAG_FORMAT_ERROR,
+  formatTimeUntil,
+  isValidBattletag,
+} from '@/utils';
 import { submitNewReport } from '@/api';
 
 export const useReport = () => {
@@ -42,7 +47,12 @@ export const useReport = () => {
     },
     onError: (error: Error) => {
       // API에서 던진 에러(예: 중복 신고)를 잡아서 빨간 글씨로 띄워줌
-      if (error.message === 'ALREADY_REPORTED') {
+      if (error instanceof AlreadyReportedRecentlyError) {
+        // 막기만 하고 언제 풀리는지 안 알려주면 될 때까지 눌러보게 됩니다.
+        setLocalError(
+          `이미 신고한 배틀태그입니다. ${formatTimeUntil(error.retryAfterSeconds)} 다시 신고할 수 있습니다.`,
+        );
+      } else if (error.message === 'ALREADY_REPORTED') {
         setLocalError('이미 신고한 배틀태그입니다.');
       } else {
         console.error('신고 접수 에러:', error);
