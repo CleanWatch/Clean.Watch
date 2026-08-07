@@ -47,16 +47,25 @@ export const formatRelativeTime = (iso?: string | null): string | null => {
 };
 
 /**
- * 남은 초를 "5시간 후"처럼 바꿉니다. 위 함수는 과거 전용이라 따로 둡니다.
+ * 남은 초를 "약 5시간 후"처럼 바꿉니다. 위 함수는 과거 전용이라 따로 둡니다.
  *
  * 시각이 아니라 **초를 받는** 이유 — 서버가 남은 시간을 재서 보내면 기기 시계가
  * 틀어져 있어도 값이 맞습니다. 시각을 받아 클라이언트가 빼면 시계 오차가
  * 그대로 오차가 됩니다.
  *
- * 내림이 아니라 **올림**입니다. 90초 남았는데 "1분 후"라고 하면 와서 또 막힙니다.
+ * 분은 **올림**입니다. 오차가 최대 1분이라 넉넉하게 말하는 편이 낫습니다 —
+ * 90초 남았는데 "1분 후"라고 하면 와서 또 막힙니다.
+ *
+ * 시간은 **반올림**하고 "약"을 붙입니다. 올림을 쓰면 1시간 1초가 "2시간 후"가 되어
+ * 한 시간을 더 기다리게 됩니다. 반올림은 몇 분 이르게 안내할 수 있지만, 그때는
+ * 다시 눌러도 "잠시 후"라는 정확한 안내를 받습니다.
  */
 export const formatTimeUntil = (seconds: number): string => {
   if (!Number.isFinite(seconds) || seconds <= MINUTE) return '잠시 후';
-  if (seconds < HOUR) return `${Math.ceil(seconds / MINUTE)}분 후`;
-  return `${Math.ceil(seconds / HOUR)}시간 후`;
+
+  const minutes = Math.ceil(seconds / MINUTE);
+  if (minutes < 60) return `${minutes}분 후`;
+
+  // 59분 59초가 "60분 후"로 나오지 않도록, 올림 결과가 60분이면 시간으로 넘깁니다.
+  return `약 ${Math.max(1, Math.round(seconds / HOUR))}시간 후`;
 };
