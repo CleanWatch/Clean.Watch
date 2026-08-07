@@ -12,4 +12,13 @@ export interface SearchResultData {
 
   /** 이 태그를 신고한 횟수. Firestore의 `count` 필드입니다. */
   reportCount: number;
+
+  /**
+   * 마지막으로 신고된 시각(ISO 문자열).
+   *
+   * **null이 올 수 있습니다.** `lastReportedAt`을 쓰기 시작하기 전에 만들어진
+   * 문서에는 이 필드가 없습니다. 없으면 화면에서 줄 자체를 그리지 않습니다 —
+   * "알 수 없음"으로 채우면 옛 데이터와 방금 신고를 구분할 수 없게 됩니다.
+   */
+  lastReportedAt: string | null;
 }

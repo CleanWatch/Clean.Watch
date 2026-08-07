@@ -26,6 +26,9 @@ export const fetchSearchResult = async (
     return {
       battletag: data.battletag,
       reportCount: data.count,
+      // 옛 문서에는 이 필드가 없습니다. Timestamp가 아닌 값이 들어 있어도
+      // 터지지 않도록 메서드 존재까지 확인합니다 (useUser.ts와 같은 방식).
+      lastReportedAt: data.lastReportedAt?.toDate?.().toISOString() ?? null,
     };
   }
 
