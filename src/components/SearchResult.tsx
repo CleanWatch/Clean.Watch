@@ -1,11 +1,6 @@
 import { useState } from 'react';
-import { cn } from '@/utils';
-
-// 검색 결과 객체 형태 정의
-interface SearchResultData {
-  battletag: string;
-  reportCount: number;
-}
+import { cn, formatRelativeTime } from '@/utils';
+import type { SearchResultData } from '@/types';
 
 // 레거시의 3단 상태(null, false, object)를 TS로 방어
 interface SearchResultProps {
@@ -21,6 +16,12 @@ export const SearchResult = ({
 }: SearchResultProps) => {
   // 컴포넌트 내부에서만 쓰이는 단순 UI 상태이므로 useState 유지 (정석)
   const [showNotice, setShowNotice] = useState(false);
+
+  // false(신고 없음)와 null(검색 전)은 둘 다 falsy라, 이 삼항으로 객체인 경우만
+  // 걸러집니다. 필드가 없는 옛 문서면 포맷터가 null을 돌려줍니다.
+  const lastReported = searchResult
+    ? formatRelativeTime(searchResult.lastReportedAt)
+    : null;
 
   // ✨ 핵심: early return(중간에 끝내기)을 없애고, 무조건 껍데기(wrapper)를 그리는 레거시 철학 유지
   return (
@@ -66,6 +67,16 @@ export const SearchResult = ({
                 </span>
                 신고되었습니다!
               </p>
+
+              {/* 같은 "3번"이라도 어제 일과 8개월 전 일은 읽는 사람에게 전혀 다른
+                  정보입니다. 시점이 없으면 옛 기록이 현재형으로 읽힙니다.
+                  값이 없는 옛 문서는 줄을 그리지 않습니다 — 채워 넣으면
+                  "모른다"와 "오래됐다"가 같아집니다. */}
+              {lastReported && (
+                <p className="text-text-muted mt-1.5 text-[13px] font-medium">
+                  최근 신고 {lastReported}
+                </p>
+              )}
 
               <button
                 onClick={() => setShowNotice(true)}

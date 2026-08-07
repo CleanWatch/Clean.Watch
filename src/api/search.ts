@@ -2,14 +2,7 @@
 
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '@/firebase/firebase';
-
-// 파이어베이스에서 가져올 문서 데이터의 타입 정의
-export interface SearchResultData {
-  id: string;
-  battletag: string; // DB에 저장된 배틀태그
-  count: number; // DB에 저장된 원본 신고 횟수
-  reportCount: number; // 프론트엔드 UI 호환용으로 가공된 신고 횟수
-}
+import type { SearchResultData } from '@/types';
 
 // 오직 배틀태그 검색만 수행하는 순수 통신 함수
 //
@@ -31,10 +24,11 @@ export const fetchSearchResult = async (
     const data = tagDoc.data();
 
     return {
-      id: tagDoc.id,
       battletag: data.battletag,
-      count: data.count,
-      reportCount: data.count, // 기존 컴포넌트 호환성을 위해 count를 reportCount로 매핑
+      reportCount: data.count,
+      // 옛 문서에는 이 필드가 없습니다. Timestamp가 아닌 값이 들어 있어도
+      // 터지지 않도록 메서드 존재까지 확인합니다 (useUser.ts와 같은 방식).
+      lastReportedAt: data.lastReportedAt?.toDate?.().toISOString() ?? null,
     };
   }
 
