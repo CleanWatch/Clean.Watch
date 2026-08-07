@@ -1,6 +1,7 @@
 /* src/api/playerStats.ts */
 
 import { api } from './axios';
+import { InvalidPlayerStatsError } from '@/utils';
 import type { MyPlayerSummary } from '@/types';
 
 /**
@@ -19,6 +20,13 @@ export const fetchMyPlayerSummary = async (): Promise<MyPlayerSummary> => {
   const { data } = await api.get<MyPlayerSummary>('/api/stats/me', {
     timeout: 15_000,
   });
+
+  // 타입 단언은 컴파일 시점에만 유효합니다. 런타임에 서버가 무엇을 돌려주든
+  // 여기서 걸러야, 화면이 profile을 있다고 믿고 읽다가 TypeError로 죽는 대신
+  // 정상적인 에러 상태(다시 시도 버튼 포함)가 됩니다.
+  if (!data || typeof data !== 'object' || !data.profile) {
+    throw new InvalidPlayerStatsError();
+  }
 
   return data;
 };

@@ -55,6 +55,20 @@ const BY_CODE: Record<PlayerStatsErrorCode, PlayerStatsErrorInfo> = {
 };
 
 /**
+ * 200인데 본문이 우리가 기대한 모양이 아닐 때 던집니다.
+ *
+ * axios는 상태 코드로만 성공을 판단하므로 이런 응답에 에러를 내지 않습니다. 그러면
+ * 화면은 `data`를 믿고 `profile.avatar`를 읽다가 TypeError로 죽습니다.
+ * 실제로 `/api/` 경로가 SPA 폴백에 먹혀 index.html이 200으로 온 적이 있습니다.
+ */
+export class InvalidPlayerStatsError extends Error {
+  constructor() {
+    super('전적 응답 형식이 올바르지 않습니다.');
+    this.name = 'InvalidPlayerStatsError';
+  }
+}
+
+/**
  * /api/stats/me 의 실패를 사용자 문구와 행동으로 변환합니다.
  *
  * captchaErrors.ts와 같이, 관련 없는 에러면 null을 돌려줘서 호출부가 원래 하던
@@ -63,6 +77,9 @@ const BY_CODE: Record<PlayerStatsErrorCode, PlayerStatsErrorInfo> = {
 export const getPlayerStatsError = (
   error: unknown,
 ): PlayerStatsErrorInfo | null => {
+  // 우리가 직접 던진 것이라 axios 에러가 아닙니다. 아래 검사보다 먼저 봐야 합니다.
+  if (error instanceof InvalidPlayerStatsError) return BY_CODE.UPSTREAM_ERROR;
+
   if (!axios.isAxiosError(error)) return null;
 
   // 클라이언트가 먼저 끊은 경우. 서버 코드가 없으므로 코드 기반 분기로는
