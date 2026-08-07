@@ -2,6 +2,7 @@
 
 import axios from 'axios';
 import { api } from './axios';
+import { AlreadyReportedRecentlyError } from '@/utils';
 
 /**
  * 신고 접수.
@@ -26,8 +27,16 @@ export const submitNewReport = async (
     // 토큰은 api 인스턴스의 인터셉터가 붙입니다.
     await api.post('/api/reports/create', { battletag, reason, details });
   } catch (error) {
-    // 호출부(useReport)가 이 메시지로 중복 신고를 구분하므로 형태를 유지합니다.
     if (axios.isAxiosError(error) && error.response?.status === 409) {
+      const body = error.response.data as
+        { error?: string; retryAfterSeconds?: number } | undefined;
+
+      if (body?.error === 'ALREADY_REPORTED_RECENTLY') {
+        throw new AlreadyReportedRecentlyError(body.retryAfterSeconds ?? 0);
+      }
+
+      // 배포가 겹치는 짧은 동안 옛 서버가 코드 없이 409만 줄 수 있습니다.
+      // 호출부(useReport)가 이 메시지로 구분하므로 형태를 유지합니다.
       throw new Error('ALREADY_REPORTED', { cause: error });
     }
     throw error;

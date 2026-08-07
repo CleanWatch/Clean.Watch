@@ -34,6 +34,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const reportRef = db.collection('reports').doc(reportId);
 
     await db.runTransaction(async (tx) => {
+      // 트랜잭션 안에서는 읽기가 전부 쓰기보다 먼저 와야 합니다.
       const reportSnap = await tx.get(reportRef);
       if (!reportSnap.exists) {
         // 이미 지워진 신고. 카운트를 또 깎으면 실제보다 낮아집니다.
@@ -42,16 +43,43 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       // 대상 배틀태그는 신고 문서에서 읽습니다.
       // 본문으로 받으면 엉뚱한 배틀태그의 카운트를 깎을 수 있습니다.
-      const tag = reportSnap.data()?.battletag as string | undefined;
+      const reportData = reportSnap.data();
+      const tag = reportData?.battletag as string | undefined;
+      const reporterUid = reportData?.reporterUid as string | undefined;
+
       const tagRef = tag ? db.collection('battletags').doc(tag) : null;
       const tagSnap = tagRef ? await tx.get(tagRef) : null;
 
+      // battletags.count는 "몇 건"이 아니라 **몇 명이 신고했나**입니다. 한 사람이
+      // 같은 태그에 여러 건을 남길 수 있으므로, 그중 한 건을 지웠다고 카운트를
+      // 깎으면 실제 신고자 수보다 낮아집니다. 그 사람의 마지막 한 건일 때만 줄입니다.
+      //
+      // limit(2)면 충분합니다 — 지우는 문서 말고 하나라도 더 있으면 마지막이 아닙니다.
+      let isReportersLast = true;
+      if (tag && reporterUid) {
+        const siblings = await tx.get(
+          db
+            .collection('reports')
+            .where('reporterUid', '==', reporterUid)
+            .where('battletag', '==', tag)
+            .limit(2),
+        );
+        isReportersLast = siblings.docs.every((doc) => doc.id === reportId);
+      }
+
       tx.delete(reportRef);
 
-      if (tagRef && tagSnap?.exists) {
+      // 마커도 함께 지웁니다. 남겨두면 신고가 하나도 없는데 쿨다운만 걸린
+      // 상태가 됩니다. 태그 문서가 이미 없어도 하위 컬렉션은 남을 수 있어
+      // tagSnap 존재 여부와 무관하게 처리합니다.
+      if (tagRef && reporterUid && isReportersLast) {
+        tx.delete(tagRef.collection('reporters').doc(reporterUid));
+      }
+
+      if (tagRef && tagSnap?.exists && isReportersLast) {
         const count = (tagSnap.data()?.count as number) ?? 1;
         if (count <= 1) {
-          // 마지막 신고였으면 랭킹에서 아예 제거
+          // 마지막 신고자였으면 랭킹에서 아예 제거
           tx.delete(tagRef);
         } else {
           tx.update(tagRef, { count: FieldValue.increment(-1) });
