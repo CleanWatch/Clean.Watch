@@ -1,6 +1,7 @@
 /* src/pages/Register/hooks/useRegisterValidation.ts */
 
 import {
+  BATTLETAG_FORMAT_ERROR,
   getFieldError,
   isValidEmail,
   isValidUsername,
@@ -54,7 +55,7 @@ export const checkFormatErrors = (formData: RegisterFormData) => {
     formData.battletag.trim(),
     null,
     isValidBattletag,
-    'Battletag 형식이 올바르지 않습니다. (예: 트레이서#1234)',
+    BATTLETAG_FORMAT_ERROR,
   );
 
   const hasError = Object.values(newErrors).some((msg) => msg !== '');

@@ -1,7 +1,7 @@
 // src/pages/MyPage/components/SettingsTab.tsx
 
 import { useState } from 'react';
-import { cn } from '@/utils';
+import { BATTLETAG_EXAMPLE, cn } from '@/utils';
 import { useUser, useMyReportsQuery, useDeleteAccountMutation } from '@/hooks';
 import { useSettingsForm } from '../hooks';
 import { InputGroup } from '@/components';
@@ -125,7 +125,7 @@ const SettingsForm = ({
 
       <InputGroup
         label="오버워치 배틀태그"
-        placeholder="예) Justice#1234"
+        placeholder={BATTLETAG_EXAMPLE}
         value={battletag}
         onChange={(val) => {
           setBattletag(val);

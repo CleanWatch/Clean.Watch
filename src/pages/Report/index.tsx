@@ -1,5 +1,5 @@
 // src/pages/Report.tsx
-import { cn } from '@/utils';
+import { BATTLETAG_EXAMPLE, cn } from '@/utils';
 import { useReport } from './hooks';
 
 export const Report = () => {
@@ -37,7 +37,7 @@ export const Report = () => {
           <input
             id="report-battletag"
             type="text"
-            placeholder="배틀태그 입력 (예: Hacker#1234)"
+            placeholder={`배틀태그 입력 (예: ${BATTLETAG_EXAMPLE})`}
             value={battleTag}
             onChange={(e) => {
               setBattleTag(e.target.value);
@@ -64,9 +64,7 @@ export const Report = () => {
             <option value="" disabled>
               신고 사유 선택 (필수)
             </option>
-            <option value="비인가 프로그램">
-              비인가 프로그램
-            </option>
+            <option value="비인가 프로그램">비인가 프로그램</option>
             <option value="고의적 게임 진행 방해 (패작/트롤링)">
               고의적 게임 진행 방해 (패작/트롤링)
             </option>

@@ -9,6 +9,14 @@ export const isValidBattletag = (tag?: string | null): boolean => {
   return regex.test(cleanTag);
 };
 
+/**
+ * 배틀태그 예시와 형식 오류 문구.
+ */
+export const BATTLETAG_EXAMPLE = 'Player#1234';
+
+export const BATTLETAG_FORMAT_ERROR =
+  '배틀태그 형식이 올바르지 않습니다. # 뒤는 숫자 4~5자리입니다.';
+
 // 2. 이메일 형식 검사
 export const isValidEmail = (email?: string | null): boolean => {
   if (!email) return false;

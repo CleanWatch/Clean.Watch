@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '@/store';
-import { isValidBattletag } from '@/utils';
+import { BATTLETAG_FORMAT_ERROR, isValidBattletag } from '@/utils';
 import { submitNewReport } from '@/api';
 
 export const useReport = () => {
@@ -59,9 +59,7 @@ export const useReport = () => {
     if (!uid) return setLocalError('로그인이 필요합니다.');
     if (!battleTag.trim()) return setLocalError('배틀태그를 입력해 주세요.');
     if (!isValidBattletag(battleTag))
-      return setLocalError(
-        '올바른 배틀태그 형식이 아닙니다. (예: 비매너유저#12345)',
-      );
+      return setLocalError(BATTLETAG_FORMAT_ERROR);
     if (!reason) return setLocalError('신고 사유를 선택해 주세요.');
 
     // 검증을 통과하면 에러 메시지 지우고 API 호출
