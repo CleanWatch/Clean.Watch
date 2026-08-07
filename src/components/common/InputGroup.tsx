@@ -53,7 +53,6 @@ export const InputGroup = ({
       <div className="flex min-h-4.5 items-start">
         {error ? (
           <p id={messageId} className="text-danger m-0 text-xs font-bold">
-            {' '}
             {error}
           </p>
         ) : (
