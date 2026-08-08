@@ -16,6 +16,8 @@ export const Register = () => {
     captchaKey,
     isRegistering,
     isChecking,
+    isVerifying,
+    battletagWarning,
   } = useRegisterForm();
 
   return (
@@ -59,6 +61,7 @@ export const Register = () => {
             onChange={(val) => handleChange('battletag', val)}
             tip="가입 후 마이페이지에서도 등록/수정할 수 있습니다."
             error={errors.battletag}
+            warning={battletagWarning}
           />
 
           <div className="mt-4 mb-5 flex justify-center">
@@ -80,6 +83,7 @@ export const Register = () => {
             disabled={
               isRegistering ||
               isChecking ||
+              isVerifying ||
               !formData.username.trim() ||
               !formData.email.trim() ||
               !formData.password
@@ -90,7 +94,15 @@ export const Register = () => {
               'disabled:hover:bg-primary disabled:cursor-not-allowed disabled:opacity-50 active:disabled:translate-y-0',
             )}
           >
-            {isRegistering || isChecking ? '가입 처리 중...' : '회원가입'}
+            {/* 실존 확인은 상류를 거쳐 3~6초가 걸립니다. 문구가 안 바뀌면
+                멈춘 것처럼 보여 사용자가 계속 누릅니다. */}
+            {isVerifying
+              ? '배틀태그 확인 중...'
+              : isRegistering || isChecking
+                ? '가입 처리 중...'
+                : battletagWarning
+                  ? '확인 없이 가입'
+                  : '회원가입'}
           </button>
         </form>
       </div>

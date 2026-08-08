@@ -55,6 +55,15 @@ const BY_CODE: Record<PlayerStatsErrorCode, PlayerStatsErrorInfo> = {
 };
 
 /**
+ * 배틀태그 확인이 "확실히 없음"으로 나왔을 때 폼에 띄우는 경고.
+ *
+ * 위 `PLAYER_NOT_FOUND` 문구를 그대로 재사용합니다. 같은 상황(비공개이거나 오타)을
+ * 마이페이지 전적 카드에서도 만나는데, 거기와 다른 말로 안내하면 사용자는 같은 문제를
+ * 두 번 다른 문제로 읽습니다. 뒤에 붙는 한 문장만 폼 전용입니다.
+ */
+export const BATTLETAG_NOT_FOUND_WARNING = `${BY_CODE.PLAYER_NOT_FOUND.message} 그대로 저장하려면 한 번 더 누르세요.`;
+
+/**
  * 200인데 본문이 우리가 기대한 모양이 아닐 때 던집니다.
  *
  * axios는 상태 코드로만 성공을 판단하므로 이런 응답에 에러를 내지 않습니다. 그러면
