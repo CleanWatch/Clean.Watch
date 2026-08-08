@@ -36,7 +36,7 @@ const BY_CODE: Record<PlayerStatsErrorCode, PlayerStatsErrorInfo> = {
   // 멀쩡한 자기 태그를 계속 들여다보게 됩니다.
   PLAYER_NOT_FOUND: {
     message:
-      '오버워치에서 이 배틀태그를 찾을 수 없습니다. 대소문자를 구분하니 게임에 표시된 그대로인지, 또는 커리어 프로필이 비공개는 아닌지 확인해 주세요. (공개 설정은 게임 안 옵션 → 소셜)',
+      '오버워치에서 이 배틀태그를 찾을 수 없습니다. 대소문자 구분, 인게임 프로필의 공개 여부를 확인해 주세요. (공개 설정: 인게임 설정 → 소셜)',
     action: 'settings',
   },
   // 상류가 백그라운드로 프로필을 긁어 캐시하므로 잠시 뒤 재시도하면 대개 성공합니다.
@@ -53,6 +53,15 @@ const BY_CODE: Record<PlayerStatsErrorCode, PlayerStatsErrorInfo> = {
     action: 'retry',
   },
 };
+
+/**
+ * 배틀태그 확인이 "확실히 없음"으로 나왔을 때 폼에 띄우는 경고.
+ *
+ * 위 `PLAYER_NOT_FOUND` 문구를 그대로 재사용합니다. 같은 상황(비공개이거나 오타)을
+ * 마이페이지 전적 카드에서도 만나는데, 거기와 다른 말로 안내하면 사용자는 같은 문제를
+ * 두 번 다른 문제로 읽습니다. 뒤에 붙는 한 문장만 폼 전용입니다.
+ */
+export const BATTLETAG_NOT_FOUND_WARNING = `${BY_CODE.PLAYER_NOT_FOUND.message} 그대로 저장하려면 한 번 더 누르세요.`;
 
 /**
  * 200인데 본문이 우리가 기대한 모양이 아닐 때 던집니다.

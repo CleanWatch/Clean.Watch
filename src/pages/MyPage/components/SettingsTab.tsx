@@ -95,6 +95,8 @@ const SettingsForm = ({
     battletagError,
     isPending,
     isChecking,
+    isVerifying,
+    battletagWarning,
     hasChanges,
     setUsername,
     setBattletag,
@@ -132,16 +134,25 @@ const SettingsForm = ({
           if (battletagError) setBattletagError('');
         }}
         error={battletagError}
+        warning={battletagWarning}
       />
 
       <button
         type="submit"
-        disabled={!hasChanges || isPending || isChecking}
+        disabled={!hasChanges || isPending || isChecking || isVerifying}
         // 예전에는 비활성이 bg-gray-400이라 어두운 배경에서 오히려 밝았습니다.
         // 로그인 버튼에서 걷어낸 것과 같은 값입니다.
         className="bg-primary hover:bg-primary-hover mt-4 rounded-lg py-4 font-bold text-white transition-all disabled:cursor-not-allowed disabled:opacity-50"
       >
-        {isPending || isChecking ? '저장 중...' : '변경사항 저장'}
+        {/* 실존 확인이 상류를 거쳐 몇 초 걸립니다. 문구가 그대로면
+            멈춘 것처럼 보여 사용자가 계속 누릅니다. */}
+        {isVerifying
+          ? '배틀태그 확인 중...'
+          : isPending || isChecking
+            ? '저장 중...'
+            : battletagWarning
+              ? '확인 없이 저장'
+              : '변경사항 저장'}
       </button>
     </form>
   );

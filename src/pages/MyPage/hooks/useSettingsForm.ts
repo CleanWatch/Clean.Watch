@@ -2,9 +2,14 @@
 
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { useUpdateProfileMutation, useCheckDuplicate } from '@/hooks';
+import {
+  useUpdateProfileMutation,
+  useCheckDuplicate,
+  useBattletagVerification,
+} from '@/hooks';
 import {
   BATTLETAG_FORMAT_ERROR,
+  BATTLETAG_NOT_FOUND_WARNING,
   getFieldError,
   isValidBattletag,
   isValidUsername,
@@ -25,11 +30,26 @@ export const useSettingsForm = ({
 }: UseSettingsFormProps) => {
   const { mutate: updateProfile, isPending } = useUpdateProfileMutation();
   const { validateDuplicate, isChecking } = useCheckDuplicate();
+  const {
+    isVerifying,
+    isWarning: isBattletagWarning,
+    shouldProceed,
+    clearWarning,
+  } = useBattletagVerification();
 
   const [username, setUsername] = useState(initialProfile.username || '');
   const [battletag, setBattletag] = useState(initialProfile.battletag || '');
   const [usernameError, setUsernameError] = useState('');
   const [battletagError, setBattletagError] = useState('');
+
+  /**
+   * 배틀태그를 고치면 앞선 경고는 그 값에 대한 것이 아닙니다.
+   * `setBattletag`을 그대로 내보내면 화면 쪽에서 이 처리를 빠뜨릴 수 있어 여기서 감쌉니다.
+   */
+  const changeBattletag = (value: string) => {
+    setBattletag(value);
+    clearWarning();
+  };
 
   const isUsernameChanged = username !== initialProfile.username;
   const isBattletagChanged = battletag !== (initialProfile.battletag || '');
@@ -112,9 +132,19 @@ export const useSettingsForm = ({
 
       if (hasError) return;
 
+      // 실존 확인은 중복 검사 뒤에 둡니다. 이미 남이 쓰는 태그면 상류에 물어볼
+      // 이유가 없고, 쓰로틀 할당량만 깎입니다.
+      // 배틀태그를 안 건드린 저장(닉네임만 수정)에서는 확인하지 않습니다.
+      if (isBattletagChanged && !(await shouldProceed(battletag))) return;
+
       updateProfile(
         { username: username.trim(), battletag: battletag.trim() },
-        { onSuccess },
+        {
+          onSuccess: () => {
+            clearWarning();
+            onSuccess();
+          },
+        },
       );
     } catch (error) {
       console.error('중복 검사 중 오류 발생:', error);
@@ -132,9 +162,11 @@ export const useSettingsForm = ({
     battletagError,
     isPending,
     isChecking,
+    isVerifying,
+    battletagWarning: isBattletagWarning ? BATTLETAG_NOT_FOUND_WARNING : '',
     hasChanges,
     setUsername,
-    setBattletag,
+    setBattletag: changeBattletag,
     setUsernameError,
     setBattletagError,
     handleSave,

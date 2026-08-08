@@ -30,3 +30,28 @@ export const fetchMyPlayerSummary = async (): Promise<MyPlayerSummary> => {
 
   return data;
 };
+
+/**
+ * 배틀태그가 오버워치에 실제로 있는지 확인합니다.
+ *
+ * **`null`은 "확인하지 못했다"입니다.** 상류 장애·타임아웃·쓰로틀이 여기로 옵니다.
+ * `false`("확실히 없다")와 반드시 갈라야 합니다 — 서버가 죽었다고 가입을 막으면
+ * 안 되기 때문입니다. 호출부는 `null`을 통과로 다룹니다.
+ */
+export const verifyBattletag = async (
+  battletag: string,
+): Promise<boolean | null> => {
+  try {
+    const { data } = await api.post<{ exists: boolean }>(
+      '/api/stats/verify',
+      { battletag },
+      // 상류가 8초를 쓰고 실측 3~6초가 나옵니다. 공용 10초로는 우리가 먼저 끊습니다.
+      { timeout: 15_000 },
+    );
+
+    // 200인데 모양이 다르면 판단 근거가 없습니다. 막지 말고 통과시킵니다.
+    return typeof data?.exists === 'boolean' ? data.exists : null;
+  } catch {
+    return null;
+  }
+};

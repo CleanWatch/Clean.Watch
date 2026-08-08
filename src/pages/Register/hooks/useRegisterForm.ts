@@ -3,8 +3,12 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
-import { useRegisterMutation, useCheckDuplicate } from '@/hooks';
-import { getCaptchaErrorMessage } from '@/utils';
+import {
+  useRegisterMutation,
+  useCheckDuplicate,
+  useBattletagVerification,
+} from '@/hooks';
+import { BATTLETAG_NOT_FOUND_WARNING, getCaptchaErrorMessage } from '@/utils';
 import {
   checkFormatErrors,
   checkDuplicateErrors,
@@ -16,6 +20,12 @@ export const useRegisterForm = () => {
   const { mutateAsync: executeRegister, isPending: isRegistering } =
     useRegisterMutation();
   const { validateDuplicate, isChecking } = useCheckDuplicate();
+  const {
+    isVerifying,
+    isWarning: isBattletagWarning,
+    shouldProceed,
+    clearWarning,
+  } = useBattletagVerification();
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   // 위젯을 다시 그리게 하는 값. Turnstile 토큰은 1회용이라 실패하면
   // 같은 토큰으로 재시도해도 계속 거부됩니다.
@@ -43,6 +53,10 @@ export const useRegisterForm = () => {
     if (errors[field as keyof typeof errors]) {
       setErrors((prev) => ({ ...prev, [field]: '' }));
     }
+
+    // 태그를 고쳤으면 앞선 경고는 그 값에 대한 것이 아닙니다. 남겨두면 새 값이
+    // 확인도 안 된 채 경고만 붙은 것처럼 보입니다.
+    if (field === 'battletag') clearWarning();
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -61,13 +75,19 @@ export const useRegisterForm = () => {
     setErrors(duplicateResult.newErrors);
     if (duplicateResult.hasError) return;
 
-    // 관문 3: 봇 검사
+    // 관문 3: 배틀태그 실존 확인 (선택 항목이라 비어 있으면 건너뜁니다)
+    //
+    // 캡챠보다 앞에 둡니다. 캡챠 토큰은 1회용이라, 여기서 경고로 멈췄다가 다시
+    // 누르면 이미 쓴 토큰이 되어 가입이 실패합니다.
+    if (!(await shouldProceed(formData.battletag))) return;
+
+    // 관문 4: 봇 검사
     if (!captchaToken) {
       toast.warning('로봇이 아님을 인증해 주세요');
       return;
     }
 
-    // 관문 4: 최종 회원가입 진행
+    // 관문 5: 최종 회원가입 진행
     try {
       await executeRegister({
         email: formData.email,
@@ -76,6 +96,7 @@ export const useRegisterForm = () => {
         battletag: formData.battletag.trim(),
         captchaToken,
       });
+      clearWarning();
       toast.success('회원가입이 완료되었습니다');
       navigate('/login');
     } catch (error) {
@@ -113,5 +134,8 @@ export const useRegisterForm = () => {
     captchaKey,
     isRegistering,
     isChecking,
+    isVerifying,
+    // 경고 문구는 화면이 아니라 여기서 정합니다. 두 화면이 같은 문장을 써야 합니다.
+    battletagWarning: isBattletagWarning ? BATTLETAG_NOT_FOUND_WARNING : '',
   };
 };
