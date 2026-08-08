@@ -180,7 +180,7 @@ export const Login = () => {
             disabled={isPending}
             onClick={handleDiscordLogin}
             className={cn(
-              'mt-4 mb-6 w-full rounded-lg py-3.5 text-[15px] font-bold text-white transition-all duration-200',
+              'mt-4 mb-3 w-full rounded-lg py-3.5 text-[15px] font-bold text-white transition-all duration-200',
               'bg-discord shadow-[0_4px_12px_rgba(88,101,242,0.2)]',
               'hover:-translate-y-px hover:brightness-90',
               'active:scale-[0.98]',
@@ -188,6 +188,30 @@ export const Login = () => {
           >
             Discord 소셜 로그인
           </button>
+
+          {/* 디스코드로 처음 로그인하면 그 자리에서 계정이 만들어집니다
+              (api/auth/discord/callback.ts). 가입 폼을 지나지 않으니 그쪽
+              동의 체크박스가 걸리지 않아, 여기서 고지합니다. 버튼 하나 누르러
+              온 사람에게 체크박스를 요구하면 이탈하므로 문구로 갈랐습니다. */}
+          <p className="text-text-muted mb-6 text-center text-[12px] leading-relaxed">
+            디스코드로 처음 로그인하면 계정이 생성되며,{' '}
+            <Link
+              to="/terms"
+              target="_blank"
+              className="text-text-muted hover:text-primary underline decoration-dotted underline-offset-2 transition-colors"
+            >
+              이용약관
+            </Link>
+            과{' '}
+            <Link
+              to="/privacy"
+              target="_blank"
+              className="text-text-muted hover:text-primary underline decoration-dotted underline-offset-2 transition-colors"
+            >
+              개인정보처리방침
+            </Link>
+            에 동의하는 것으로 봅니다.
+          </p>
 
           <div className="text-text-muted mt-5 flex items-center justify-center gap-3 text-[13px] font-medium">
             <Link

@@ -26,6 +26,15 @@ export const useRegisterForm = () => {
     shouldProceed,
     clearWarning,
   } = useBattletagVerification();
+  /**
+   * 약관·방침 동의 및 연령 확인.
+   *
+   * 개인정보 수집에는 동의가 필요하고, 만 14세 미만은 가입할 수 없습니다.
+   * 앱이 나이를 확인할 방법은 없으니 자기신고로 받되, 약관에 문구만 두고
+   * 아무것도 묻지 않으면 **받은 적이 없는 것과 같으므로** 필수 체크로 둡니다.
+   */
+  const [agreed, setAgreed] = useState(false);
+
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   // 위젯을 다시 그리게 하는 값. Turnstile 토큰은 1회용이라 실패하면
   // 같은 토큰으로 재시도해도 계속 거부됩니다.
@@ -81,13 +90,19 @@ export const useRegisterForm = () => {
     // 누르면 이미 쓴 토큰이 되어 가입이 실패합니다.
     if (!(await shouldProceed(formData.battletag))) return;
 
-    // 관문 4: 봇 검사
+    // 관문 4: 동의 확인
+    if (!agreed) {
+      toast.warning('이용약관과 개인정보처리방침에 동의해 주세요');
+      return;
+    }
+
+    // 관문 5: 봇 검사
     if (!captchaToken) {
       toast.warning('로봇이 아님을 인증해 주세요');
       return;
     }
 
-    // 관문 5: 최종 회원가입 진행
+    // 관문 6: 최종 회원가입 진행
     try {
       await executeRegister({
         email: formData.email,
@@ -129,6 +144,8 @@ export const useRegisterForm = () => {
     errors,
     handleChange,
     handleSubmit,
+    agreed,
+    setAgreed,
     captchaToken,
     setCaptchaToken,
     captchaKey,
