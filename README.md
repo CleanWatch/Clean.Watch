@@ -147,7 +147,7 @@ Vercel Serverless Functions · 푸시마다 린트·타입체크·빌드, 배포
 
 작업 이력과 **판단 근거는 PR에 있습니다.** 문서로 옮겨 적으면 한쪽만 낡습니다.
 
-- [#1~#3](https://github.com/Ryanghyeon/overwatch.anithack/pull/2) 레거시 JS → TypeScript 이주, 보안 아키텍처 재설계
-- [#5~#8](https://github.com/Ryanghyeon/overwatch.anithack/pull/8) 전적 연동 · Discord OAuth · 스모크 테스트 · 커스텀 도메인
-- [#9~#11](https://github.com/Ryanghyeon/overwatch.anithack/pull/11) 에러 화면 · 토스트 · 헤더 · 브랜드 자산
-- [#12~#18](https://github.com/Ryanghyeon/overwatch.anithack/pull/18) 신고 데이터 신뢰성 · 배틀태그 실존 확인 · CSP
+- [#1~#3](https://github.com/CleanWatch/Clean.Watch/pull/2) 레거시 JS → TypeScript 이주, 보안 아키텍처 재설계
+- [#5~#8](https://github.com/CleanWatch/Clean.Watch/pull/8) 전적 연동 · Discord OAuth · 스모크 테스트 · 커스텀 도메인
+- [#9~#11](https://github.com/CleanWatch/Clean.Watch/pull/11) 에러 화면 · 토스트 · 헤더 · 브랜드 자산
+- [#12~#18](https://github.com/CleanWatch/Clean.Watch/pull/18) 신고 데이터 신뢰성 · 배틀태그 실존 확인 · CSP

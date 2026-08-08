@@ -21,7 +21,7 @@ export const Footer = () => {
 
         <div className="mt-2 flex items-center justify-center gap-3.75">
           <a
-            href="https://github.com/Ryanghyeon/overwatch.anithack/issues"
+            href="https://github.com/CleanWatch/Clean.Watch/issues"
             target="_blank"
             rel="noopener noreferrer"
             className="text-text-muted hover:text-primary text-[0.9rem] font-medium transition-colors duration-200"
