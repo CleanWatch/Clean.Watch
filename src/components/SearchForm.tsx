@@ -76,7 +76,11 @@ export const SearchForm = ({
           maxLength={20}
           disabled={isSearching}
           className={cn(
-            'h-14 flex-1 rounded-lg px-5 text-[17px] transition-all duration-200 outline-none',
+            // min-w-0 이 없으면 좁은 화면에서 검색 버튼이 카드 밖으로 밀려 나갑니다.
+            // flex 아이템의 min-width 기본값이 auto라, input은 size 속성(기본 20자)이
+            // 정하는 폭 아래로 줄지 않습니다. flex-1을 줘도 그 아래로는 안 줄어들어
+            // 남는 자리가 모자라면 옆의 버튼이 대신 밀립니다.
+            'h-14 min-w-0 flex-1 rounded-lg px-5 text-[17px] transition-all duration-200 outline-none',
             'border-border-main bg-bg-main text-text-main border',
             'placeholder:text-text-muted',
             'focus:border-primary focus:bg-bg-card focus:ring-primary focus:ring-2',
@@ -91,7 +95,9 @@ export const SearchForm = ({
           type="submit"
           disabled={isSearching}
           className={cn(
-            'h-14 rounded-lg px-7 text-[17px] font-bold whitespace-nowrap transition-all duration-200',
+            // 좁은 화면에서는 좌우 여백을 줄여 그만큼을 입력칸에 넘깁니다.
+            // 이 버튼이 85px을 가져가면 360px 화면에서 예시 문구가 아슬아슬해집니다.
+            'h-14 rounded-lg px-5 text-[17px] font-bold whitespace-nowrap transition-all duration-200 sm:px-7',
             'bg-primary hover:bg-primary-hover text-white active:scale-[0.96]',
             'disabled:transform-none disabled:cursor-not-allowed disabled:opacity-50',
           )}
