@@ -46,7 +46,7 @@ export const PasswordResetModal = ({
     >
       <div
         className={cn(
-          'flex w-full max-w-100 flex-col rounded-2xl p-8',
+          'flex w-full max-w-100 flex-col rounded-2xl p-6 sm:p-8',
           'border-border-main bg-bg-card text-text-main border shadow-[0_10px_40px_rgba(0,0,0,0.5)]',
         )}
         onClick={(e) => e.stopPropagation()}

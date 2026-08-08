@@ -33,10 +33,10 @@ export const Login = () => {
   if (isExchanging) return <LoadingSpinner />;
 
   return (
-    <div className="flex grow items-center justify-center p-5">
+    <div className="flex grow items-center justify-center p-4 sm:p-5">
       <div
         className={cn(
-          'w-full max-w-105 p-10',
+          'w-full max-w-105 p-6 sm:p-10',
           'border-border-main bg-bg-card rounded-2xl border shadow-[0_8px_32px_0_rgba(0,0,0,0.1)]',
           'text-text-main',
         )}
