@@ -48,3 +48,24 @@ export const TURNSTILE_SITE_KEY = import.meta.env.DEV
  * src/firebase/firebase.ts 참고.
  */
 export const RECAPTCHA_SITE_KEY = '6Lc-wHEtAAAAAGidLUY3csG5h0f0a3XM3fUEn_Fg';
+
+/**
+ * 약관·개인정보처리방침에 들어가는 값.
+ *
+ * 두 문서와 가입 동의 문구가 같은 값을 봐야 하므로 여기 모읍니다.
+ * 흩어 놓으면 시행일 하나 고칠 때 한쪽만 낡습니다.
+ */
+export const LEGAL_EFFECTIVE_DATE = '2026-08-08';
+
+/**
+ * 개인정보 보호책임자 연락처.
+ *
+ * ⚠️ **아직 수신되지 않는 주소입니다.** 「개인정보 보호법」상 방침의 필수
+ * 기재사항이라 문서에는 넣어 두었지만, 실제로 메일을 받을 수 있게 하기 전에는
+ * 신고 대상자의 이의 제기가 도착하지 않습니다. Zoho Mail 무료로 개설 가능하며
+ * 자세한 조건은 BACKLOG.md 「푸터 연락처」에 있습니다.
+ */
+export const CONTACT_EMAIL = 'admin@cleanwatch.cloud';
+
+/** 신고 삭제·정정 요청 처리 기한(일). 문서에 약속하는 값입니다. */
+export const REMOVAL_REQUEST_DAYS = 7;

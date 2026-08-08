@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { Turnstile } from 'react-turnstile';
 import { BATTLETAG_EXAMPLE, cn } from '@/utils';
 import { useRegisterForm } from './hooks';
@@ -18,6 +19,8 @@ export const Register = () => {
     isChecking,
     isVerifying,
     battletagWarning,
+    agreed,
+    setAgreed,
   } = useRegisterForm();
 
   return (
@@ -64,6 +67,39 @@ export const Register = () => {
             warning={battletagWarning}
           />
 
+          {/* 동의는 캡챠 위에 둡니다. 캡챠를 통과한 뒤 체크를 안 했다고
+              막히면 토큰이 낭비되고 위젯을 다시 그려야 합니다. */}
+          <label className="mt-5 flex cursor-pointer items-start gap-2.5">
+            <input
+              type="checkbox"
+              checked={agreed}
+              onChange={(e) => setAgreed(e.target.checked)}
+              className="border-border-main text-primary accent-primary focus:ring-primary mt-0.5 h-4 w-4 shrink-0 cursor-pointer rounded"
+            />
+            <span className="text-text-muted text-[13px] leading-relaxed select-none">
+              <span className="text-primary font-semibold">(필수)</span> 만 14세
+              이상이며,{' '}
+              <Link
+                to="/terms"
+                target="_blank"
+                onClick={(e) => e.stopPropagation()}
+                className="text-text-main hover:text-primary font-semibold underline decoration-dotted underline-offset-2 transition-colors"
+              >
+                이용약관
+              </Link>
+              과{' '}
+              <Link
+                to="/privacy"
+                target="_blank"
+                onClick={(e) => e.stopPropagation()}
+                className="text-text-main hover:text-primary font-semibold underline decoration-dotted underline-offset-2 transition-colors"
+              >
+                개인정보처리방침
+              </Link>
+              에 동의합니다.
+            </span>
+          </label>
+
           <div className="mt-4 mb-5 flex justify-center">
             {/* key가 바뀌면 위젯이 새로 마운트되어 새 토큰을 받습니다.
                 Turnstile 토큰은 1회용이라 거절된 뒤 재시도하려면 필요합니다. */}
@@ -86,7 +122,8 @@ export const Register = () => {
               isVerifying ||
               !formData.username.trim() ||
               !formData.email.trim() ||
-              !formData.password
+              !formData.password ||
+              !agreed
             }
             className={cn(
               'bg-primary mt-2.5 w-full rounded-lg p-3.5 text-base font-bold text-white shadow-[0_4px_12px_rgba(255,136,0,0.2)] transition-all duration-200',

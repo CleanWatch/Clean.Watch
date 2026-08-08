@@ -34,3 +34,8 @@ export const Report = lazyImport(() => import('@/pages/Report'), 'Report');
 export const Ranking = lazyImport(() => import('@/pages/Ranking'), 'Ranking');
 export const MyPage = lazyImport(() => import('@/pages/MyPage'), 'MyPage');
 export const Admin = lazyImport(() => import('@/pages/Admin'), 'Admin');
+export const Privacy = lazyImport(
+  () => import('@/pages/Legal/Privacy'),
+  'Privacy',
+);
+export const Terms = lazyImport(() => import('@/pages/Legal/Terms'), 'Terms');

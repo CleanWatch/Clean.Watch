@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 // import { useCopyToClipboard } from '@/hooks';
 
 export const Footer = () => {
@@ -19,7 +20,21 @@ export const Footer = () => {
           of Blizzard Entertainment, Inc.
         </p>
 
-        <div className="mt-2 flex items-center justify-center gap-3.75">
+        {/* flex-wrap: 좁은 화면에서 링크 세 개가 한 줄에 들어가지 않습니다.
+            없으면 부모를 밀어내 푸터가 화면 밖으로 나갑니다. */}
+        <div className="mt-3 flex flex-wrap items-center justify-center gap-x-3.75 gap-y-1.5">
+          <Link
+            to="/terms"
+            className="text-text-muted hover:text-primary text-[0.9rem] font-medium transition-colors duration-200"
+          >
+            이용약관
+          </Link>
+          <Link
+            to="/privacy"
+            className="text-text-muted hover:text-primary text-[0.9rem] font-medium transition-colors duration-200"
+          >
+            개인정보처리방침
+          </Link>
           <a
             href="https://github.com/CleanWatch/Clean.Watch/issues"
             target="_blank"

@@ -10,6 +10,8 @@ import {
   Ranking,
   MyPage,
   Admin,
+  Privacy,
+  Terms,
 } from './lazyPages';
 
 // 헬퍼 함수: 라우터 진입 시 반복되는 로딩·에러 처리 보일러플레이트 제거
@@ -47,6 +49,8 @@ export const router = createBrowserRouter([
       { path: 'ranking', element: withBoundary(Ranking, 'ranking') },
       { path: 'mypage', element: withBoundary(MyPage, 'mypage') },
       { path: 'admin', element: withBoundary(Admin, 'admin') },
+      { path: 'privacy', element: withBoundary(Privacy, 'privacy') },
+      { path: 'terms', element: withBoundary(Terms, 'terms') },
       // {path: 'path', element: withBoundary(component, 'path') }.
 
       // 위 어느 것과도 맞지 않는 주소. 반드시 맨 마지막에 둡니다.
