@@ -63,10 +63,10 @@ vercel dev
 
 여러 문서에 걸치거나 선행 검사가 필요해서 브라우저에 맡길 수 없는 작업을 담당합니다. **DB 쓰기는 전부 여기를 거칩니다.**
 
-- `_lib/`: 공용 모듈 (Admin SDK 초기화, ID 토큰 검증, OverFast 클라이언트).
+- `_lib/`: 공용 모듈 (Admin SDK 초기화, ID 토큰 검증, OverFast 클라이언트, uid별 쓰로틀).
 - `auth/discord/`: Discord OAuth 인가·콜백 (토큰 교환, 커스텀 토큰 발급).
 - `reports/`: 신고 접수·삭제 (중복 검사 + 랭킹 카운트 갱신을 한 트랜잭션으로).
-- `stats/`: OverFast API 프록시 (프로필·경쟁전 티어 조회).
+- `stats/`: OverFast API 프록시 (프로필·경쟁전 티어 조회, 배틀태그 실존 확인).
 - `users/`: 닉네임·배틀태그 중복 검사.
 - `account/`: 회원 탈퇴 (신고 익명화 → 문서 삭제 → 계정 삭제).
 - `verify-captcha.ts`: Cloudflare Turnstile 토큰 검증.
