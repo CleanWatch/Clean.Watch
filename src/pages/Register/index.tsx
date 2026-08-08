@@ -21,8 +21,8 @@ export const Register = () => {
   } = useRegisterForm();
 
   return (
-    <div className="flex flex-1 items-center justify-center p-5">
-      <div className="border-border-main bg-bg-card text-text-main w-full max-w-105 rounded-2xl border p-10 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)]">
+    <div className="flex flex-1 items-center justify-center p-4 sm:p-5">
+      <div className="border-border-main bg-bg-card text-text-main w-full max-w-105 rounded-2xl border p-6 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] sm:p-10">
         <h1 className="mb-8 text-center text-[28px] font-extrabold tracking-tight">
           회원가입
         </h1>
