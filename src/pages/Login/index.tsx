@@ -210,7 +210,7 @@ export const Login = () => {
             >
               개인정보처리방침
             </Link>
-            에 동의하는 것으로 봅니다.
+            에 동의하는 것으로 간주합니다.
           </p>
 
           <div className="text-text-muted mt-5 flex items-center justify-center gap-3 text-[13px] font-medium">
