@@ -1,6 +1,6 @@
 import { useState, type SyntheticEvent } from 'react';
 import {
-  BATTLETAG_EXAMPLE,
+  BATTLETAG_PLACEHOLDER,
   BATTLETAG_FORMAT_ERROR,
   cn,
   isValidBattletag,
@@ -72,7 +72,7 @@ export const SearchForm = ({
           type="text"
           value={searchQuery}
           onChange={handleInputChange}
-          placeholder={`배틀태그 검색 (예: ${BATTLETAG_EXAMPLE})`}
+          placeholder={BATTLETAG_PLACEHOLDER}
           maxLength={20}
           disabled={isSearching}
           className={cn(
