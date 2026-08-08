@@ -4,53 +4,44 @@
 
 ### 🔗 [cleanwatch.cloud](https://cleanwatch.cloud)
 
+![배틀태그를 검색하면 누적 신고 횟수와 최근 신고 시점이 나옵니다](public/screenshot-search.png)
+
 <br>
 
 ## 🎮 주요 기능
 
-- 🔥 **배틀태그 전과 조회 (Killer Feature):** 배틀태그(예: 홍길동#1234) 검색 한 번으로 해당 유저의 누적 신고 횟수와 신고 사유(트롤링, 비인가 프로그램 사용 등)를 조회하는 검색 시스템
-- **신고 접수 및 방어 로직:** 카테고리별 세부 신고 기능. 중복 신고 검사와 랭킹 카운트 갱신을 서버 트랜잭션으로 묶어, 검사를 건너뛴 신고나 카운트만 오른 상태가 생기지 않도록 처리
-- **같은 태그 재신고 — 24시간에 1회, 단 숫자는 안 오름:** 같은 사람을 또 만났을 때 기록할 수 있어야 하지만, 공개되는 신고 횟수는 **"몇 건"이 아니라 "몇 명"** 이어야 합니다. 한 사람이 반복해서 숫자를 부풀릴 수 있으면, 실명에 가까운 배틀태그에 붙는 그 숫자가 근거를 잃습니다. 그래서 기록은 쌓되 카운트는 첫 신고에만 오릅니다
-- **최근 신고 시점 표시:** 같은 `3회`라도 어제 일과 8개월 전 일은 전혀 다른 정보입니다. 시점이 없으면 옛 기록이 현재형으로 읽힙니다
-- **오버워치 전적 연동:** 등록한 배틀태그의 프로필과 경쟁전 티어를 마이페이지에 표시. OverFast API를 서버에서 대신 호출해 CORS와 레이트 리밋을 사용자에게 떠넘기지 않음
-- **배틀태그 실존 확인 — 막지 않고 경고:** 등록 전에 오버워치에 실제로 있는지 확인합니다. 다만 **비공개 프로필도 404를 내기 때문에** 거부하지 않습니다. 막으면 비공개 사용자는 자기 진짜 배틀태그를 아예 등록할 수 없습니다
-- **디스코드 연동 로그인:** Discord OAuth2 기반 간편 로그인. 인가 코드 교환을 서버에서 처리하고 `state` 파라미터로 CSRF 방어
-- **마이페이지:** 대시보드(프로필·전적), 내 신고 내역, 프로필 설정(닉네임·배틀태그·회원 탈퇴)
-- **관리자 대시보드:** 신고 내역 열람 및 삭제. 권한 검사는 서버와 보안 규칙 양쪽에서 수행
+- 🔥 **배틀태그 전과 조회** — 검색 한 번으로 누적 신고 횟수와 사유를 확인
+- **신고 접수** — 카테고리별 신고. 중복 검사와 카운트 갱신을 서버 트랜잭션으로 묶음
+- **재신고** — 같은 태그를 24시간에 1회. 공개 횟수는 "몇 명"이라 카운트는 오르지 않음
+- **최근 신고 시점** — `3회 · 최근 2일 전`
+- **오버워치 전적 연동** — 프로필·경쟁전 티어. 등록 시 배틀태그 실존 확인
+- **디스코드 로그인** — OAuth2. 인가 코드 교환은 서버에서, `state`로 CSRF 방어
+- **마이페이지 · 관리자 대시보드** — 내 신고 내역·프로필 설정, 신고 열람·삭제
 
 <br>
 
 ## 🛠 기술 스택 및 API
 
-**Frontend & Build**
+**Frontend**
 
 ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
 ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
-![React Router](https://img.shields.io/badge/React_Router-CA4245?style=for-the-badge&logo=react-router&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E)
-<br>
-
-**State Management & Styling**
-
+![React Router](https://img.shields.io/badge/React_Router-CA4245?style=for-the-badge&logo=react-router&logoColor=white)
 ![React Query](https://img.shields.io/badge/React_Query-FF4154?style=for-the-badge&logo=ReactQuery&logoColor=white)
 ![Zustand](https://img.shields.io/badge/Zustand-443E38?style=for-the-badge)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
-<br>
 
-**Backend & Database**
+**Backend & Infra**
 
 ![Firebase](https://img.shields.io/badge/firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)
-
-Firebase Authentication · Cloud Firestore · **App Check** · Admin SDK (서버리스 함수)
-
-**Deployment & CI**
-
 ![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
 ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white)
 
+Firebase Authentication · Cloud Firestore · **App Check** · Admin SDK ·
 Vercel Serverless Functions · 푸시마다 린트·타입체크·빌드, 배포 후 실제 엔드포인트를 때리는 스모크 테스트
 
-**3rd Party API & Libraries**
+**3rd Party**
 
 ![OverFast API](https://img.shields.io/badge/OverFast_API-F99E1A?style=for-the-badge&logo=overwatch&logoColor=white)
 ![Discord OAuth2](https://img.shields.io/badge/Discord_OAuth2-5865F2?style=for-the-badge&logo=discord&logoColor=white)
@@ -61,6 +52,29 @@ Vercel Serverless Functions · 푸시마다 린트·타입체크·빌드, 배포
 - **Discord OAuth2** — 소셜 로그인. 토큰 교환은 서버에서 처리합니다
 - **Cloudflare Turnstile** — 회원가입·비밀번호 재설정 봇 방어
 - **Sonner** — 토스트 알림. 화면을 막고 맥락을 지우는 `alert()`를 전부 걷어냈습니다
+
+<br>
+
+## 🧭 설계 결정
+
+기능보다 **판단**이 필요했던 것들입니다.
+
+**공개되는 신고 횟수는 "몇 건"이 아니라 "몇 명"입니다.**
+같은 사람을 또 만났을 때 기록할 수 있어야 하므로 재신고는 24시간에 1회 허용하되,
+카운트는 첫 신고에만 올립니다. 한 사람이 반복해서 숫자를 부풀릴 수 있으면 **실명에
+가까운 배틀태그에 붙는 그 숫자가 근거를 잃기** 때문입니다. 삭제도 같은 원칙이라,
+그 사람의 마지막 한 건이 지워질 때만 차감합니다.
+
+**배틀태그 실존 확인은 막지 않고 경고만 합니다.**
+오버워치는 **비공개 프로필도 404**를 냅니다. 거부하면 비공개 사용자는 자기 진짜
+배틀태그를 아예 등록할 수 없습니다. 서버도 "없음"을 404가 아닌 **200 `{ exists: false }`**
+로 내려, 클라이언트가 "확실히 없다"와 "못 물어봤다"를 구분하게 했습니다. 상류가
+죽었다고 가입이 막히면 안 되니까요.
+
+**실패는 뭉치지 않고 갈라서 안내합니다.**
+토큰 없음 / 권한 없음 / 상류 장애 / 상류 없음이 각각 다른 상태 코드와 문구로
+내려갑니다. 하나로 뭉치면 "잠시 후 다시 시도"라는 누구에게도 도움이 안 되는 안내만
+남습니다.
 
 <br>
 
@@ -125,76 +139,15 @@ Vercel Serverless Functions · 푸시마다 린트·타입체크·빌드, 배포
 
 ## 👥 팀원 역할 분담
 
-<table>
-  <tr>
-    <th>GitHub</th>
-    <th>담당 역할 및 구현 내용</th>
-  </tr>
-  <tr>
-    <td valign="top"><a href="https://github.com/pandemoniummm">@pandemoniummm</a></td>
-    <td>
-      <strong>프론트엔드 리드 · 아키텍처 총괄</strong><br>
-      <br>
-      <strong>1. 레거시 JS → TypeScript 전환</strong><br>
-      • 자체 TS/Vite 보일러플레이트 구축, 라우터·상태 관리·API 계층 재설계<br>
-      • 페이지에 뭉쳐 있던 로직을 Custom Hook으로 분리 (Login · Register · MyPage · Report)<br>
-      • Husky · ESLint · Prettier로 컨벤션 고정, <code>React.lazy</code> + 청크 분할로 초기 로딩 최적화<br>
-      <br>
-      <strong>2. 보안 아키텍처 재설계</strong><br>
-      • DB 쓰기를 전량 서버리스로 이관. 중복 검사와 카운트 갱신을 <strong>한 트랜잭션</strong>으로 묶어,
-        검사를 건너뛴 신고나 한쪽만 반영된 상태가 생길 수 없게 재구성<br>
-      • Firestore 보안 규칙 재작성 및 버전 관리 편입 —
-        전체 공개였던 <code>users</code> 읽기 차단, <code>role</code> 자가 승격 차단<br>
-      • Firebase App Check(reCAPTCHA v3) 도입. 규칙·서버 검사로는 판별할 수 없는
-        <strong>요청 출처</strong>를 검증<br>
-      <br>
-      <strong>3. 기능 및 안정화</strong><br>
-      • OverFast API 프록시 및 마이페이지 전적 카드<br>
-      • Discord OAuth 파이프라인 완성(<code>state</code> CSRF 방어), 회원 탈퇴, Turnstile 캡챠 정상화<br>
-      • 배포 후 실제 엔드포인트를 호출하는 스모크 테스트 —
-        빌드는 통과하는데 배포에서만 죽는 문제를 잡기 위해<br>
-      <br>
-      <strong>4. 서비스 공개 및 마감</strong><br>
-      • 커스텀 도메인 <code>cleanwatch.cloud</code> 연결 —
-        DNS·OAuth 콜백·App Check 도메인까지 이관<br>
-      • 실패 화면 체계화 — 404·401·403·렌더 에러를 공용 <code>ErrorState</code>로 통합하고,
-        에러 경계를 라우트별로 분리해 페이지를 옮기면 저절로 복구되게<br>
-      • 화면을 막고 맥락을 지우던 <code>alert()</code> 15곳을 토스트로 교체, 공용 헤더 도입<br>
-      • 파비콘·OG 이미지·<code>lang</code>·응답 헤더 등 공개 전 마감<br>
-      <br>
-      <strong>5. 신고 데이터의 신뢰성 · CSP</strong><br>
-      • <strong>공개 신고 횟수를 "몇 명"으로 정의</strong>하고 그 정의를 코드로 강제 —
-        재신고는 24시간에 1회 허용하되 카운트는 첫 신고에만. 삭제도 그 사람의
-        마지막 한 건일 때만 차감하도록 함께 수정<br>
-      • 중복 검사를 트랜잭션 안으로 옮겨 <strong>동시 요청 두 건이 나란히 통과하던 창</strong>을
-        제거 (같은 틱 2회 제출 → 201·409로 갈리는 것을 실측)<br>
-      • 배틀태그 실존 확인 엔드포인트 — <strong>"없음"은 에러가 아니라 결과(200)</strong>로
-        내려 "확실히 없다"와 "못 물어봤다"를 구분. 상류 장애 시 저장을 막지 않음<br>
-      • 같은 커밋에 uid별 쓰로틀 — 배틀태그를 본문으로 받는 순간 상류 스크래핑
-        증폭기가 되고, 상류 레이트 리밋이 <strong>우리 서버 IP 기준</strong>이라
-        한 명 때문에 전체가 막힘<br>
-      • CSP 도입 — 정책을 코드가 아니라 <strong>프로덕션 실측 요청</strong>으로 구성하고
-        <code>Report-Only</code> → 위반 0 확인 → 강제 전환 순서로 적용<br>
-      • 200이지만 형태가 다른 응답을 경계에서 차단 — SPA 폴백이 API를 삼키면
-        <code>if (error)</code>로는 안 잡히고 화면이 죽던 문제
-    </td>
-  </tr>
-  <tr>
-    <td valign="top"><a href="https://github.com/Ryanghyeon">@Ryanghyeon</a></td>
-    <td>
-      <strong>백엔드/인프라 초기 세팅</strong><br>
-      • 프로젝트 초기 환경 구성 및 Firebase Admin SDK 아키텍처 설계<br>
-      • Discord OAuth 콜백 API 라우팅 및 인증 서버 연동 초기 뼈대 작성<br>
-      • Vercel 초기 배포 환경 설정 및 환경변수 관리
-    </td>
-  </tr>
-  <tr>
-    <td valign="top"><a href="https://github.com/ininin0423">@ininin0423</a></td>
-    <td>
-      <strong>프론트엔드 UI 서포트 및 보안 설정</strong><br>
-      • 주요 도메인(Login, Ranking, Admin) 초기 UI 컴포넌트 구성<br>
-      • Firebase App Check(ReCaptcha V3) 연동을 통한 클라이언트 보안 설정 보조<br>
-      • 프로젝트 패키지 의존성 및 Firebase 설정 파일 관리
-    </td>
-  </tr>
-</table>
+| GitHub                                                 | 역할                                                                                                     |
+| ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
+| **[@pandemoniummm](https://github.com/pandemoniummm)** | **프론트엔드 리드 · 아키텍처 총괄**<br>TypeScript 이주 · 보안 아키텍처 재설계 · 신고 데이터 신뢰성 · CSP |
+| [@Ryanghyeon](https://github.com/Ryanghyeon)           | 백엔드/인프라 초기 세팅 — Admin SDK 구조, OAuth 콜백 라우팅, Vercel 초기 배포                            |
+| [@ininin0423](https://github.com/ininin0423)           | 프론트엔드 UI 서포트 · 보안 설정 보조 — 초기 UI 컴포넌트, App Check 연동                                 |
+
+작업 이력과 **판단 근거는 PR에 있습니다.** 문서로 옮겨 적으면 한쪽만 낡습니다.
+
+- [#1~#3](https://github.com/Ryanghyeon/overwatch.anithack/pull/2) 레거시 JS → TypeScript 이주, 보안 아키텍처 재설계
+- [#5~#8](https://github.com/Ryanghyeon/overwatch.anithack/pull/8) 전적 연동 · Discord OAuth · 스모크 테스트 · 커스텀 도메인
+- [#9~#11](https://github.com/Ryanghyeon/overwatch.anithack/pull/11) 에러 화면 · 토스트 · 헤더 · 브랜드 자산
+- [#12~#18](https://github.com/Ryanghyeon/overwatch.anithack/pull/18) 신고 데이터 신뢰성 · 배틀태그 실존 확인 · CSP
