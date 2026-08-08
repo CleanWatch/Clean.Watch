@@ -17,6 +17,20 @@ export const BATTLETAG_EXAMPLE = 'Player#1234';
 export const BATTLETAG_FORMAT_ERROR =
   '배틀태그 형식이 올바르지 않습니다. # 뒤는 숫자 4~5자리입니다.';
 
+/**
+ * 라벨이 화면에 보이지 않는 입력칸(검색·신고)의 placeholder.
+ *
+ * 원래는 `배틀태그 검색 (예: Player#1234)`처럼 설명까지 담았는데, 모바일에서
+ * **`Player#1`에서 잘렸습니다.** 375px 기준 41px 초과였고, 가장 큰 430px 화면에서도
+ * 넘쳤습니다. 하필 잘려 나가는 부분이 "# 뒤 숫자 4자리"라는, 예시를 보여주는
+ * 이유 그 자체였습니다.
+ *
+ * 설명을 빼도 잃는 게 없습니다 — 두 곳 다 `sr-only` 라벨이 있어 스크린리더는
+ * 그대로 읽고, 화면에서는 옆의 `검색` 버튼과 페이지 맥락이 그 역할을 합니다.
+ * 라벨이 보이는 곳(가입·설정)은 설명이 중복이라 `BATTLETAG_EXAMPLE`을 그대로 씁니다.
+ */
+export const BATTLETAG_PLACEHOLDER = `예: ${BATTLETAG_EXAMPLE}`;
+
 // 2. 이메일 형식 검사
 export const isValidEmail = (email?: string | null): boolean => {
   if (!email) return false;

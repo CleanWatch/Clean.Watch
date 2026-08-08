@@ -1,5 +1,5 @@
 // src/pages/Report.tsx
-import { BATTLETAG_EXAMPLE, cn } from '@/utils';
+import { BATTLETAG_PLACEHOLDER, cn } from '@/utils';
 import { useReport } from './hooks';
 
 export const Report = () => {
@@ -37,7 +37,7 @@ export const Report = () => {
           <input
             id="report-battletag"
             type="text"
-            placeholder={`배틀태그 입력 (예: ${BATTLETAG_EXAMPLE})`}
+            placeholder={BATTLETAG_PLACEHOLDER}
             value={battleTag}
             onChange={(e) => {
               setBattleTag(e.target.value);
