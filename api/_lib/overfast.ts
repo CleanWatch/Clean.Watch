@@ -25,8 +25,7 @@ const UPSTREAM_TIMEOUT_MS = 8_000;
  * 문제가 생겼을 때 운영자가 우리에게 연락할 수단이 있어야, IP 대역째
  * 차단당하는 대신 조정할 기회가 생깁니다.
  */
-const USER_AGENT =
-  'CleanWatch/1.0 (+https://cleanwatch.cloud)';
+const USER_AGENT = 'CleanWatch/1.0 (+https://cleanwatch.cloud)';
 
 /** 경쟁전 역할군. Object.entries로 순회하면 안 되는 이유는 아래 참고. */
 const ROLES = ['tank', 'damage', 'support', 'open'] as const;
@@ -118,7 +117,10 @@ const request = async <T>(path: string): Promise<T> => {
     const body = (await response.json().catch(() => null)) as {
       error?: { retry_after?: number };
     } | null;
-    console.warn('[OverFast] 플레이어 없음. retry_after:', body?.error?.retry_after);
+    console.warn(
+      '[OverFast] 플레이어 없음. retry_after:',
+      body?.error?.retry_after,
+    );
     throw new OverFastError(404, 'PLAYER_NOT_FOUND');
   }
 
@@ -188,6 +190,18 @@ export const fetchPlayerSummary = async (
     `/players/${encodeURIComponent(playerId)}/summary`,
   );
 
+  // ⚠️ 아래 이미지 URL들은 **브라우저가 직접** 불러옵니다. 이 함수는 서버에서 도는데,
+  // 응답에 담아 보낸 절대 주소를 화면이 <img src>로 씁니다
+  // (PlayerStatsPanel의 avatar · endorsementIcon · roleIcon · rankIcon · tierIcon).
+  //
+  // 그래서 이 호스트들이 `vercel.json`의 CSP img-src에 등록되어 있습니다.
+  //
+  //   d15f34w2p8l1cc.cloudfront.net   avatar · namecard
+  //   static.playoverwatch.com        rank · tier · role 아이콘
+  //
+  // 상류가 CDN을 갈아치우면 **CSP에서 막혀 이미지만 조용히 안 뜹니다.** 콘솔에
+  // CSP 위반으로만 남고 API는 200이라, 여기를 안 보면 원인을 못 찾습니다.
+  // (cloudfront 쪽은 불투명한 배포 ID라 바뀔 여지가 더 큽니다)
   return {
     battletag: battletag.trim(),
     profile: {
