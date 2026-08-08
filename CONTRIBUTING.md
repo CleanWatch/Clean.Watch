@@ -50,7 +50,7 @@ vercel dev
  ├── 📂 public/          # 그대로 배포되는 정적 파일 (파비콘, OG 이미지)
  ├── 📜 index.html       # SPA 진입점 (title, meta, OG 태그)
  ├── 📜 firestore.rules  # Firestore 보안 규칙 (콘솔이 아닌 여기서 관리)
- ├── 📜 vercel.json      # 배포 설정 (보안 헤더, 함수 옵션)
+ ├── 📜 vercel.json      # 배포 설정 (보안 헤더, 함수 옵션) — 아래 CSP 항목 참고
  ├── 📜 eslint.config.js # 팀 공통 린트(Lint) 규칙
  ├── 📜 .prettierrc      # 팀 공통 코드 포맷팅 규칙
  ├── 📜 tsconfig.*.json  # TypeScript 환경 분리 설정 (app: 프론트, node: 빌드/서버)
@@ -83,6 +83,36 @@ vercel dev
 - `utils/`: 공통 유틸리티 함수 (`cn.ts`, 정규식 유효성 검사 등).
 
 **Tip**: _자잘한 설정 파일(package-lock.json, .gitignore 등)은 생략되었으며, 코드 작성 시 eslint.config.js와 .prettierrc의 룰이 .husky를 통해 커밋 단계에서 강제 적용됩니다._
+
+---
+
+## 🔒 CSP 헤더가 `cleanwatch.cloud`에만 붙는 이유
+
+`vercel.json`의 `Content-Security-Policy`는 **호스트 조건이 걸려 있습니다.**
+
+```json
+"has": [{ "type": "host", "value": "cleanwatch.cloud" }]
+```
+
+JSON에는 주석을 못 달아 여기 적습니다. **일부러 이렇게 한 것이니 조건을 지우지 마세요.**
+
+`vercel dev`도 `vercel.json`을 읽는데, Vite 개발 서버는 **인라인 스크립트**(React 새로고침
+프리앰블)와 **blob 워커**를 씁니다. 조건 없이 걸면 그 둘이 차단되어 **로컬 화면이 통째로
+하얘집니다.** 프로덕션 빌드에는 인라인 스크립트도 blob도 없어서 영향이 없습니다.
+
+`vercel dev`는 `has` 조건을 평가하지 않으므로 로컬에는 CSP가 붙지 않고, 프로덕션에서만
+적용됩니다.
+
+⚠️ **이 구조는 "붙지 않는 쪽"으로 실패합니다.** 조건이 어긋나면 사이트가 죽는 대신 CSP가
+조용히 사라집니다. 그러니 `vercel.json`을 고친 뒤에는 **배포된 주소에서 헤더를 직접
+확인하세요.**
+
+```bash
+curl -sI https://cleanwatch.cloud/ | grep -i content-security-policy
+```
+
+허용 목록을 늘려야 할 일이 생기면(외부 이미지·스크립트 추가 등) **`Report-Only`로 먼저
+배포해 위반을 확인한 뒤** 강제로 바꾸는 순서를 지켜주세요.
 
 ---
 
