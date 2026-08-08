@@ -54,6 +54,10 @@
       "eslint --fix",
       "prettier --write"
     ],
+    "api/**/*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ],
     "./*.{ts,tsx,js,jsx}": [
       "eslint --fix",
       "prettier --write"

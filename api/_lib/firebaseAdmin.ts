@@ -18,9 +18,7 @@ const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
 const privateKey = process.env.FIREBASE_PRIVATE_KEY;
 
 if (!projectId || !clientEmail || !privateKey) {
-  console.error(
-    '[Firebase Admin] 필수 환경 변수가 누락됨. (.env 확인 필요)',
-  );
+  console.error('[Firebase Admin] 필수 환경 변수가 누락됨. (.env 확인 필요)');
 }
 
 /**
