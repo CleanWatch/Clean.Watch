@@ -1,3 +1,4 @@
+import { FileText, ShieldCheck } from 'lucide-react';
 /* src/pages/Admin.tsx */
 
 import { Link } from 'react-router-dom';
@@ -70,8 +71,13 @@ export const Admin = () => {
     <div className="flex w-full grow flex-col items-center px-4 py-10 sm:px-6">
       <div className="w-full max-w-200">
         <div className="border-border-main mb-8 flex items-center justify-between border-b pb-6">
-          <h1 className="text-text-main text-2xl font-black sm:text-3xl">
-            <span aria-hidden="true">🛠️</span>&nbsp;관리자 대시보드
+          <h1 className="text-text-main flex items-center gap-2.5 text-2xl font-black sm:text-3xl">
+            <ShieldCheck
+              className="text-primary"
+              size={26}
+              aria-hidden="true"
+            />
+            관리자 대시보드
           </h1>
           <Link
             to="/"
@@ -125,8 +131,13 @@ export const Admin = () => {
 
                 {report.details && (
                   <div className="border-text-muted mt-2 rounded-lg border-l-4 bg-black/20 p-4">
-                    <span className="text-text-muted mb-2 block text-xs font-bold">
-                      <span aria-hidden="true">📝</span>&nbsp;세부사항
+                    <span className="text-text-muted mb-2 flex items-center gap-1.5 text-xs font-bold">
+                      <FileText
+                        className="shrink-0"
+                        size={13}
+                        aria-hidden="true"
+                      />
+                      세부사항
                     </span>
                     <p className="text-text-main/90 text-sm leading-relaxed break-all whitespace-pre-wrap">
                       {report.details}

@@ -1,3 +1,4 @@
+import { Flag } from 'lucide-react';
 // src/pages/Report.tsx
 import { BATTLETAG_PLACEHOLDER, cn } from '@/utils';
 import { useReport } from './hooks';
@@ -26,8 +27,9 @@ export const Report = () => {
           'p-8 sm:p-10',
         )}
       >
-        <h1 className="text-text-main mb-8 text-center text-[2rem] font-black tracking-tight">
-          <span aria-hidden="true">🚨</span>&nbsp;핵 사용자 신고
+        <h1 className="text-text-main mb-8 flex items-center justify-center gap-2.5 text-[2rem] font-black tracking-tight">
+          <Flag className="text-danger shrink-0" size={28} aria-hidden="true" />
+          핵 사용자 신고
         </h1>
 
         <div className="flex flex-col gap-5">

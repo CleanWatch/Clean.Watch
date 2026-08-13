@@ -25,6 +25,12 @@
   /* 호버는 primary·discord와 같이 어두워집니다. 예전 값은 혼자 밝아졌습니다. */
   --color-danger-hover: #dc464a;
 
+  /* 4-1. 성공·완료 */
+  /* 「연동됨」처럼 "정상"을 말해야 하는 자리에 쓸 색이 없었습니다.
+     primary(주황)를 쓰면 주의처럼 보이고, text-muted를 쓰면 연동이
+     안 된 것처럼 보입니다. 카드 배경 기준 10.2:1. */
+  --color-success: #4ade80;
+
   /* 5. 텍스트 가독성 계층 */
   --color-text-main: #f9fafb; /* 찐한 기본 글자 (tailwind gray-900) */
   --color-text-muted: #9ca3af; /* 부가 설명 텍스트 (tailwind gray-500) */

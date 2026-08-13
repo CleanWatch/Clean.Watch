@@ -1,3 +1,4 @@
+import { Hammer, Search } from 'lucide-react';
 import { useState } from 'react';
 import { cn, formatRelativeTime } from '@/utils';
 import type { SearchResultData } from '@/types';
@@ -81,17 +82,18 @@ export const SearchResult = ({
               <button
                 onClick={() => setShowNotice(true)}
                 className={cn(
-                  'mt-5 flex h-11 items-center justify-center rounded-lg px-6 text-[14px] font-bold transition-all duration-200',
+                  'mt-5 flex h-11 items-center justify-center gap-2 rounded-lg px-6 text-[14px] font-bold transition-all duration-200',
                   'bg-primary hover:bg-primary-hover text-white active:scale-[0.96]',
                 )}
               >
-                <span aria-hidden="true">🔍</span>&nbsp;상세 전과 기록 보기
+                <Search className="shrink-0" size={16} aria-hidden="true" />
+                상세 전과 기록 보기
               </button>
 
               {showNotice && (
-                <p className="text-text-muted mt-4 text-[13px] font-medium">
-                  <span aria-hidden="true">🛠️</span>&nbsp;상세 신고 기록실
-                  타임라인 준비 중입니다...
+                <p className="text-text-muted mt-4 flex items-center justify-center gap-1.5 text-[13px] font-medium">
+                  <Hammer className="shrink-0" size={14} aria-hidden="true" />
+                  상세 신고 기록실 타임라인 준비 중입니다...
                 </p>
               )}
             </div>
