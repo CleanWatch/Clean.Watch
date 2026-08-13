@@ -1,3 +1,4 @@
+import { Flag, ShieldCheck, Trophy, User } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { cn } from '@/utils';
 import { useAuthStore } from '@/store';
@@ -27,11 +28,12 @@ export const HomeMenu = () => {
         <Link
           to="/ranking"
           className={cn(
-            'flex h-14 flex-1 items-center justify-center rounded-lg text-[16px] font-bold transition-all duration-200',
+            'flex h-14 flex-1 items-center justify-center gap-2 rounded-lg text-[16px] font-bold transition-all duration-200',
             'border-border-main bg-bg-card text-text-main hover:border-primary hover:text-primary border active:scale-[0.96]',
           )}
         >
-          <span aria-hidden="true">🏆</span>&nbsp;신고 랭킹
+          <Trophy className="shrink-0" size={18} aria-hidden="true" />
+          신고 랭킹
         </Link>
       </div>
     );
@@ -71,40 +73,46 @@ export const HomeMenu = () => {
         <Link
           to="/report"
           className={cn(
-            'col-span-2 flex h-14 items-center justify-center rounded-lg text-[16px] font-bold transition-all duration-200 sm:col-span-1',
+            'col-span-2 flex h-14 items-center justify-center gap-2 rounded-lg text-[16px] font-bold transition-all duration-200 sm:col-span-1',
             'bg-primary hover:bg-primary-hover text-white active:scale-[0.96]',
           )}
         >
-          <span aria-hidden="true">🚨</span>&nbsp;신고하기
+          <Flag className="shrink-0" size={18} aria-hidden="true" />
+          신고하기
         </Link>
         <Link
           to="/ranking"
           className={cn(
-            'flex h-14 items-center justify-center rounded-lg text-[16px] font-bold transition-all duration-200',
+            'flex h-14 items-center justify-center gap-2 rounded-lg text-[16px] font-bold transition-all duration-200',
             'border-border-main bg-bg-card text-text-main hover:border-primary hover:text-primary border active:scale-[0.96]',
           )}
         >
-          <span aria-hidden="true">🏆</span>&nbsp;신고 랭킹
+          <Trophy className="shrink-0" size={18} aria-hidden="true" />
+          신고 랭킹
         </Link>
         <Link
           to="/mypage"
           className={cn(
-            'flex h-14 items-center justify-center rounded-lg text-[16px] font-bold transition-all duration-200',
+            'flex h-14 items-center justify-center gap-2 rounded-lg text-[16px] font-bold transition-all duration-200',
             'border-border-main bg-bg-card text-text-main hover:border-primary hover:text-primary border active:scale-[0.96]',
           )}
         >
-          <span aria-hidden="true">👤</span>&nbsp;마이페이지
+          <User className="shrink-0" size={18} aria-hidden="true" />
+          마이페이지
         </Link>
 
         {isAdmin && (
           <Link
             to="/admin"
             className={cn(
-              'col-span-2 mt-2 flex h-14 items-center justify-center rounded-lg text-[16px] font-bold transition-all duration-200 sm:col-span-3',
+              'col-span-2 mt-2 flex h-14 items-center justify-center gap-2 rounded-lg text-[16px] font-bold transition-all duration-200 sm:col-span-3',
               'bg-danger text-white shadow-[0_4px_12px_rgba(246,82,86,0.2)]',
               'hover:bg-danger-hover hover:-translate-y-px active:scale-[0.98]',
             )}
           >
+            {/* 원래 이모지가 없던 자리입니다. 같은 줄의 나머지 셋이 전부
+                아이콘을 갖게 되어 여기만 비면 어긋나 보입니다. */}
+            <ShieldCheck className="shrink-0" size={18} aria-hidden="true" />
             관리자 대시보드
           </Link>
         )}

@@ -1,3 +1,4 @@
+import { CircleCheck } from 'lucide-react';
 /* src/pages/MyPage/components/DashboardTab.tsx */
 
 import { useUser } from '@/hooks';
@@ -67,8 +68,9 @@ export const DashboardTab = ({ onNavigateSettings }: Props) => {
         {profile.battletag ? (
           <div className="flex items-center gap-3">
             <span className="text-primary font-black">{profile.battletag}</span>
-            <span className="rounded-full bg-green-500/10 px-3 py-1 text-xs font-bold text-green-500">
-              <span aria-hidden="true">✅</span>&nbsp;연동됨
+            <span className="text-success bg-success/10 flex items-center gap-1 rounded-full px-3 py-1 text-xs font-bold">
+              <CircleCheck className="shrink-0" size={13} aria-hidden="true" />
+              연동됨
             </span>
           </div>
         ) : (
