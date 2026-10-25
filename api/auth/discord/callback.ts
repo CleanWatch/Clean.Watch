@@ -5,10 +5,8 @@ import {
   buildClearedStateCookie,
   safeEqual,
 } from '../../_lib/oauth.js';
-// 격리된 파이어베이스 어드민 호출
 import { getAdminAuth, getAdminFirestore } from '../../_lib/firebaseAdmin.js';
 
-// 디스코드 응답 데이터 타입 단언 (Strict Mode 방어)
 interface DiscordTokenResponse {
   access_token?: string;
   error?: string;
@@ -22,26 +20,21 @@ interface DiscordUser {
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  // Method Guard
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
   const { code, state } = req.query;
 
-  // Payload Guard
   if (!code || typeof code !== 'string') {
     return res
       .status(400)
       .json({ error: 'Bad Request: Missing authorization code' });
   }
 
-  // CSRF Guard: 인가를 시작한 브라우저가 맞는지 확인합니다.
-  // 이 검사가 없으면 공격자가 자신의 인가 코드를 피해자에게 열게 만들어
-  // 피해자를 공격자 계정으로 로그인시킬 수 있습니다.
+  // 공격자가 자기 인가 코드로 피해자를 공격자 계정에 로그인시키는 것을 막는다
   const cookieState = req.cookies?.[OAUTH_STATE_COOKIE];
 
-  // 사용한 state는 재사용되지 않도록 즉시 만료시킵니다.
   res.setHeader('Set-Cookie', buildClearedStateCookie());
 
   if (
@@ -53,7 +46,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(403).json({ error: 'Forbidden: Invalid state' });
   }
 
-  // 리소스 고갈 방어 (10s timeout)
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 10000);
 
@@ -66,7 +58,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       redirect_uri: process.env.DISCORD_REDIRECT_URI || '',
     });
 
-    // Step A: 디스코드 토큰 발급
     const tokenResponse = await fetch('https://discord.com/api/oauth2/token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -83,56 +74,45 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         .json({ error: 'Unauthorized: Token negotiation failed' });
     }
 
-    // Step B: 디스코드 유저 정보 조회
     const userResponse = await fetch('https://discord.com/api/users/@me', {
       headers: { Authorization: `Bearer ${tokenData.access_token}` },
       signal: controller.signal,
     });
 
-    clearTimeout(timeoutId); // 외부 통신 완료 시 타임아웃 해제
+    clearTimeout(timeoutId);
 
     const user = (await userResponse.json()) as DiscordUser;
 
-    // Step C: 격리된 파이어베이스 도구 로드 및 커스텀 토큰 굽기
     const adminAuth = getAdminAuth();
     const db = getAdminFirestore();
 
     const firebaseToken = await adminAuth.createCustomToken(user.id);
 
-    // Step D: Firestore DB 갱신
     const userRef = db.collection('users').doc(user.id);
     const prev = (await userRef.get()).data();
 
-    // Discord의 avatar는 URL이 아니라 해시라서 CDN 경로로 조립해야 함.
-    //
-    // 아바타가 없으면 null입니다. 예전에는 여기서 ui-avatars URL을 만들어
-    // 저장했는데, 그 URL에 가입 시점의 닉네임이 박혀서 닉네임을 바꿔도
-    // 옛 이름이 계속 보였습니다. 이니셜은 이제 Avatar 컴포넌트가
-    // 현재 닉네임으로 그립니다.
+    // avatar는 해시라 CDN 경로로 조립한다. 없으면 Avatar 컴포넌트가 이니셜을 그린다.
     const photoUrl = user.avatar
       ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
       : null;
 
-    // 매 로그인마다 갱신되는 필드
     const patch: Record<string, unknown> = {
       uid: user.id,
       username: user.username,
       email: user.email || '',
-      avatar: user.avatar || '', // 원본 해시 유지 (다른 크기/포맷 URL 재생성용)
+      avatar: user.avatar || '',
       photoUrl,
       lastLogin: FieldValue.serverTimestamp(),
     };
 
-    // 최초 1회만 기록. 매번 쓰면 관리자가 강등되고 가입일이 갱신됨
+    // 최초 1회만. 매번 쓰면 관리자가 강등되고 가입일이 바뀐다.
     if (!prev?.role) patch.role = 'user';
     if (!prev?.createdAt) patch.createdAt = FieldValue.serverTimestamp();
     if (prev?.battletag === undefined) patch.battletag = null;
 
     await userRef.set(patch, { merge: true });
 
-    // Step E: 프론트엔드로 상대 경로 리다이렉트 (레거시의 하드코딩 URL 대체)
-    // 해시(#)로 넘기면 서버 액세스 로그에 토큰이 남지 않습니다.
-    // 쿼리스트링(?)은 요청 URL의 일부라 그대로 기록됩니다.
+    // 쿼리스트링과 달리 해시는 서버 액세스 로그에 남지 않는다
     res.redirect(302, `/login#token=${firebaseToken}`);
   } catch (error) {
     clearTimeout(timeoutId);

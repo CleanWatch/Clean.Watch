@@ -1,14 +1,6 @@
 import { Link } from 'react-router-dom';
 
-/**
- * 약관·방침 공용 셸.
- *
- * 두 문서의 조판을 한곳에 모읍니다. 본문에서 쓰는 요소(제목·문단·표·목록)는
- * `elements.tsx`에 있고, `L`로 묶어 씁니다.
- *
- * Tailwind Typography 플러그인은 쓰지 않았습니다. 문서 두 개를 위해 의존성을
- * 추가할 만큼 얻는 게 없고, 다크 배경에 맞추려면 어차피 변수를 덮어써야 합니다.
- */
+// 약관·방침 공용 셸. 본문 요소는 elements.tsx (L로 묶어 쓴다).
 export const LegalLayout = ({
   title,
   effectiveDate,

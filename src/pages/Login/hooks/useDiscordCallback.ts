@@ -1,5 +1,3 @@
-/* src/pages/Login/hooks/useDiscordCallback.ts */
-
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import {
@@ -9,8 +7,7 @@ import {
 } from 'firebase/auth';
 import { auth } from '@/firebase/firebase';
 
-// 콜백은 토큰을 해시(#token=)로 넘깁니다. 해시는 서버로 전송되지 않아
-// Vercel 액세스 로그나 Referer 헤더에 토큰이 남지 않습니다.
+// 토큰은 해시로 온다. 해시는 서버로 안 가서 액세스 로그·Referer에 안 남는다.
 const readTokenFromHash = () =>
   new URLSearchParams(window.location.hash.replace(/^#/, '')).get('token');
 

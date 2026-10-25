@@ -1,5 +1,3 @@
-/* src/api/ranking.ts */
-
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { db } from '@/firebase/firebase';
 
@@ -19,7 +17,6 @@ export const fetchRanking = async (): Promise<RankingData[]> => {
     return {
       id: doc.id,
       battletag: data.battletag,
-      // 레거시 디테일 유지: DB의 count를 UI용 reportCount로 매핑
       reportCount: data.count || 0,
     };
   });

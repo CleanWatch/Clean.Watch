@@ -1,5 +1,3 @@
-/* src/pages/MyPage/components/ReportsTab.tsx */
-
 import { useMyReportsQuery } from '@/hooks';
 
 export const ReportsTab = () => {

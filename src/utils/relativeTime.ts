@@ -1,15 +1,4 @@
-/* src/utils/relativeTime.ts */
-
-/**
- * ISO 시각을 "3일 전"처럼 사람이 읽는 표현으로 바꿉니다.
- *
- * `Intl.RelativeTimeFormat`은 브라우저 내장이라 날짜 라이브러리를 넣지 않아도
- * 한국어 표현이 그대로 나옵니다.
- *
- * `numeric: 'always'`인 이유 — 'auto'로 두면 1일 전이 "어제", 1개월 전이 "지난달"이
- * 됩니다. 문장으로는 자연스럽지만 여기서는 **얼마나 최근인지 견주는 값**으로 읽히므로
- * 단위를 일정하게 유지하는 편이 낫습니다. "지난달"은 3주 전인지 6주 전인지 모릅니다.
- */
+// numeric: 'auto'면 "지난달"처럼 나와 얼마나 최근인지 비교가 안 된다
 const FORMATTER = new Intl.RelativeTimeFormat('ko', { numeric: 'always' });
 
 const MINUTE = 60;
@@ -24,11 +13,9 @@ export const formatRelativeTime = (iso?: string | null): string | null => {
   const target = new Date(iso).getTime();
   if (Number.isNaN(target)) return null;
 
-  // 초 단위. 과거일수록 커집니다.
   const elapsed = (Date.now() - target) / 1000;
 
-  // 기기 시계가 앞서 있으면 음수가 나와 "1분 후" 같은 문구가 됩니다.
-  // 사용자에게 의미가 없으므로 1분 미만과 함께 눌러둡니다.
+  // 기기 시계가 앞서 음수가 나와도 여기서 걸린다
   if (elapsed < MINUTE) return '방금';
 
   if (elapsed < HOUR) {
@@ -47,18 +34,8 @@ export const formatRelativeTime = (iso?: string | null): string | null => {
 };
 
 /**
- * 남은 초를 "약 5시간 후"처럼 바꿉니다. 위 함수는 과거 전용이라 따로 둡니다.
- *
- * 시각이 아니라 **초를 받는** 이유 — 서버가 남은 시간을 재서 보내면 기기 시계가
- * 틀어져 있어도 값이 맞습니다. 시각을 받아 클라이언트가 빼면 시계 오차가
- * 그대로 오차가 됩니다.
- *
- * 분은 **올림**입니다. 오차가 최대 1분이라 넉넉하게 말하는 편이 낫습니다 —
- * 90초 남았는데 "1분 후"라고 하면 와서 또 막힙니다.
- *
- * 시간은 **반올림**하고 "약"을 붙입니다. 올림을 쓰면 1시간 1초가 "2시간 후"가 되어
- * 한 시간을 더 기다리게 됩니다. 반올림은 몇 분 이르게 안내할 수 있지만, 그때는
- * 다시 눌러도 "잠시 후"라는 정확한 안내를 받습니다.
+ * 남은 초 → "약 5시간 후".
+ * 분은 올림(일찍 와서 또 막히지 않게), 시간은 반올림(한 시간 더 기다리게 하지 않게).
  */
 export const formatTimeUntil = (seconds: number): string => {
   if (!Number.isFinite(seconds) || seconds <= MINUTE) return '잠시 후';
@@ -66,6 +43,5 @@ export const formatTimeUntil = (seconds: number): string => {
   const minutes = Math.ceil(seconds / MINUTE);
   if (minutes < 60) return `${minutes}분 후`;
 
-  // 59분 59초가 "60분 후"로 나오지 않도록, 올림 결과가 60분이면 시간으로 넘깁니다.
   return `약 ${Math.max(1, Math.round(seconds / HOUR))}시간 후`;
 };

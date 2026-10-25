@@ -1,7 +1,5 @@
 import { cn } from '@/utils';
 
-// 부모(Home)가 데이터를 패칭해서 내려주도록 Props 정의
-// 통계 숫자는 포맷팅(예: "1,234")되어 넘어올 수 있으므로 string도 허용
 interface HomeStatsProps {
   reportCount?: number; // 값이 없을 수 있으니 ?
   battleTagCount?: number;
@@ -13,8 +11,7 @@ export const HomeStats = ({
   battleTagCount,
   isLoading,
 }: HomeStatsProps) => {
-  // 숫자 자리에 무엇을 넣을지 한 곳에서 정함
-  // 실패 시 0을 보여주면 신고가 없는 상태로 읽히므로, 숫자를 내보내지 않음
+  // 실패 시 0을 보여주면 신고가 없는 걸로 읽혀서 숫자를 비운다
 
   const show = (value?: number) => {
     if (value !== undefined) return value;
@@ -23,9 +20,7 @@ export const HomeStats = ({
   };
 
   return (
-    // HomeMenu와 통일감 있는 Grid 레이아웃 적용
     <div className="mt-8 grid grid-cols-2 gap-3">
-      {/* 누적 신고 (메인 지표) */}
       <div
         className={cn(
           'flex h-24 flex-col items-center justify-center rounded-lg',
@@ -40,7 +35,6 @@ export const HomeStats = ({
         </span>
       </div>
 
-      {/* 누적 배틀태그 (서브 지표) */}
       <div
         className={cn(
           'flex h-24 flex-col items-center justify-center rounded-lg',
@@ -54,7 +48,6 @@ export const HomeStats = ({
           {show(battleTagCount)}
         </span>
       </div>
-      {/* 실패 시 출력할 메시지 */}
       {!isLoading && reportCount === undefined && (
         <p className="text-danger col-span-2 text-center text-[12px]">
           통계를 불러오지 못했습니다.

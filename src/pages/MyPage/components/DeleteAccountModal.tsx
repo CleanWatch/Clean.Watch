@@ -1,5 +1,3 @@
-/* src/pages/MyPage/components/DeleteAccountModal.tsx */
-
 import { useId, useState } from 'react';
 import { cn } from '@/utils';
 
@@ -24,8 +22,7 @@ export const DeleteAccountModal = ({
 }: DeleteAccountModalProps) => {
   const inputId = useId();
 
-  // 입력값 초기화는 effect가 아니라 부모의 key로 처리합니다.
-  // 닫을 때 key가 바뀌어 컴포넌트가 리마운트되므로 typed가 자연히 비워집니다.
+  // 입력값은 부모가 key로 리마운트해서 비운다
   const [typed, setTyped] = useState('');
 
   if (!isOpen) return null;
