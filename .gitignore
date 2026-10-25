@@ -35,3 +35,6 @@ dist-ssr
 .env.*
 !.env.example
 .vercel
+
+# Claude Code (개인 설정은 공유하지 않음)
+.claude/settings.local.json
