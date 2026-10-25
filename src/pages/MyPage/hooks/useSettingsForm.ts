@@ -59,7 +59,7 @@ export const useSettingsForm = ({
     let hasError = false;
 
     // 형식 검사가 먼저. 틀린 값으로 중복 검사 요청을 보낼 이유가 없다.
-    // 안내일 뿐 강제는 아니다 (규칙은 role·uid·createdAt만 막는다).
+    // 서버도 같은 검사를 하므로 여기는 빠른 안내다.
     if (isUsernameChanged) {
       const message = getFieldError(
         username.trim(),

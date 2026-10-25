@@ -41,17 +41,11 @@ service cloud.firestore {
     //             일반 유저 경로에서는 호출되지 않도록 배치했습니다.
     //
     // [전제 조건] 이 함수가 안전하려면 users 문서의 role을 클라이언트가
-    //             수정할 수 없어야 합니다. 아래 users 규칙에서 막고 있습니다.
+    //             수정할 수 없어야 합니다. 아래 users 규칙에서 쓰기를 막고 있습니다.
     //             그 방어가 뚫리면 권한 체계 전체가 무너집니다.
     function isAdmin() {
       return isSignedIn() &&
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
-    }
-
-    // update 요청에서 실제로 값이 바뀐 필드 목록
-    // (create 시에는 resource가 없으므로 update에서만 사용할 것)
-    function changedKeys() {
-      return request.resource.data.diff(resource.data).affectedKeys();
     }
 
     // ------------------------------------------------------------------
@@ -67,49 +61,25 @@ service cloud.firestore {
     // users — 회원 정보
     //
     // 읽기: src/hooks/queries/useUser.ts:12       (본인 문서 조회)
-    //       src/hooks/queries/useMyPageQueries.ts:76 (프로필 수정 전 조회)
-    // 쓰기: src/hooks/queries/useAuthMutations.ts:69 (가입 시 문서 생성)
-    //       src/hooks/queries/useMyPageQueries.ts:77 (프로필 수정)
+    // 쓰기: 없음 — api/users/create.ts, api/users/update.ts,
+    //       api/account/delete.ts, api/auth/discord/callback.ts가 처리
     // ------------------------------------------------------------------
     match /users/{userId} {
 
       // 본인 문서만 읽을 수 있습니다.
       //
-      // 예전에는 `if true`였습니다. 닉네임 중복 검사가 로그인 이전에 실행돼서
-      // 인증 조건을 걸면 가입이 막혔기 때문입니다. 그 대가로 users 문서 전체가
-      // 공개됐고, email 필드가 들어 있어 getDocs(collection(db,'users')) 한 번이면
-      // 전체 회원 이메일이 털렸습니다. 규칙은 필드 단위 읽기 제한을 지원하지 않아
-      // 여기서는 가릴 방법이 없었습니다.
-      //
-      // 중복 검사를 api/users/check-duplicate.ts로 옮겨 해결했습니다. 서버는
-      // 조회할 필드를 화이트리스트로 제한하고 boolean만 돌려주므로, email이나
-      // role의 존재 여부를 캐물을 수 없습니다.
+      // 규칙은 필드 단위 읽기 제한을 지원하지 않습니다. 문서에 email이 있어
+      // 남에게 열면 전체 회원 이메일이 노출되므로 닉네임·배틀태그 중복 검사는
+      // api/users/check-duplicate.ts가 boolean만 돌려주는 식으로 맡습니다.
       allow read: if isOwner(userId);
 
-      // 생성: 본인 UID의 문서만, 그리고 role은 반드시 'user'
+      // 쓰기 전면 차단.
       //
-      // role을 검사하지 않으면 가입 시점에 { role: 'admin' }으로 문서를 만들어
-      // 스스로 관리자가 될 수 있습니다.
-      //
-      // 참고: Discord 로그인은 api/auth/discord/callback.ts 에서 Admin SDK로
-      //       문서를 만들며, Admin SDK는 이 규칙을 우회하므로 영향받지 않습니다.
-      allow create: if isOwner(userId)
-                    && request.resource.data.role == 'user';
-
-      // 수정: 본인 문서만, 그리고 권한·식별자·가입일은 건드릴 수 없음
-      //
-      // 이 제한이 없으면 콘솔에서
-      //   updateDoc(doc(db,'users',내UID), { role: 'admin' })
-      // 한 줄로 관리자 권한을 획득할 수 있습니다. isAdmin()이 이 필드를
-      // 신뢰하므로 여기가 뚫리면 reports 읽기·삭제까지 전부 열립니다.
-      allow update: if isOwner(userId)
-                    && !changedKeys().hasAny(['role', 'uid', 'createdAt']);
-
-      // 삭제: 클라이언트에서는 차단합니다.
-      // 회원 탈퇴는 api/account/delete.ts가 Admin SDK로 처리하며,
-      // Admin SDK는 이 규칙을 우회하므로 여기를 열어줄 필요가 없습니다.
-      // 열어두면 세션만 있으면 아무 문서나 지울 수 있게 됩니다.
-      allow delete: if false;
+      // isAdmin()이 role 필드를 신뢰하므로 클라이언트가 users를 쓸 수 있으면
+      // 스스로 관리자가 될 수 있습니다. 필드 차단(role·uid·createdAt)만으로는
+      // 닉네임·배틀태그 중복 검사를 건너뛰는 것도 막지 못해, 가입 문서 생성과
+      // 프로필 수정은 서버가 트랜잭션으로 검사한 뒤 Admin SDK로 씁니다.
+      allow write: if false;
     }
 
     // ------------------------------------------------------------------

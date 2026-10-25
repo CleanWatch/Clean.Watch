@@ -1,14 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
-import {
-  collection,
-  doc,
-  getDocs,
-  query,
-  updateDoc,
-  where,
-} from 'firebase/firestore';
+import axios from 'axios';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
 import { auth, db } from '@/firebase/firebase';
 import { api } from '@/api';
@@ -62,8 +56,7 @@ export const useUpdateProfileMutation = () => {
     }) => {
       if (!uid) throw new Error('인증 정보가 없습니다.');
 
-      const userRef = doc(db, 'users', uid);
-      await updateDoc(userRef, {
+      await api.post('/api/users/update', {
         username: data.username,
         battletag: data.battletag || null,
       });
@@ -77,7 +70,17 @@ export const useUpdateProfileMutation = () => {
     },
     onError: (error) => {
       console.error('프로필 업데이트 에러:', error);
-      toast.error('프로필 변경에 실패했습니다');
+      // 검사 뒤 그새 누가 가져간 경우
+      const code = axios.isAxiosError(error)
+        ? (error.response?.data as { error?: string } | undefined)?.error
+        : undefined;
+      if (code === 'USERNAME_TAKEN') {
+        toast.error('이미 사용 중인 닉네임입니다');
+      } else if (code === 'BATTLETAG_TAKEN') {
+        toast.error('이미 연동된 배틀태그입니다');
+      } else {
+        toast.error('프로필 변경에 실패했습니다');
+      }
     },
   });
 };
