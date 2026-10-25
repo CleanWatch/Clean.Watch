@@ -1,8 +1,10 @@
-import { PageHeader } from '@/components';
+import { ErrorAction, ErrorState, PageHeader } from '@/components';
+import { useAuthStore } from '@/store';
 import { BATTLETAG_PLACEHOLDER, FIELD, cn } from '@/utils';
 import { useReport } from './hooks';
 
 export const Report = () => {
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const {
     battleTag,
     setBattleTag,
@@ -15,6 +17,25 @@ export const Report = () => {
     submitReport,
     isSubmitting,
   } = useReport();
+
+  // 훅은 위에서 다 불렀다. 비로그인이면 서버가 401을 주지만 폼을 다 쓴 뒤에야 알게 된다.
+  if (!isLoggedIn) {
+    return (
+      <ErrorState
+        label="로그인"
+        title="로그인이 필요한 페이지입니다"
+        description="신고는 로그인 후 접수할 수 있습니다."
+        actions={
+          <>
+            <ErrorAction to="/login">로그인하기</ErrorAction>
+            <ErrorAction to="/" variant="secondary">
+              홈으로
+            </ErrorAction>
+          </>
+        }
+      />
+    );
+  }
 
   return (
     <div className="mx-auto w-full max-w-300 grow px-5 sm:px-10">
