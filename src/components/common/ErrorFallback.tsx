@@ -28,7 +28,7 @@ export function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
       }
     >
       {detail && (
-        <div className="border-border-main bg-bg-card mt-3 w-full max-w-85 rounded-lg border p-3 text-left">
+        <div className="border-border-main bg-bg-card mt-6 w-full max-w-85 rounded-lg border p-3 text-left">
           <p className="text-text-muted mb-1 text-[10px] font-bold tracking-[0.08em]">
             DEV ONLY
           </p>

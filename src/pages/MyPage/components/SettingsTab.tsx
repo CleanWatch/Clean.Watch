@@ -21,9 +21,7 @@ export const SettingsTab = ({
 
   if (isLoading || !profile) {
     return (
-      <div className="text-text-muted py-20 text-center">
-        설정 정보를 불러오는 중...
-      </div>
+      <div className="text-text-muted py-12">설정 정보를 불러오는 중...</div>
     );
   }
 
@@ -35,7 +33,7 @@ export const SettingsTab = ({
       />
 
       {/* 저장 버튼과 붙어 있으면 오조작하기 쉬워 선으로 떼어 둔다 */}
-      <div className="border-border-main mx-auto mt-10 max-w-112.5 border-t pt-6">
+      <div className="border-border-main mt-10 max-w-110 border-t pt-6">
         <p className="text-danger mb-1.5 text-sm font-bold">회원 탈퇴</p>
         <p className="text-text-muted mb-4 text-xs leading-relaxed">
           계정과 프로필이 삭제되며 되돌릴 수 없습니다. 작성하신 신고는 익명으로
@@ -45,8 +43,8 @@ export const SettingsTab = ({
           type="button"
           onClick={() => setIsDeleteOpen(true)}
           className={cn(
-            'text-danger border-danger/30 bg-danger/10 rounded-lg border px-5 py-2.5 text-sm font-bold transition-all',
-            'hover:bg-danger hover:text-white',
+            'text-danger border-danger/30 bg-danger/10 inline-flex h-11 items-center rounded-lg border px-5 text-sm font-bold transition-all',
+            'hover:bg-danger hover:text-bg-main',
           )}
         >
           회원 탈퇴
@@ -105,10 +103,7 @@ const SettingsForm = ({
   });
 
   return (
-    <form
-      onSubmit={handleSave}
-      className="mx-auto flex max-w-112.5 flex-col gap-5"
-    >
+    <form onSubmit={handleSave} className="flex max-w-110 flex-col gap-5">
       <InputGroup
         label="유저네임"
         value={username}

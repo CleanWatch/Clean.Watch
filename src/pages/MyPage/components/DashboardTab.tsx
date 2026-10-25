@@ -11,11 +11,7 @@ export const DashboardTab = ({ onNavigateSettings }: Props) => {
   const { data: profile, isLoading, isError, refetch } = useUser();
 
   if (isLoading)
-    return (
-      <div className="text-text-muted py-20 text-center">
-        프로필 불러오는 중...
-      </div>
-    );
+    return <div className="text-text-muted py-12">프로필 불러오는 중...</div>;
 
   if (isError || !profile)
     return (
@@ -24,7 +20,7 @@ export const DashboardTab = ({ onNavigateSettings }: Props) => {
         <button
           type="button"
           onClick={() => refetch()}
-          className="border-border-main text-text-muted hover:border-primary hover:text-primary rounded-lg border px-4 py-2 text-[13px] font-bold transition-colors"
+          className="border-border-strong text-text-muted hover:border-primary hover:text-primary inline-flex h-11 items-center rounded-lg border px-4 text-[13px] font-bold transition-colors"
         >
           다시 시도
         </button>
@@ -33,7 +29,7 @@ export const DashboardTab = ({ onNavigateSettings }: Props) => {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="border-border-main flex items-center gap-6 border-b pb-8">
+      <div className="flex items-center gap-5 pb-2 sm:gap-6">
         <Avatar
           photoUrl={profile.photoUrl}
           username={profile.username}
@@ -41,7 +37,7 @@ export const DashboardTab = ({ onNavigateSettings }: Props) => {
           className="border-primary h-20 w-20 border-2 text-2xl shadow-lg"
         />
         <div>
-          <h2 className="text-text-main text-2xl font-black">
+          <h2 className="text-text-main text-2xl font-extrabold tracking-tight">
             {profile.username}
           </h2>
           <p className="text-text-muted text-sm">
@@ -53,7 +49,7 @@ export const DashboardTab = ({ onNavigateSettings }: Props) => {
         </div>
       </div>
 
-      <div className="border-border-main bg-bg-main flex items-center justify-between rounded-xl border px-5 py-4">
+      <div className="border-border-main flex flex-wrap items-center justify-between gap-3 border-y py-5">
         <span className="text-text-muted font-bold">블리자드 연동 계정</span>
         {profile.battletag ? (
           <div className="flex items-center gap-3">

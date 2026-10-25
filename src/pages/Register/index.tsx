@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { Turnstile } from 'react-turnstile';
 import { BATTLETAG_EXAMPLE, cn } from '@/utils';
 import { useRegisterForm } from './hooks';
-import { InputGroup } from '@/components';
+import { InputGroup, PageHeader } from '@/components';
 import { TURNSTILE_SITE_KEY } from '@/constants';
 
 export const Register = () => {
@@ -22,12 +22,13 @@ export const Register = () => {
   } = useRegisterForm();
 
   return (
-    <div className="flex flex-1 items-center justify-center p-4 sm:p-5">
-      <div className="border-border-main bg-bg-card text-text-main w-full max-w-105 rounded-2xl border p-6 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] sm:p-10">
-        <h1 className="mb-8 text-center text-[28px] font-extrabold tracking-tight">
-          회원가입
-        </h1>
+    <div className="mx-auto w-full max-w-300 grow px-5 sm:px-10">
+      <PageHeader
+        title="회원가입"
+        description="가입하면 신고를 등록하고, 내가 접수한 신고 내역을 확인할 수 있습니다."
+      />
 
+      <div className="text-text-main max-w-110 pb-16 sm:pb-24">
         <form onSubmit={handleSubmit} noValidate>
           <InputGroup
             label="닉네임"
@@ -97,7 +98,7 @@ export const Register = () => {
             </span>
           </label>
 
-          <div className="mt-4 mb-5 flex justify-center">
+          <div className="mt-4 mb-5 flex">
             {/* 토큰이 1회용이라 거절되면 key를 바꿔 새로 받는다 */}
             <Turnstile
               key={captchaKey}
@@ -120,7 +121,7 @@ export const Register = () => {
               !agreed
             }
             className={cn(
-              'bg-primary text-bg-main mt-2.5 w-full rounded-lg p-3.5 text-base font-bold shadow-[0_4px_12px_rgba(255,136,0,0.2)] transition-all duration-200',
+              'bg-primary text-bg-main mt-2.5 w-full rounded-lg p-3.5 text-base font-bold transition-all duration-200',
               'hover:bg-primary-hover active:-translate-y-px',
               'disabled:hover:bg-primary disabled:cursor-not-allowed disabled:opacity-50 active:disabled:translate-y-0',
             )}

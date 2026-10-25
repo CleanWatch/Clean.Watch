@@ -1,8 +1,7 @@
-import { FileText, ShieldCheck } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { FileText } from 'lucide-react';
 import { cn } from '@/utils';
 import { useAuthStore } from '@/store';
-import { ErrorState } from '@/components';
+import { ErrorState, PageHeader } from '@/components';
 import {
   useAdminReportsQuery,
   useDeleteReportMutation,
@@ -64,25 +63,10 @@ export const Admin = () => {
   }
 
   return (
-    <div className="flex w-full grow flex-col items-center px-4 py-10 sm:px-6">
-      <div className="w-full max-w-200">
-        <div className="border-border-main mb-8 flex items-center justify-between border-b pb-6">
-          <h1 className="text-text-main flex items-center gap-2.5 text-2xl font-black sm:text-3xl">
-            <ShieldCheck
-              className="text-primary"
-              size={26}
-              aria-hidden="true"
-            />
-            관리자 대시보드
-          </h1>
-          <Link
-            to="/"
-            className="border-border-main bg-bg-card text-text-main rounded-lg border px-4 py-2 text-sm font-bold transition-all hover:bg-white/5"
-          >
-            홈으로
-          </Link>
-        </div>
+    <div className="mx-auto w-full max-w-300 grow px-5 sm:px-10">
+      <PageHeader eyebrow="관리자" title="관리자 대시보드" />
 
+      <div className="max-w-200 pb-16 sm:pb-24">
         {isLoading ? (
           <div className="text-text-muted py-20 text-center text-lg font-bold">
             데이터를 불러오는 중...
@@ -102,13 +86,13 @@ export const Admin = () => {
             접수된 신고 내역이 없습니다.
           </div>
         ) : (
-          <div className="flex flex-col gap-4">
+          <div className="border-border-main border-b">
             {reports.map((report) => (
               <div
                 key={report.id}
-                className="border-border-main bg-bg-card flex flex-col gap-4 rounded-xl border p-6 shadow-lg transition-transform hover:shadow-xl"
+                className="border-border-main flex flex-col gap-4 border-t py-6"
               >
-                <div className="flex items-center justify-between border-b border-white/5 pb-3">
+                <div className="flex items-center justify-between gap-4">
                   <h3 className="text-primary text-xl font-black">
                     {report.battletag}
                   </h3>
@@ -124,7 +108,7 @@ export const Admin = () => {
                 </p>
 
                 {report.details && (
-                  <div className="border-text-muted mt-2 rounded-lg border-l-4 bg-black/20 p-4">
+                  <div className="border-border-strong bg-bg-card mt-2 rounded-lg border-l-4 p-4">
                     <span className="text-text-muted mb-2 flex items-center gap-1.5 text-xs font-bold">
                       <FileText
                         className="shrink-0"
@@ -156,8 +140,8 @@ export const Admin = () => {
                     }}
                     disabled={isDeleting}
                     className={cn(
-                      'border-danger/20 bg-danger/10 text-danger rounded-lg border px-6 py-2 text-sm font-bold transition-all',
-                      'hover:bg-danger hover:text-white',
+                      'border-danger/30 bg-danger/10 text-danger inline-flex h-11 items-center rounded-lg border px-6 text-sm font-bold transition-all',
+                      'hover:bg-danger hover:text-bg-main',
                       'disabled:cursor-not-allowed disabled:opacity-50',
                     )}
                   >

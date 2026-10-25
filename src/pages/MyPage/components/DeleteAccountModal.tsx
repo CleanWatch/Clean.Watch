@@ -90,7 +90,7 @@ export const DeleteAccountModal = ({
             className={cn(
               'flex-1 rounded-lg border py-3 font-bold transition-all',
               'text-danger border-danger/30 bg-danger/10',
-              'hover:bg-danger hover:text-white',
+              'hover:bg-danger hover:text-bg-main',
               'disabled:bg-danger/5 disabled:text-danger/40 disabled:hover:bg-danger/5 disabled:cursor-not-allowed disabled:border-transparent',
             )}
           >

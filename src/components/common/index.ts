@@ -5,3 +5,4 @@ export * from './ErrorFallback';
 export * from './ErrorState';
 export * from './LoadingSpinner';
 export * from './InputGroup';
+export * from './PageHeader';

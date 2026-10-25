@@ -10,8 +10,7 @@ const ROLE_LABEL: Record<PlayerRole, string> = {
   open: '자유 경쟁전',
 };
 
-const CARD =
-  'border-border-main bg-bg-card rounded-xl border overflow-hidden' as const;
+const CARD = 'border-border-main rounded-lg border overflow-hidden' as const;
 
 interface Props {
   onNavigateSettings: () => void;
@@ -19,7 +18,7 @@ interface Props {
 
 /** 아이콘 URL은 nullable이라 있을 때만 그린다. */
 const RankTile = ({ entry }: { entry: PlayerRankEntry }) => (
-  <div className="bg-bg-main flex flex-col items-center gap-2 rounded-xl px-3 py-5">
+  <div className="bg-bg-card flex flex-col items-center gap-2 rounded-lg px-3 py-5">
     <span className="text-text-muted flex items-center gap-1.5 text-xs">
       {entry.roleIcon && (
         <img src={entry.roleIcon} alt="" className="h-4 w-4 opacity-70" />
@@ -59,7 +58,7 @@ export const PlayerStatsPanel = ({ onNavigateSettings }: Props) => {
     <button
       type="button"
       onClick={onNavigateSettings}
-      className="bg-primary hover:bg-primary-hover text-bg-main rounded-lg px-4 py-2 text-[13px] font-bold transition-colors"
+      className="bg-primary hover:bg-primary-hover text-bg-main inline-flex h-11 items-center rounded-lg px-4 text-[13px] font-bold transition-colors"
     >
       프로필 설정으로
     </button>
@@ -103,7 +102,7 @@ export const PlayerStatsPanel = ({ onNavigateSettings }: Props) => {
             type="button"
             onClick={() => refetch()}
             disabled={isFetching}
-            className="border-border-main text-text-muted hover:border-primary hover:text-primary rounded-lg border px-4 py-2 text-[13px] font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+            className="border-border-strong text-text-muted hover:border-primary hover:text-primary inline-flex h-11 items-center rounded-lg border px-4 text-[13px] font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isFetching ? '불러오는 중...' : '다시 시도'}
           </button>
@@ -173,7 +172,7 @@ export const PlayerStatsPanel = ({ onNavigateSettings }: Props) => {
       ) : (
         // 실패가 아니라 경쟁전 기록만 없는 상태. 비공개 프로필은 PLAYER_NOT_FOUND로 따로 온다.
         <div className="p-4">
-          <div className="bg-bg-main rounded-lg px-4 py-5 text-center">
+          <div className="bg-bg-card rounded-lg px-4 py-5 text-center">
             <p className="text-text-muted text-sm">
               이번 시즌 경쟁전 기록이 없습니다.
             </p>

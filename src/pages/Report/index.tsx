@@ -1,5 +1,5 @@
-import { Flag } from 'lucide-react';
-import { BATTLETAG_PLACEHOLDER, cn } from '@/utils';
+import { PageHeader } from '@/components';
+import { BATTLETAG_PLACEHOLDER, FIELD, cn } from '@/utils';
 import { useReport } from './hooks';
 
 export const Report = () => {
@@ -17,20 +17,17 @@ export const Report = () => {
   } = useReport();
 
   return (
-    <div className="flex grow items-center justify-center p-5">
+    <div className="mx-auto w-full max-w-300 grow px-5 sm:px-10">
+      <PageHeader
+        title="핵 사용자 신고"
+        description="신고한 사람 수가 공개 신고 횟수로 집계됩니다. 같은 배틀태그는 24시간에 한 번 다시 신고할 수 있습니다."
+      />
+
       <form
         onSubmit={submitReport}
         noValidate // 브라우저 기본 말풍선 툴팁 끄기
-        className={cn(
-          'border-border-main bg-bg-card w-full max-w-112.5 rounded-2xl border shadow-2xl transition-all duration-300',
-          'p-8 sm:p-10',
-        )}
+        className="max-w-120 pb-16 sm:pb-24"
       >
-        <h1 className="text-text-main mb-8 flex items-center justify-center gap-2.5 text-[2rem] font-black tracking-tight">
-          <Flag className="text-danger shrink-0" size={28} aria-hidden="true" />
-          핵 사용자 신고
-        </h1>
-
         <div className="flex flex-col gap-5">
           <label htmlFor="report-battletag" className="sr-only">
             신고할 배틀태그
@@ -44,10 +41,7 @@ export const Report = () => {
               setBattleTag(e.target.value);
               setLocalError('');
             }}
-            className={cn(
-              'border-border-main bg-bg-main text-text-main w-full rounded-lg border p-4 text-[16px] transition-all duration-200 outline-none',
-              'placeholder:text-text-muted focus:border-primary focus:ring-primary focus:ring-1',
-            )}
+            className={cn(FIELD, 'p-4 text-[16px]')}
           />
 
           <select
@@ -57,8 +51,8 @@ export const Report = () => {
               setLocalError('');
             }}
             className={cn(
-              'border-border-main bg-bg-main text-text-main w-full appearance-none rounded-lg border p-4 text-[16px] transition-all duration-200 outline-none',
-              'focus:border-primary focus:ring-primary focus:ring-1',
+              FIELD,
+              'appearance-none p-4 text-[16px]',
               reason === '' ? 'text-text-muted' : 'text-text-main',
             )}
           >
@@ -79,10 +73,7 @@ export const Report = () => {
             placeholder="비인가 프로그램 사용 정황이나 발생 시간 등 세부사항을 적어주세요.(리플레이 코드 등)"
             value={details}
             onChange={(e) => setDetails(e.target.value)}
-            className={cn(
-              'border-border-main bg-bg-main text-text-main min-h-30 w-full resize-none rounded-lg border p-4 text-[16px] transition-all duration-200 outline-none',
-              'placeholder:text-text-muted focus:border-primary focus:ring-primary focus:ring-1',
-            )}
+            className={cn(FIELD, 'min-h-30 resize-none p-4 text-[16px]')}
           ></textarea>
 
           {localError && (
@@ -96,7 +87,7 @@ export const Report = () => {
             // 빈 칸만 잠근다. 형식 오류는 눌렀을 때 알린다 (타이핑 중 깜빡임 방지).
             disabled={isSubmitting || !battleTag.trim() || !reason}
             className={cn(
-              'mt-2 flex h-14 w-full items-center justify-center rounded-lg text-[16px] font-bold text-white transition-all duration-200',
+              'text-bg-main mt-2 flex h-14 w-full items-center justify-center rounded-lg text-[16px] font-bold transition-all duration-200',
               'bg-danger hover:bg-danger-hover active:scale-[0.98]',
               'disabled:cursor-not-allowed disabled:opacity-50',
             )}

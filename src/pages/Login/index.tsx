@@ -1,10 +1,10 @@
-import { cn } from '@/utils';
+import { FIELD, cn } from '@/utils';
 import { Link } from 'react-router-dom';
 import { Turnstile } from 'react-turnstile';
 import { handleDiscordLogin } from '@/hooks';
 import { useLoginForm, useDiscordCallback } from './hooks';
 import { PasswordResetModal } from './components';
-import { LoadingSpinner } from '@/components';
+import { LoadingSpinner, PageHeader } from '@/components';
 import { TURNSTILE_SITE_KEY } from '@/constants';
 
 export const Login = () => {
@@ -31,18 +31,13 @@ export const Login = () => {
   if (isExchanging) return <LoadingSpinner />;
 
   return (
-    <div className="flex grow items-center justify-center p-4 sm:p-5">
-      <div
-        className={cn(
-          'w-full max-w-105 p-6 sm:p-10',
-          'border-border-main bg-bg-card rounded-2xl border shadow-[0_8px_32px_0_rgba(0,0,0,0.1)]',
-          'text-text-main',
-        )}
-      >
-        <h1 className="mb-8 text-center text-[28px] font-extrabold tracking-tight">
-          로그인
-        </h1>
+    <div className="mx-auto w-full max-w-300 grow px-5 sm:px-10">
+      <PageHeader
+        title="로그인"
+        description="이메일 또는 Discord 계정으로 로그인합니다."
+      />
 
+      <div className="text-text-main max-w-110 pb-16 sm:pb-24">
         <form onSubmit={onSubmit} noValidate>
           <div className="mb-5">
             <label
@@ -61,11 +56,7 @@ export const Login = () => {
               }}
               placeholder="example@email.com"
               disabled={isPending}
-              className={cn(
-                'text-text-main w-full rounded-lg px-4 py-3 text-[15px] transition-all outline-none',
-                'border-border-main bg-bg-main border',
-                'focus:border-primary focus:bg-bg-card focus:ring-primary focus:ring-2',
-              )}
+              className={FIELD}
             />
           </div>
 
@@ -86,11 +77,7 @@ export const Login = () => {
               }}
               placeholder="비밀번호 입력"
               disabled={isPending}
-              className={cn(
-                'text-text-main w-full rounded-lg px-4 py-3 text-[15px] transition-all outline-none',
-                'border-border-main bg-bg-main border',
-                'focus:border-primary focus:bg-bg-card focus:ring-primary focus:ring-2',
-              )}
+              className={FIELD}
             />
           </div>
 
@@ -158,11 +145,9 @@ export const Login = () => {
             }
             className={cn(
               'mt-1 w-full rounded-lg py-3.5 text-[16px] font-bold transition-all duration-200',
-              'bg-bg-main border-border-main text-text-muted border',
-              'hover:border-primary hover:text-primary hover:-translate-y-px',
+              'bg-primary hover:bg-primary-hover text-bg-main',
               'active:scale-[0.98]',
-              'disabled:transform-none disabled:cursor-not-allowed disabled:opacity-50',
-              'disabled:hover:border-border-main disabled:hover:text-text-muted',
+              'disabled:hover:bg-primary disabled:cursor-not-allowed disabled:opacity-50',
             )}
           >
             {isPending ? '로그인 중...' : '로그인'}
@@ -183,7 +168,7 @@ export const Login = () => {
           </button>
 
           {/* 디스코드 첫 로그인은 가입 폼을 거치지 않아 동의를 여기서 고지한다 */}
-          <p className="text-text-muted mb-6 text-center text-[12px] leading-relaxed">
+          <p className="text-text-muted mb-6 text-[12px] leading-relaxed">
             디스코드로 처음 로그인하면 계정이 생성되며,{' '}
             <Link
               to="/terms"
@@ -203,7 +188,7 @@ export const Login = () => {
             에 동의하는 것으로 간주합니다.
           </p>
 
-          <div className="text-text-muted mt-5 flex items-center justify-center gap-3 text-[13px] font-medium">
+          <div className="text-text-muted mt-5 flex items-center gap-3 text-[13px] font-medium">
             <Link
               to="/register"
               className="hover:text-primary transition-colors hover:underline"
