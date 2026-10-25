@@ -110,6 +110,8 @@ export const useRegisterForm = () => {
         finalErrors.email = '이미 가입된 이메일입니다.';
       } else if (err.message === 'already-in-use-username') {
         finalErrors.username = '이미 사용 중인 닉네임입니다.';
+      } else if (err.message === 'already-in-use-battletag') {
+        finalErrors.battletag = '이미 연동된 배틀태그입니다.';
       }
       setErrors(finalErrors);
     }

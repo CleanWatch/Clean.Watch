@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -11,13 +12,10 @@ import {
   signOut,
 } from 'firebase/auth';
 
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
-
-import { auth, db } from '@/firebase/firebase';
+import { auth } from '@/firebase/firebase';
 import { useAuthStore } from '@/store';
 import { checkDuplicate, api } from '@/api';
 import { withTimeout } from '@/utils';
-import type { UserRole } from '@/types';
 
 // Axios 에러와 Firebase 에러를 같이 받는다
 interface AuthError extends Error {
@@ -26,6 +24,17 @@ interface AuthError extends Error {
     status: number;
   };
 }
+
+// 폼이 이미 쓰는 에러 메시지로 맞춰, 서버 409도 같은 경로로 필드에 표시한다
+const toRegisterError = (error: unknown) => {
+  const code = axios.isAxiosError(error)
+    ? (error.response?.data as { error?: string } | undefined)?.error
+    : undefined;
+
+  if (code === 'USERNAME_TAKEN') return new Error('already-in-use-username');
+  if (code === 'BATTLETAG_TAKEN') return new Error('already-in-use-battletag');
+  return error;
+};
 
 export const useRegisterMutation = () => {
   return useMutation({
@@ -53,19 +62,15 @@ export const useRegisterMutation = () => {
         password,
       );
 
-      await Promise.all([
-        sendEmailVerification(user),
-        setDoc(doc(db, 'users', user.uid), {
-          uid: user.uid,
-          email,
-          username,
-          battletag: battletag || null,
-          // 이니셜 아바타는 Avatar 컴포넌트가 현재 닉네임으로 그린다
-          photoUrl: null,
-          role: 'user' as UserRole,
-          createdAt: serverTimestamp(),
-        }),
-      ]);
+      try {
+        await api.post('/api/users/create', { username, battletag });
+      } catch (error) {
+        // 프로필 없는 계정이 남으면 같은 이메일로 다시 가입할 수 없다
+        await user.delete().catch(() => undefined);
+        throw toRegisterError(error);
+      }
+
+      await sendEmailVerification(user);
 
       return user;
     },
@@ -75,7 +80,8 @@ export const useRegisterMutation = () => {
         toast.error('비정상적인 접근으로 의심되어 차단되었습니다');
       } else if (
         error.code !== 'auth/email-already-in-use' &&
-        error.message !== 'already-in-use-username'
+        error.message !== 'already-in-use-username' &&
+        error.message !== 'already-in-use-battletag'
       ) {
         toast.error('회원가입 중 오류가 발생했습니다', {
           description: '잠시 후 다시 시도해 주세요.',
