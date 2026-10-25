@@ -32,6 +32,12 @@ DB는 Firebase(Auth · Firestore · App Check)입니다.
   사용자 안내는 `alert()`가 아니라 `sonner` 토스트로 띄웁니다.
 - 공개 신고 횟수는 "몇 건"이 아니라 "몇 명"입니다. 재신고(24시간 롤링)는 카운트를 올리지 않고,
   삭제는 그 사람의 마지막 한 건일 때만 차감합니다. 신고 로직을 건드릴 때 이 불변식을 지키세요.
+- 화면은 카드(`rounded-2xl` 박스) 대신 `PageHeader`(왼쪽 정렬)와 가는 구분선으로 짭니다. 바탕 위 입력칸은
+  `src/utils/styles.ts`의 `FIELD`를 씁니다. 주황·빨강 단색 버튼의 글자는 흰색이 아니라 `text-bg-main`입니다
+  (흰색은 대비가 3:1 안팎이라 읽기 어렵습니다).
+- 로고·순위·통계 숫자는 `font-display`(Barlow Condensed)입니다. CSP가 외부 폰트를 막아 `@fontsource`로
+  번들하므로 Google Fonts 링크를 넣지 마세요.
+- `package-lock.json`은 npm 11 이상으로 갱신합니다. npm 10은 `libc` 필드를 지워 다른 플랫폼 설치에 영향을 줍니다.
 - 포맷: Prettier (작은따옴표, 세미콜론, 너비 80, Tailwind 클래스 정렬 플러그인).
 - 주석은 코드만 봐서는 알 수 없는 이유만, 한국어 메모체(`~다`)로 짧게 씁니다.
   변경 이력("예전에는~"), 코드를 다시 읽어주는 설명, 파일 경로 헤더, 주석 안 마크다운 강조는 쓰지 않습니다.
@@ -42,6 +48,8 @@ DB는 Firebase(Auth · Firestore · App Check)입니다.
 - `vercel.json`의 CSP 헤더에 붙은 `has: host = cleanwatch.cloud` 조건은 일부러 넣은 것입니다.
   지우면 `vercel dev` 로컬 화면이 하얘집니다. CSP 허용 목록을 늘릴 때는 `Report-Only`로 먼저 배포해야 하므로
   임의로 고치지 말고 사용자에게 확인하세요.
+- `firestore.rules`는 저장소 파일을 Firebase 콘솔에 붙여넣어야 반영됩니다(자동 배포가 아닙니다). 규칙을 바꾸는 PR에는
+  "코드 배포 확인 후 규칙 게시" 순서를 적으세요. 거꾸로 하면 구버전 화면의 쓰기가 `permission-denied`로 실패합니다.
 - **로컬도 프로덕션 Firebase를 씁니다.** 브라우저로 화면을 확인하다가 회원가입·신고 폼을 제출하면
   운영 DB에 실제 데이터가 생깁니다. 폼 제출은 사용자 확인 없이 하지 마세요.
 - `.env`에는 실제 비밀값(Admin SDK 개인 키, OAuth 시크릿)이 있습니다. 읽거나 출력하지 말고, 필요한 변수
