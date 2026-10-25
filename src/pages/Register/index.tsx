@@ -5,9 +5,7 @@ import { useRegisterForm } from './hooks';
 import { InputGroup } from '@/components';
 import { TURNSTILE_SITE_KEY } from '@/constants';
 
-// 메인 페이지 컴포넌트: Register
 export const Register = () => {
-  // 비즈니스 로직은 훅에 위임
   const {
     formData,
     errors,
@@ -67,8 +65,7 @@ export const Register = () => {
             warning={battletagWarning}
           />
 
-          {/* 동의는 캡챠 위에 둡니다. 캡챠를 통과한 뒤 체크를 안 했다고
-              막히면 토큰이 낭비되고 위젯을 다시 그려야 합니다. */}
+          {/* 캡챠보다 위에 둔다. 통과 후 동의 때문에 막히면 토큰이 낭비된다 */}
           <label className="mt-5 flex cursor-pointer items-start gap-2.5">
             <input
               type="checkbox"
@@ -101,8 +98,7 @@ export const Register = () => {
           </label>
 
           <div className="mt-4 mb-5 flex justify-center">
-            {/* key가 바뀌면 위젯이 새로 마운트되어 새 토큰을 받습니다.
-                Turnstile 토큰은 1회용이라 거절된 뒤 재시도하려면 필요합니다. */}
+            {/* 토큰이 1회용이라 거절되면 key를 바꿔 새로 받는다 */}
             <Turnstile
               key={captchaKey}
               sitekey={TURNSTILE_SITE_KEY}
@@ -113,9 +109,7 @@ export const Register = () => {
 
           <button
             type="submit"
-            // 필수 칸이 비어 있으면 잠급니다. 형식 오류는 눌렀을 때 문구로
-            // 알려주지만(타이핑 중 버튼이 깜빡이면 불편), 빈 칸은 "입력 중"이
-            // 아니라 "보낼 게 없음"입니다.
+            // 빈 칸만 잠근다. 형식 오류는 눌렀을 때 알린다 (타이핑 중 깜빡임 방지).
             disabled={
               isRegistering ||
               isChecking ||
@@ -131,8 +125,7 @@ export const Register = () => {
               'disabled:hover:bg-primary disabled:cursor-not-allowed disabled:opacity-50 active:disabled:translate-y-0',
             )}
           >
-            {/* 실존 확인은 상류를 거쳐 3~6초가 걸립니다. 문구가 안 바뀌면
-                멈춘 것처럼 보여 사용자가 계속 누릅니다. */}
+            {/* 실존 확인에 3~6초 걸려 문구로 진행 중임을 알린다 */}
             {isVerifying
               ? '배틀태그 확인 중...'
               : isRegistering || isChecking

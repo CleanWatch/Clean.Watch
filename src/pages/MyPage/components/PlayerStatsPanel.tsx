@@ -1,5 +1,3 @@
-/* src/pages/MyPage/components/PlayerStatsPanel.tsx */
-
 import type { ReactNode } from 'react';
 import { cn, getPlayerStatsError } from '@/utils';
 import { useMyPlayerSummary, useUser } from '@/hooks';
@@ -19,12 +17,7 @@ interface Props {
   onNavigateSettings: () => void;
 }
 
-/**
- * 티어 한 칸.
- *
- * 아이콘 URL은 전부 nullable입니다. src에 null을 넣으면 깨진 이미지가 뜨므로
- * 각각 값이 있을 때만 그립니다. 없어도 역할명과 티어 글자는 남습니다.
- */
+/** 아이콘 URL은 nullable이라 있을 때만 그린다. */
 const RankTile = ({ entry }: { entry: PlayerRankEntry }) => (
   <div className="bg-bg-main flex flex-col items-center gap-2 rounded-xl px-3 py-5">
     <span className="text-text-muted flex items-center gap-1.5 text-xs">
@@ -42,7 +35,7 @@ const RankTile = ({ entry }: { entry: PlayerRankEntry }) => (
   </div>
 );
 
-/** 문구 하나와 버튼 하나짜리 상태. 안내와 에러가 같은 껍데기를 씁니다. */
+/** 안내·에러 공용 상태 박스 */
 const Notice = ({
   message,
   children,
@@ -80,12 +73,7 @@ export const PlayerStatsPanel = ({ onNavigateSettings }: Props) => {
     );
   }
 
-  // 배틀태그가 없으면 화면에서 바로 안내합니다.
-  //
-  // 서버도 BATTLETAG_NOT_SET을 돌려주지만 그 코드는 여기 도달하지 않습니다.
-  // 훅이 enabled: false로 요청 자체를 막기 때문입니다(호출 한 번과 Firestore
-  // 읽기 한 번을 아끼려고 일부러 그렇게 뒀습니다). 서버 코드에만 의존하면
-  // 요청이 없으니 에러도 없고, 결국 아무것도 그리지 않게 됩니다.
+  // 훅이 요청을 막아서(enabled: false) 서버 코드가 오지 않는다. 여기서 바로 안내한다.
   if (!user?.battletag) {
     return (
       <Notice message="배틀태그를 등록하면 전적을 볼 수 있어요.">
@@ -109,8 +97,7 @@ export const PlayerStatsPanel = ({ onNavigateSettings }: Props) => {
       <Notice message={info?.message ?? '전적을 불러오지 못했습니다.'}>
         {info?.action === 'settings' && settingsButton}
 
-        {/* 갱신 버튼은 여기에만 둡니다. 정상 상태에서 눌러도 상류가 1시간
-            캐시라 같은 값이 와서, "갱신"이라 써놓고 안 바뀌면 거짓말이 됩니다. */}
+        {/* 갱신 버튼은 에러일 때만. 정상 상태에선 상류가 1시간 캐시라 눌러도 안 바뀐다 */}
         {info?.action === 'retry' && (
           <button
             type="button"
@@ -131,9 +118,7 @@ export const PlayerStatsPanel = ({ onNavigateSettings }: Props) => {
 
   return (
     <div className={CARD}>
-      {/* 배경에 profile.namecard를 깔 수도 있지만 쓰지 않습니다. 밝은 네임카드에서는
-          오버레이를 씌워도 오른쪽 글자가 묻히고, 오버레이를 진하게 하면 이미지가
-          안 보여 얻는 게 없습니다. 응답에는 남아 있으니 필요해지면 꺼내 쓰세요. */}
+      {/* namecard 배경은 밝은 카드에서 글자가 묻혀서 안 쓴다 */}
       <div className="border-border-main flex items-center gap-4 border-b p-5">
         {profile.avatar && (
           <img
@@ -148,9 +133,7 @@ export const PlayerStatsPanel = ({ onNavigateSettings }: Props) => {
             <span className="text-text-main truncate text-lg font-bold">
               {profile.username}
             </span>
-            {/* 아이콘 자체가 레벨을 나타내므로 숫자를 함께 쓰면 같은 말을
-                두 번 하는 셈입니다. 아이콘이 없을 때만 숫자로 대체합니다.
-                레벨은 title 속성으로 남겨 마우스를 올리면 확인됩니다. */}
+            {/* 아이콘이 곧 레벨이라 아이콘이 없을 때만 숫자를 쓴다 */}
             {profile.endorsementIcon ? (
               <img
                 src={profile.endorsementIcon}
@@ -181,20 +164,14 @@ export const PlayerStatsPanel = ({ onNavigateSettings }: Props) => {
       </div>
 
       {rank ? (
-        // 서버가 기록 없는 역할군을 이미 걸러서 보냅니다. 개수가 1~4개로
-        // 가변이라 칸 수를 고정하면 빈 칸이 생기거나 넘칩니다.
+        // 역할군 개수가 1~4개로 가변이라 auto-fit
         <div className="grid grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-3 p-5">
           {rank.entries.map((entry) => (
             <RankTile key={entry.role} entry={entry} />
           ))}
         </div>
       ) : (
-        // 실패가 아닙니다. 프로필은 멀쩡히 있고 경쟁전 기록만 없는 상태입니다.
-        //
-        // 비공개 프로필은 여기 오지 않습니다. 상류가 /summary 단계에서 404를 내서
-        // PLAYER_NOT_FOUND로 걸러집니다(실측 확인). 그래서 예전에 여기 있던
-        // "비공개 프로필입니다" 문구는 도달하지 않는 안내였습니다.
-        // 공개 설정 안내는 playerStatsErrors.ts의 PLAYER_NOT_FOUND로 옮겼습니다.
+        // 실패가 아니라 경쟁전 기록만 없는 상태. 비공개 프로필은 PLAYER_NOT_FOUND로 따로 온다.
         <div className="p-4">
           <div className="bg-bg-main rounded-lg px-4 py-5 text-center">
             <p className="text-text-muted text-sm">

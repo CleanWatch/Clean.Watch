@@ -1,5 +1,3 @@
-// src/pages/MyPage/components/SettingsTab.tsx
-
 import { useState } from 'react';
 import { BATTLETAG_EXAMPLE, cn } from '@/utils';
 import { useUser, useMyReportsQuery, useDeleteAccountMutation } from '@/hooks';
@@ -36,7 +34,7 @@ export const SettingsTab = ({
         onNavigateDashboard={onNavigateDashboard}
       />
 
-      {/* 위험 구역. 저장 버튼과 붙여두면 오조작 위험이 있어 선으로 구분합니다. */}
+      {/* 저장 버튼과 붙어 있으면 오조작하기 쉬워 선으로 떼어 둔다 */}
       <div className="border-border-main mx-auto mt-10 max-w-112.5 border-t pt-6">
         <p className="text-danger mb-1.5 text-sm font-bold">회원 탈퇴</p>
         <p className="text-text-muted mb-4 text-xs leading-relaxed">
@@ -55,8 +53,7 @@ export const SettingsTab = ({
         </button>
       </div>
 
-      {/* key가 바뀌면 리마운트되어 입력값이 초기화됩니다.
-          effect로 비우면 렌더 중 setState가 되어 연쇄 렌더를 유발합니다. */}
+      {/* key로 리마운트해 입력값을 비운다. effect로 비우면 연쇄 렌더가 생긴다 */}
       <DeleteAccountModal
         key={String(isDeleteOpen)}
         isOpen={isDeleteOpen}
@@ -87,7 +84,6 @@ const SettingsForm = ({
   initialProfile,
   onNavigateDashboard,
 }: SettingsFormProps) => {
-  // 💡 길고 복잡했던 상태 관리와 로직을 훅 하나로 깔끔하게 호출!
   const {
     username,
     battletag,
@@ -113,8 +109,6 @@ const SettingsForm = ({
       onSubmit={handleSave}
       className="mx-auto flex max-w-112.5 flex-col gap-5"
     >
-      {/* 라벨 연결(useId)과 aria-describedby·aria-invalid를 InputGroup이 처리합니다.
-          직접 쓰던 때는 그게 없어 스크린리더가 에러 문구를 읽어주지 못했습니다. */}
       <InputGroup
         label="유저네임"
         value={username}
@@ -140,12 +134,9 @@ const SettingsForm = ({
       <button
         type="submit"
         disabled={!hasChanges || isPending || isChecking || isVerifying}
-        // 예전에는 비활성이 bg-gray-400이라 어두운 배경에서 오히려 밝았습니다.
-        // 로그인 버튼에서 걷어낸 것과 같은 값입니다.
         className="bg-primary hover:bg-primary-hover mt-4 rounded-lg py-4 font-bold text-white transition-all disabled:cursor-not-allowed disabled:opacity-50"
       >
-        {/* 실존 확인이 상류를 거쳐 몇 초 걸립니다. 문구가 그대로면
-            멈춘 것처럼 보여 사용자가 계속 누릅니다. */}
+        {/* 실존 확인에 몇 초 걸려 문구로 진행 중임을 알린다 */}
         {isVerifying
           ? '배틀태그 확인 중...'
           : isPending || isChecking

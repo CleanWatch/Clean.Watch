@@ -1,4 +1,3 @@
-// src/pages/MyPage.tsx
 import { useState } from 'react';
 import { cn } from '@/utils';
 import { useAuthStore } from '@/store';
@@ -33,7 +32,6 @@ export const MyPage = () => {
   return (
     <div className="flex w-full grow justify-center px-4 py-10 sm:px-6">
       <div className="border-border-main bg-bg-card flex w-full max-w-212.5 flex-col overflow-hidden rounded-2xl border shadow-2xl">
-        {/* 상단 탭 (Tab) 내비게이션 */}
         <div className="border-border-main bg-bg-main/50 flex border-b">
           {(['dashboard', 'reports', 'settings'] as TabType[]).map((tab) => (
             <button
@@ -53,7 +51,6 @@ export const MyPage = () => {
           ))}
         </div>
 
-        {/* 탭 내용 렌더링 컨테이너 */}
         <div className="p-6 sm:p-10">
           {activeTab === 'dashboard' && (
             <DashboardTab onNavigateSettings={() => setActiveTab('settings')} />

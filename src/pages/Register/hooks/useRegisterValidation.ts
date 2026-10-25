@@ -1,5 +1,3 @@
-/* src/pages/Register/hooks/useRegisterValidation.ts */
-
 import {
   BATTLETAG_FORMAT_ERROR,
   getFieldError,
@@ -10,7 +8,6 @@ import {
 } from '@/utils';
 import { toast } from 'sonner';
 
-// 폼 데이터 타입 정의
 export interface RegisterFormData {
   username: string;
   email: string;
@@ -18,14 +15,12 @@ export interface RegisterFormData {
   battletag: string;
 }
 
-// 중복 검사 함수 타입 정의 (파라미터로 필드와 값을 받고, boolean을 반환하는 비동기 함수)
 type ValidateDuplicateFn = (params: {
   field: 'username' | 'battletag';
   value: string;
 }) => Promise<boolean>;
 
 export const checkFormatErrors = (formData: RegisterFormData) => {
-  // 1. 객체 할당 오타 수정
   const newErrors = {
     username: '',
     email: '',
@@ -60,11 +55,9 @@ export const checkFormatErrors = (formData: RegisterFormData) => {
 
   const hasError = Object.values(newErrors).some((msg) => msg !== '');
 
-  // 2. return 오타 수정 및 setErrors 제거
   return { newErrors, hasError };
 };
 
-// 3. async 앞 할당 연산자(=) 누락 수정
 export const checkDuplicateErrors = async (
   formData: RegisterFormData,
   validateDuplicate: ValidateDuplicateFn,
@@ -79,7 +72,7 @@ export const checkDuplicateErrors = async (
     });
 
     if (isNameDuplicated) {
-      newErrors.username = '이미 누군가 사용 중인 닉네임입니다 😭';
+      newErrors.username = '이미 사용 중인 닉네임입니다.';
       hasError = true;
     }
 
@@ -90,12 +83,11 @@ export const checkDuplicateErrors = async (
       });
 
       if (isTagDuplicated) {
-        newErrors.battletag = '이미 누군가 연동한 배틀태그입니다 😭';
+        newErrors.battletag = '이미 연동된 배틀태그입니다.';
         hasError = true;
       }
     }
 
-    // setErrors 대신 결과값 반환
     return { newErrors, hasError };
   } catch (error) {
     console.error('중복 검사 중 오류 발생:', error);

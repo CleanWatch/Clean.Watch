@@ -1,6 +1,4 @@
 import { FileText, ShieldCheck } from 'lucide-react';
-/* src/pages/Admin.tsx */
-
 import { Link } from 'react-router-dom';
 import { cn } from '@/utils';
 import { useAuthStore } from '@/store';
@@ -23,7 +21,6 @@ export const Admin = () => {
   const { mutate: deleteReport, isPending: isDeleting } =
     useDeleteReportMutation();
 
-  // 인증 가드
   if (!isLoggedIn) {
     return (
       <ErrorState
@@ -34,7 +31,7 @@ export const Admin = () => {
     );
   }
 
-  // 권한 조회가 끝나기 전에 판정하면 실제 관리자도 거부 화면을 봅니다.
+  // 조회 전에 판정하면 관리자도 거부 화면을 본다
   if (isUserLoading) {
     return (
       <div className="text-text-muted flex grow items-center justify-center">
@@ -43,8 +40,7 @@ export const Admin = () => {
     );
   }
 
-  // 조회 실패를 "권한 없음"으로 표시하면 관리자가 권한을 잃은 줄 오해합니다.
-  // 네트워크 문제와 실제 권한 부족은 반드시 구분해야 합니다.
+  // 네트워크 실패를 "권한 없음"으로 보여주면 안 된다
   if (isUserError) {
     return (
       <ErrorState
@@ -56,7 +52,7 @@ export const Admin = () => {
     );
   }
 
-  // 권한 가드. 로그인 여부는 따로 알려주지 않아 비로그인과 같은 문구를 씁니다.
+  // 비로그인과 같은 문구를 쓴다
   if (user?.role !== 'admin') {
     return (
       <ErrorState
@@ -92,8 +88,7 @@ export const Admin = () => {
             데이터를 불러오는 중...
           </div>
         ) : isError ? (
-          /* 조회 실패를 "내역 없음"으로 표시하면 DB가 빈 것으로 오인하게 됩니다.
-             관리자 권한이 없거나 Firestore 규칙에 막힌 경우가 여기로 옵니다. */
+          /* 실패를 "내역 없음"으로 보여주면 DB가 빈 줄 안다 */
           <div className="py-20 text-center">
             <p className="text-danger mb-2 font-bold">
               신고 내역을 불러오지 못했습니다.
@@ -118,7 +113,6 @@ export const Admin = () => {
                     {report.battletag}
                   </h3>
                   <span className="text-text-muted text-sm">
-                    {/* Firestore Timestamp 객체를 JS Date로 변환 후 렌더링 */}
                     {report.createdAt?.toDate?.()?.toLocaleString('ko-KR') ||
                       '날짜 미상'}
                   </span>

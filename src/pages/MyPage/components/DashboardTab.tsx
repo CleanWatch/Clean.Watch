@@ -1,6 +1,4 @@
 import { CircleCheck } from 'lucide-react';
-/* src/pages/MyPage/components/DashboardTab.tsx */
-
 import { useUser } from '@/hooks';
 import { Avatar } from '@/components';
 import { PlayerStatsPanel } from './PlayerStatsPanel';
@@ -19,9 +17,6 @@ export const DashboardTab = ({ onNavigateSettings }: Props) => {
       </div>
     );
 
-  // 예전에는 isError를 받지 않아, 조회가 실패해도 로딩도 에러도 아닌 상태로
-  // 화면을 그렸습니다. 이름과 가입일 자리가 빈 채로요. 실패했으면 실패했다고
-  // 말하는 편이 빈 화면보다 낫습니다.
   if (isError || !profile)
     return (
       <div className="flex flex-col items-center gap-4 py-20 text-center">
@@ -39,9 +34,6 @@ export const DashboardTab = ({ onNavigateSettings }: Props) => {
   return (
     <div className="flex flex-col gap-6">
       <div className="border-border-main flex items-center gap-6 border-b pb-8">
-        {/* 이니셜은 저장하지 않고 여기서 계산합니다. 예전에는 가입 시점의
-            닉네임이 박힌 이미지 URL을 저장해서, 닉네임을 바꿔도 옛 이름이
-            계속 보였습니다. 디스코드 프로필 사진은 그대로 씁니다. */}
         <Avatar
           photoUrl={profile.photoUrl}
           username={profile.username}
@@ -53,7 +45,6 @@ export const DashboardTab = ({ onNavigateSettings }: Props) => {
             {profile.username}
           </h2>
           <p className="text-text-muted text-sm">
-            {/* createdAt은 ISO 문자열이므로 Date 객체로 감싸서 변환 */}
             가입일:{' '}
             {profile.createdAt
               ? new Date(profile.createdAt).toLocaleDateString()
@@ -62,7 +53,6 @@ export const DashboardTab = ({ onNavigateSettings }: Props) => {
         </div>
       </div>
 
-      {/* 연동 배너 */}
       <div className="border-border-main bg-bg-main flex items-center justify-between rounded-xl border px-5 py-4">
         <span className="text-text-muted font-bold">블리자드 연동 계정</span>
         {profile.battletag ? (
@@ -78,8 +68,7 @@ export const DashboardTab = ({ onNavigateSettings }: Props) => {
         )}
       </div>
 
-      {/* 배틀태그가 없어도 그립니다. "등록하면 볼 수 있어요" 안내를 패널이
-          담당하고, 훅의 enabled가 네트워크 호출 자체를 막습니다. */}
+      {/* 배틀태그가 없어도 그린다. 안내는 패널이 하고 요청은 훅이 막는다 */}
       <PlayerStatsPanel onNavigateSettings={onNavigateSettings} />
     </div>
   );

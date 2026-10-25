@@ -10,7 +10,6 @@ interface SearchFormProps {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   executeSearch: (e: SyntheticEvent<HTMLFormElement>) => void;
-  /** 제출을 막았을 때 이전 결과를 내립니다. */
   clearResult: () => void;
   isSearching?: boolean;
 }
@@ -22,17 +21,15 @@ export const SearchForm = ({
   clearResult,
   isSearching = false,
 }: SearchFormProps) => {
-  // 폼 내부 UI 전용 에러 상태 관리
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // 수문장 역할: 폼 제출 시 유효성을 먼저 검사하고 통과할 때만 부모의 executeSearch 호출
+  // 형식 검사를 통과할 때만 부모의 executeSearch를 부른다
   const handleSubmit = (e: SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault(); // 기본 폼 제출(새로고침) 방지
 
     const query = searchQuery.trim();
 
-    // 막을 때는 이전 결과도 같이 내립니다. 여기서 return하면 executeSearch가
-    // 호출되지 않아, 내리지 않으면 새 에러 밑에 다른 배틀태그의 결과가 남습니다.
+    // 여기서 막으면 executeSearch가 안 불리니 이전 결과도 직접 내린다
     if (!query) {
       setErrorMessage('배틀태그를 입력해주세요.');
       clearResult();
@@ -45,14 +42,12 @@ export const SearchForm = ({
       return;
     }
 
-    // 검증을 무사히 통과했다면 에러를 초기화하고 부모 로직(API 호출 등) 실행
     setErrorMessage(null);
     executeSearch(e);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
-    // 사용자가 다시 타이핑을 시작하면 기존 에러 메시지를 지워주는 UX 디테일
     if (errorMessage) {
       setErrorMessage(null);
     }
@@ -61,9 +56,7 @@ export const SearchForm = ({
   return (
     <form onSubmit={handleSubmit} className="mx-auto w-full">
       <div className="flex items-center gap-3">
-        {/* 검색 인풋창 */}
-        {/* placeholder는 라벨을 대신하지 못합니다. 입력을 시작하면 사라지고,
-            스크린리더가 라벨로 읽어준다는 보장도 없습니다. */}
+        {/* placeholder는 라벨을 대신하지 못해 sr-only 라벨을 둔다 */}
         <label htmlFor="battletag-search" className="sr-only">
           배틀태그 검색
         </label>
@@ -76,16 +69,12 @@ export const SearchForm = ({
           maxLength={20}
           disabled={isSearching}
           className={cn(
-            // min-w-0 이 없으면 좁은 화면에서 검색 버튼이 카드 밖으로 밀려 나갑니다.
-            // flex 아이템의 min-width 기본값이 auto라, input은 size 속성(기본 20자)이
-            // 정하는 폭 아래로 줄지 않습니다. flex-1을 줘도 그 아래로는 안 줄어들어
-            // 남는 자리가 모자라면 옆의 버튼이 대신 밀립니다.
+            // min-w-0: flex 아이템 기본 min-width가 auto라 없으면 좁은 화면에서 버튼이 밀려난다
             'h-14 min-w-0 flex-1 rounded-lg px-5 text-[17px] transition-all duration-200 outline-none',
             'border-border-main bg-bg-main text-text-main border',
             'placeholder:text-text-muted',
             'focus:border-primary focus:bg-bg-card focus:ring-primary focus:ring-2',
             'disabled:cursor-not-allowed disabled:opacity-50',
-            // 에러가 있을 경우 테두리를 빨간색으로 변경하여 시각적 피드백 제공
             errorMessage &&
               'border-danger focus:border-danger focus:ring-danger',
           )}
@@ -95,8 +84,7 @@ export const SearchForm = ({
           type="submit"
           disabled={isSearching}
           className={cn(
-            // 좁은 화면에서는 좌우 여백을 줄여 그만큼을 입력칸에 넘깁니다.
-            // 이 버튼이 85px을 가져가면 360px 화면에서 예시 문구가 아슬아슬해집니다.
+            // 좁은 화면에선 버튼 여백을 줄여 입력칸에 넘긴다
             'h-14 rounded-lg px-5 text-[17px] font-bold whitespace-nowrap transition-all duration-200 sm:px-7',
             'bg-primary hover:bg-primary-hover text-white active:scale-[0.96]',
             'disabled:transform-none disabled:cursor-not-allowed disabled:opacity-50',
@@ -106,7 +94,6 @@ export const SearchForm = ({
         </button>
       </div>
 
-      {/* 에러 메시지 렌더링 영역 */}
       {errorMessage && (
         <p className="text-danger mt-2 pl-1 text-sm font-medium">
           {errorMessage}

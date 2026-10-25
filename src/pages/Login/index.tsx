@@ -1,5 +1,3 @@
-/* src/pages/Login/index.tsx */
-
 import { cn } from '@/utils';
 import { Link } from 'react-router-dom';
 import { Turnstile } from 'react-turnstile';
@@ -133,8 +131,7 @@ export const Login = () => {
 
           {needsCaptcha && (
             <div className="mb-4 flex min-h-16.25 justify-center">
-              {/* key가 바뀌면 위젯이 새로 마운트되어 새 토큰을 받습니다.
-                  Turnstile 토큰은 1회용이라 로그인 시도마다 새로 필요합니다. */}
+              {/* 토큰이 1회용이라 시도마다 key를 바꿔 새로 받는다 */}
               <Turnstile
                 key={uiState.captchaKey}
                 sitekey={TURNSTILE_SITE_KEY}
@@ -152,9 +149,7 @@ export const Login = () => {
 
           <button
             type="submit"
-            // 필수 칸이 비어 있으면 잠급니다. 형식 오류는 눌렀을 때 문구로
-            // 알려주지만(타이핑 중 버튼이 깜빡이면 불편), 빈 칸은 "입력 중"이
-            // 아니라 "보낼 게 없음"입니다.
+            // 빈 칸만 잠근다. 형식 오류는 눌렀을 때 알린다 (타이핑 중 깜빡임 방지).
             disabled={
               isPending ||
               (needsCaptcha && !uiState.captchaToken) ||
@@ -166,8 +161,6 @@ export const Login = () => {
               'bg-bg-main border-border-main text-text-muted border',
               'hover:border-primary hover:text-primary hover:-translate-y-px',
               'active:scale-[0.98]',
-              // 예전에는 비활성이 bg-gray-400 + 흰 글자라 평소(어두운 배경)보다
-              // 오히려 밝아서, 잠긴 상태가 활성처럼 보였습니다.
               'disabled:transform-none disabled:cursor-not-allowed disabled:opacity-50',
               'disabled:hover:border-border-main disabled:hover:text-text-muted',
             )}
@@ -189,10 +182,7 @@ export const Login = () => {
             Discord 소셜 로그인
           </button>
 
-          {/* 디스코드로 처음 로그인하면 그 자리에서 계정이 만들어집니다
-              (api/auth/discord/callback.ts). 가입 폼을 지나지 않으니 그쪽
-              동의 체크박스가 걸리지 않아, 여기서 고지합니다. 버튼 하나 누르러
-              온 사람에게 체크박스를 요구하면 이탈하므로 문구로 갈랐습니다. */}
+          {/* 디스코드 첫 로그인은 가입 폼을 거치지 않아 동의를 여기서 고지한다 */}
           <p className="text-text-muted mb-6 text-center text-[12px] leading-relaxed">
             디스코드로 처음 로그인하면 계정이 생성되며,{' '}
             <Link

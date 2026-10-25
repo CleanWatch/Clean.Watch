@@ -7,15 +7,11 @@ import { LegalLayout } from './LegalLayout';
 import * as L from './elements';
 
 /**
- * 개인정보처리방침.
- *
- * ⚠️ **코드가 바뀌면 이 문서도 바뀝니다.** 저장 항목·보유 기간·수탁자를 그대로
- * 적어 둔 문서라, 아래를 고치면 여기도 함께 고쳐야 합니다.
- *
- *   users 문서 필드      → 1. 수집 항목
- *   api/account/delete   → 3. 보유 기간 (탈퇴 시 신고가 남는다는 부분)
- *   firestore.rules      → 7. 안전성 확보 조치 (신고는 운영자만 열람)
- *   외부 API 추가        → 4. 제3자 제공
+ * 코드와 짝인 문서다. 아래를 바꾸면 해당 항목도 고친다.
+ *   users 문서 필드    → 1. 수집 항목
+ *   api/account/delete → 3. 보유 기간
+ *   firestore.rules    → 7. 안전성 확보 조치
+ *   외부 API 추가      → 4. 제3자 제공
  */
 export const Privacy = () => (
   <LegalLayout title="개인정보처리방침" effectiveDate={LEGAL_EFFECTIVE_DATE}>
@@ -33,7 +29,6 @@ export const Privacy = () => (
         ['이메일 주소', '이용자 직접 입력'],
         [
           '비밀번호',
-          // 배열 안의 JSX라 key가 필요합니다. 자리 표시용 span으로 감쌉니다.
           <span key="password">
             <L.B>서비스는 원문을 보관하지 않습니다.</L.B> 인증 사업자(Firebase
             Authentication)가 단방향 암호화하여 저장합니다

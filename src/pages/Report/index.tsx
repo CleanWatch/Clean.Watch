@@ -1,5 +1,4 @@
 import { Flag } from 'lucide-react';
-// src/pages/Report.tsx
 import { BATTLETAG_PLACEHOLDER, cn } from '@/utils';
 import { useReport } from './hooks';
 
@@ -94,9 +93,7 @@ export const Report = () => {
 
           <button
             type="submit"
-            // 필수 칸이 비어 있으면 잠급니다. 형식 오류는 눌렀을 때 문구로
-            // 알려주지만(타이핑 중 버튼이 깜빡이면 불편), 빈 칸은 "입력 중"이
-            // 아니라 "보낼 게 없음"입니다.
+            // 빈 칸만 잠근다. 형식 오류는 눌렀을 때 알린다 (타이핑 중 깜빡임 방지).
             disabled={isSubmitting || !battleTag.trim() || !reason}
             className={cn(
               'mt-2 flex h-14 w-full items-center justify-center rounded-lg text-[16px] font-bold text-white transition-all duration-200',

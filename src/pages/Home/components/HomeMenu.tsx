@@ -7,14 +7,11 @@ import { useLogoutMutation, useUser } from '@/hooks';
 export const HomeMenu = () => {
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const { mutate: handleLogout } = useLogoutMutation();
-  // Firestore 유저 데이터 연동
   const { data: user, isLoading } = useUser();
 
-  // 비로그인 상태
   if (!isLoggedIn) {
     return (
       <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-        {/* 로그인 (메인 액션) */}
         <Link
           to="/login"
           className={cn(
@@ -24,7 +21,6 @@ export const HomeMenu = () => {
         >
           로그인
         </Link>
-        {/* 신고 랭킹 */}
         <Link
           to="/ranking"
           className={cn(
@@ -39,7 +35,7 @@ export const HomeMenu = () => {
     );
   }
 
-  // 로그인 상태이지만 아직 유저 정보를 불러오는 중일 때 방어 로직 (깜빡임 방지)
+  // 유저 정보 로딩 중 깜빡임 방지
   if (isLoading) {
     return (
       <div className="text-text-muted mt-8 flex h-50 items-center justify-center text-[15px]">
@@ -48,11 +44,9 @@ export const HomeMenu = () => {
     );
   }
 
-  // 데이터 로딩 완료 후 진짜 유저 정보 세팅
   const userName = user?.username;
   const isAdmin = user?.role === 'admin';
 
-  // 로그인 상태 (유저 or 관리자)
   return (
     <div className="mt-8 flex flex-col gap-5">
       <div className="text-text-main text-center text-[15px]">
@@ -110,8 +104,7 @@ export const HomeMenu = () => {
               'hover:bg-danger-hover hover:-translate-y-px active:scale-[0.98]',
             )}
           >
-            {/* 원래 이모지가 없던 자리입니다. 같은 줄의 나머지 셋이 전부
-                아이콘을 갖게 되어 여기만 비면 어긋나 보입니다. */}
+            {/* 같은 줄 나머지가 전부 아이콘이라 맞춰 둔다 */}
             <ShieldCheck className="shrink-0" size={18} aria-hidden="true" />
             관리자 대시보드
           </Link>

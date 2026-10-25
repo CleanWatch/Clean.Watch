@@ -5,7 +5,6 @@ import { useAuthStore } from '@/store';
 import { LoadingSpinner } from './components';
 
 function App() {
-  // 앱이 켜지자마자 문지기 배치. 알아서 Zustand 업데이트 함
   useAuthListener();
 
   const { isAuthLoading } = useAuthStore();
@@ -13,7 +12,6 @@ function App() {
     return <LoadingSpinner />;
   }
 
-  // 라우터 렌더링
   return <RouterProvider router={router} />;
 }
 

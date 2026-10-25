@@ -1,5 +1,3 @@
-/* src/components/common/InputGroup.tsx */
-
 import { useId } from 'react';
 import { cn } from '@/utils';
 
@@ -11,13 +9,7 @@ interface InputGroupProps {
   onChange: (val: string) => void;
   tip?: string;
   error?: string;
-  /**
-   * 저장을 막지 **않는** 경고. 빨강이 아니라 호박색으로 나갑니다.
-   *
-   * 빨강은 "고쳐야 넘어간다"는 뜻으로 읽힙니다. 배틀태그 실존 확인처럼
-   * "못 찾았지만 그대로 진행할 수 있다"는 상황에 빨강을 쓰면, 사용자는 고칠 수
-   * 없는 값(비공개 프로필)을 붙들고 멈춥니다.
-   */
+  /** 저장을 막지 않는 경고. 빨강은 "고쳐야 넘어간다"로 읽혀서 호박색을 쓴다. */
   warning?: string;
 }
 
@@ -31,7 +23,6 @@ export const InputGroup = ({
   error,
   warning,
 }: InputGroupProps) => {
-  // 재사용 컴포넌트라 인스턴스마다 고유한 id가 필요합니다.
   const inputId = useId();
   const messageId = `${inputId}-message`;
 
@@ -49,10 +40,8 @@ export const InputGroup = ({
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        // 에러·안내 문구를 입력 칸과 연결해 스크린리더가 함께 읽도록 합니다.
         aria-describedby={error || warning || tip ? messageId : undefined}
-        // 경고에는 붙이지 않습니다. aria-invalid는 "이 값으로는 제출할 수 없다"는
-        // 뜻인데, 경고는 다시 누르면 그대로 저장됩니다.
+        // 경고엔 aria-invalid를 안 붙인다. 다시 누르면 그대로 저장되는 값이다.
         aria-invalid={error ? true : undefined}
         className={cn(
           'border-border-main bg-bg-main text-text-main mb-1 w-full rounded-lg border px-4 py-3 text-[15px] transition-all duration-200 outline-none',
@@ -64,8 +53,7 @@ export const InputGroup = ({
             'border-amber-400 focus:border-amber-400 focus:ring-amber-400/20',
         )}
       />
-      {/* 우선순위: 에러 > 경고 > 안내. 셋을 동시에 띄우면 무엇부터 봐야 할지
-          알 수 없고, 세로 높이도 들쭉날쭉해집니다. */}
+      {/* 하나만 띄운다: 에러 > 경고 > 안내 */}
       <div className="flex min-h-4.5 items-start">
         {error ? (
           <p id={messageId} className="text-danger m-0 text-xs font-bold">
