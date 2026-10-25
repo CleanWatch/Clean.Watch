@@ -1,5 +1,3 @@
-import { cn } from '@/utils';
-
 interface HomeStatsProps {
   reportCount?: number; // 값이 없을 수 있으니 ?
   battleTagCount?: number;
@@ -14,42 +12,33 @@ export const HomeStats = ({
   // 실패 시 0을 보여주면 신고가 없는 걸로 읽혀서 숫자를 비운다
 
   const show = (value?: number) => {
-    if (value !== undefined) return value;
+    if (value !== undefined) return value.toLocaleString('ko-KR');
     if (isLoading) return '...';
     return '-';
   };
 
   return (
-    <div className="mt-8 grid grid-cols-2 gap-3">
-      <div
-        className={cn(
-          'flex h-24 flex-col items-center justify-center rounded-lg',
-          'border-border-main bg-bg-card hover:border-primary/50 border transition-all duration-300',
-        )}
-      >
-        <span className="text-text-muted text-[13px] font-medium">
+    <div className="grid grid-cols-2 gap-6 lg:grid-cols-1 lg:gap-10">
+      <div>
+        <div className="text-text-muted text-[13px] font-bold tracking-[0.08em]">
           누적 신고
-        </span>
-        <span className="text-primary mt-1 text-2xl font-black">
+        </div>
+        <div className="font-display text-primary mt-1.5 text-[3.5rem] leading-none font-bold tabular-nums lg:mt-2 lg:text-[5.25rem]">
           {show(reportCount)}
-        </span>
+        </div>
       </div>
 
-      <div
-        className={cn(
-          'flex h-24 flex-col items-center justify-center rounded-lg',
-          'border-border-main bg-bg-card hover:border-text-muted/50 border transition-all duration-300',
-        )}
-      >
-        <span className="text-text-muted text-[13px] font-medium">
+      <div>
+        <div className="text-text-muted text-[13px] font-bold tracking-[0.08em]">
           누적 배틀태그
-        </span>
-        <span className="text-text-main mt-1 text-2xl font-bold">
+        </div>
+        <div className="font-display text-text-main mt-1.5 text-[3.5rem] leading-none font-bold tabular-nums lg:mt-2 lg:text-[5.25rem]">
           {show(battleTagCount)}
-        </span>
+        </div>
       </div>
+
       {!isLoading && reportCount === undefined && (
-        <p className="text-danger col-span-2 text-center text-[12px]">
+        <p className="text-danger col-span-2 text-[12px] lg:col-span-1">
           통계를 불러오지 못했습니다.
         </p>
       )}

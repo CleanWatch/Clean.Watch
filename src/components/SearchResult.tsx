@@ -70,7 +70,7 @@ export const SearchResult = ({
                 onClick={() => setShowNotice(true)}
                 className={cn(
                   'mt-5 flex h-11 items-center justify-center gap-2 rounded-lg px-6 text-[14px] font-bold transition-all duration-200',
-                  'bg-primary hover:bg-primary-hover text-white active:scale-[0.96]',
+                  'bg-primary hover:bg-primary-hover text-bg-main active:scale-[0.96]',
                 )}
               >
                 <Search className="shrink-0" size={16} aria-hidden="true" />

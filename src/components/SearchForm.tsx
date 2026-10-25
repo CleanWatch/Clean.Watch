@@ -54,8 +54,15 @@ export const SearchForm = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mx-auto w-full">
-      <div className="flex items-center gap-3">
+    <form onSubmit={handleSubmit} className="w-full">
+      {/* 넓은 화면에선 입력칸과 버튼이 한 테두리 안에 묶이고, 좁은 화면에선 위아래로 쌓인다 */}
+      <div
+        className={cn(
+          'flex flex-col gap-2.5 transition-colors duration-200 sm:flex-row sm:items-center sm:gap-2',
+          'sm:border-border-strong sm:bg-bg-card sm:focus-within:border-primary sm:rounded-xl sm:border sm:p-2',
+          errorMessage && 'sm:border-danger sm:focus-within:border-danger',
+        )}
+      >
         {/* placeholder는 라벨을 대신하지 못해 sr-only 라벨을 둔다 */}
         <label htmlFor="battletag-search" className="sr-only">
           배틀태그 검색
@@ -70,10 +77,11 @@ export const SearchForm = ({
           disabled={isSearching}
           className={cn(
             // min-w-0: flex 아이템 기본 min-width가 auto라 없으면 좁은 화면에서 버튼이 밀려난다
-            'h-14 min-w-0 flex-1 rounded-lg px-5 text-[17px] transition-all duration-200 outline-none',
-            'border-border-main bg-bg-main text-text-main border',
+            'h-15 w-full min-w-0 rounded-lg px-4 text-lg transition-all duration-200 outline-none',
+            'border-border-strong bg-bg-card text-text-main border',
             'placeholder:text-text-muted',
-            'focus:border-primary focus:bg-bg-card focus:ring-primary focus:ring-2',
+            'focus:border-primary focus:ring-primary focus:ring-1',
+            'sm:h-14 sm:flex-1 sm:border-0 sm:bg-transparent sm:text-xl sm:focus:ring-0',
             'disabled:cursor-not-allowed disabled:opacity-50',
             errorMessage &&
               'border-danger focus:border-danger focus:ring-danger',
@@ -84,9 +92,8 @@ export const SearchForm = ({
           type="submit"
           disabled={isSearching}
           className={cn(
-            // 좁은 화면에선 버튼 여백을 줄여 입력칸에 넘긴다
-            'h-14 rounded-lg px-5 text-[17px] font-bold whitespace-nowrap transition-all duration-200 sm:px-7',
-            'bg-primary hover:bg-primary-hover text-white active:scale-[0.96]',
+            'h-14 w-full rounded-lg text-[17px] font-bold whitespace-nowrap transition-all duration-200 sm:w-auto sm:px-9 sm:text-lg',
+            'bg-primary hover:bg-primary-hover text-bg-main active:scale-[0.97]',
             'disabled:transform-none disabled:cursor-not-allowed disabled:opacity-50',
           )}
         >

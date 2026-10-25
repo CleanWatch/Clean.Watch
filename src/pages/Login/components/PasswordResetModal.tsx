@@ -98,7 +98,7 @@ export const PasswordResetModal = ({
               !modalState.email.trim()
             }
             className={cn(
-              'bg-primary hover:bg-primary-hover flex-1 rounded-lg py-3 font-bold text-white transition-all',
+              'bg-primary hover:bg-primary-hover text-bg-main flex-1 rounded-lg py-3 font-bold transition-all',
               'disabled:hover:bg-primary disabled:cursor-not-allowed disabled:opacity-50',
             )}
           >

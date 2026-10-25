@@ -7,7 +7,7 @@ import { cn } from '@/utils';
 const ACTION_BASE = 'rounded-lg px-6 py-2.5 text-sm font-bold transition-all';
 
 const ACTION_VARIANT = {
-  primary: 'bg-primary hover:bg-primary-hover text-white',
+  primary: 'bg-primary hover:bg-primary-hover text-bg-main',
   secondary: cn(
     'border-border-main text-text-muted border',
     'hover:border-primary hover:text-primary',
