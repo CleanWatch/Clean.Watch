@@ -61,6 +61,18 @@ jobs:
           check "/api/auth/discord/callback?code=test" 403 "콜백 함수가 죽었습니다"
           check "/api/verify-captcha"                  405 "캡챠 검증 함수가 죽었습니다"
 
+          # POST 전용 함수는 GET에 405를 돌려준다. 핸들러 첫 줄에서 막으므로 DB를 건드리지 않고,
+          # 모듈 로드(firebase-admin 등)가 실패한 함수는 여기까지 못 와서 500이 된다.
+          check "/api/users/create"                    405 "프로필 생성 함수가 죽었습니다"
+          check "/api/users/update"                    405 "프로필 수정 함수가 죽었습니다"
+          check "/api/users/check-duplicate"           405 "중복 검사 함수가 죽었습니다"
+          check "/api/reports/create"                  405 "신고 접수 함수가 죽었습니다"
+          check "/api/reports/delete"                  405 "신고 삭제 함수가 죽었습니다"
+          check "/api/account/delete"                  405 "회원 탈퇴 함수가 죽었습니다"
+          check "/api/stats/verify"                    405 "배틀태그 확인 함수가 죽었습니다"
+          # GET 전용이고, 인증이 DB 조회보다 먼저라 토큰이 없으면 401이다.
+          check "/api/stats/me"                        401 "전적 조회 함수가 죽었습니다"
+
           echo
 
           # 302가 "어디로" 가는지까지 확인합니다.
