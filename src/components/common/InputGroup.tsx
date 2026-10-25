@@ -1,5 +1,5 @@
 import { useId } from 'react';
-import { cn } from '@/utils';
+import { FIELD, cn } from '@/utils';
 
 interface InputGroupProps {
   label: string;
@@ -44,13 +44,12 @@ export const InputGroup = ({
         // 경고엔 aria-invalid를 안 붙인다. 다시 누르면 그대로 저장되는 값이다.
         aria-invalid={error ? true : undefined}
         className={cn(
-          'border-border-main bg-bg-main text-text-main mb-1 w-full rounded-lg border px-4 py-3 text-[15px] transition-all duration-200 outline-none',
-          'placeholder:text-text-muted/70',
-          'focus:border-primary focus:ring-primary/20 focus:ring-2',
-          error && 'border-danger focus:border-danger focus:ring-danger/20',
+          FIELD,
+          'mb-1',
+          error && 'border-danger focus:border-danger focus:ring-danger',
           !error &&
             warning &&
-            'border-amber-400 focus:border-amber-400 focus:ring-amber-400/20',
+            'border-amber-400 focus:border-amber-400 focus:ring-amber-400',
         )}
       />
       {/* 하나만 띄운다: 에러 > 경고 > 안내 */}

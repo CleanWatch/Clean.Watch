@@ -4,12 +4,13 @@ import { cn } from '@/utils';
 
 /** 404·렌더 에러·로그인 필요·권한 없음 공용 화면. 버튼은 상황마다 달라 호출부가 넘긴다. */
 
-const ACTION_BASE = 'rounded-lg px-6 py-2.5 text-sm font-bold transition-all';
+const ACTION_BASE =
+  'inline-flex h-11 items-center rounded-lg px-6 text-sm font-bold transition-all active:scale-[0.97]';
 
 const ACTION_VARIANT = {
   primary: 'bg-primary hover:bg-primary-hover text-bg-main',
   secondary: cn(
-    'border-border-main text-text-muted border',
+    'border-border-strong text-text-main border',
     'hover:border-primary hover:text-primary',
   ),
 } as const;
@@ -63,27 +64,31 @@ export const ErrorState = ({
   actions,
   children,
 }: Props) => (
-  <div className="flex grow flex-col items-center justify-center gap-1.5 px-5 text-center">
+  <div className="mx-auto flex w-full max-w-300 grow flex-col justify-center px-5 pb-24 sm:px-10">
     {label && (
       <p
         className={cn(
-          'text-xs font-bold tracking-[0.16em]',
-          tone === 'danger' ? 'text-danger' : 'text-text-muted',
+          'font-display mb-2 text-6xl leading-none font-bold tracking-[0.04em] sm:text-8xl',
+          tone === 'danger' ? 'text-danger' : 'text-primary',
         )}
       >
         {label}
       </p>
     )}
 
-    <h1 className="text-text-main mt-1 text-xl font-bold">{title}</h1>
+    <h1 className="text-text-main mt-2 text-[1.75rem] leading-[1.25] font-extrabold tracking-tight break-keep sm:text-4xl">
+      {title}
+    </h1>
 
     {description && (
-      <p className="text-text-muted text-sm leading-relaxed">{description}</p>
+      <p className="text-text-muted mt-3 max-w-140 text-base leading-relaxed break-keep">
+        {description}
+      </p>
     )}
 
     {children}
 
-    <div className="mt-4 flex flex-wrap justify-center gap-2">
+    <div className="mt-8 flex flex-wrap gap-3">
       {actions ?? <ErrorAction to="/">홈으로</ErrorAction>}
     </div>
   </div>

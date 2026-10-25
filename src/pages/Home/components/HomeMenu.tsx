@@ -74,7 +74,7 @@ export const HomeMenu = () => {
           to="/admin"
           className={cn(
             BUTTON,
-            'bg-danger hover:bg-danger-hover text-white hover:-translate-y-px',
+            'bg-danger hover:bg-danger-hover text-bg-main hover:-translate-y-px',
           )}
         >
           <ShieldCheck className="shrink-0" size={18} aria-hidden="true" />

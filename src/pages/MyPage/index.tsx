@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { cn } from '@/utils';
 import { useAuthStore } from '@/store';
-import { ErrorState, ErrorAction } from '@/components';
+import { ErrorState, ErrorAction, PageHeader } from '@/components';
 import { DashboardTab, ReportsTab, SettingsTab } from './components';
 
 type TabType = 'dashboard' | 'reports' | 'settings';
@@ -30,18 +30,31 @@ export const MyPage = () => {
   }
 
   return (
-    <div className="flex w-full grow justify-center px-4 py-10 sm:px-6">
-      <div className="border-border-main bg-bg-card flex w-full max-w-212.5 flex-col overflow-hidden rounded-2xl border shadow-2xl">
-        <div className="border-border-main bg-bg-main/50 flex border-b">
+    <div className="mx-auto w-full max-w-300 grow px-5 sm:px-10">
+      <PageHeader
+        eyebrow="마이페이지"
+        title="내 계정"
+        className="pb-6 sm:pb-8"
+      />
+
+      <div className="max-w-190 pb-16 sm:pb-24">
+        <div
+          role="tablist"
+          aria-label="마이페이지 메뉴"
+          className="border-border-main flex gap-6 border-b sm:gap-8"
+        >
           {(['dashboard', 'reports', 'settings'] as TabType[]).map((tab) => (
             <button
               key={tab}
+              type="button"
+              role="tab"
+              aria-selected={activeTab === tab}
               onClick={() => setActiveTab(tab)}
               className={cn(
-                'flex-1 py-4 text-sm font-bold transition-all sm:text-base',
+                '-mb-px min-h-11 border-b-2 py-3 text-[15px] font-bold transition-colors sm:text-base',
                 activeTab === tab
-                  ? 'border-primary text-primary border-b-2'
-                  : 'text-text-muted hover:text-text-main hover:bg-white/5',
+                  ? 'border-primary text-primary'
+                  : 'text-text-muted hover:text-text-main border-transparent',
               )}
             >
               {tab === 'dashboard' && '대시보드'}
@@ -51,7 +64,7 @@ export const MyPage = () => {
           ))}
         </div>
 
-        <div className="p-6 sm:p-10">
+        <div role="tabpanel" className="pt-8 sm:pt-10">
           {activeTab === 'dashboard' && (
             <DashboardTab onNavigateSettings={() => setActiveTab('settings')} />
           )}

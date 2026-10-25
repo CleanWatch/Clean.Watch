@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { PageHeader } from '@/components';
 
 // 약관·방침 공용 셸. 본문 요소는 elements.tsx (L로 묶어 쓴다).
 export const LegalLayout = ({
@@ -10,23 +11,20 @@ export const LegalLayout = ({
   effectiveDate: string;
   children: React.ReactNode;
 }) => (
-  <div className="flex flex-1 justify-center p-4 sm:p-5">
-    <article className="border-border-main bg-bg-card text-text-main w-full max-w-200 rounded-2xl border p-6 sm:p-10">
-      <header className="border-border-main mb-8 border-b pb-6">
-        <h1 className="text-[26px] font-extrabold tracking-tight sm:text-[30px]">
-          {title}
-        </h1>
-        <p className="text-text-muted mt-2 text-[13px]">
-          시행일 {effectiveDate}
-        </p>
-      </header>
+  <div className="mx-auto w-full max-w-300 grow px-5 sm:px-10">
+    <article className="text-text-main max-w-200 pb-16 sm:pb-24">
+      <PageHeader
+        eyebrow={`시행일 ${effectiveDate}`}
+        title={title}
+        className="border-border-main mb-8 border-b"
+      />
 
       <div className="text-[15px] leading-relaxed">{children}</div>
 
       <footer className="border-border-main mt-10 border-t pt-6">
         <Link
           to="/"
-          className="text-primary hover:text-primary-hover text-[14px] font-semibold transition-colors"
+          className="text-primary hover:text-primary-hover inline-flex min-h-11 items-center text-[14px] font-semibold transition-colors"
         >
           ← 홈으로
         </Link>

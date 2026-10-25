@@ -7,7 +7,7 @@ const LINK =
   'text-text-muted hover:text-text-main text-[15px] transition-colors';
 
 const ACTION = cn(
-  'rounded-lg border px-3 py-1.5 text-[13px] font-bold transition-all',
+  'inline-flex h-11 items-center rounded-lg border px-4 text-[13px] font-bold transition-all',
   'border-border-main text-text-muted hover:border-primary hover:text-primary',
 );
 
