@@ -134,7 +134,7 @@ const SettingsForm = ({
       <button
         type="submit"
         disabled={!hasChanges || isPending || isChecking || isVerifying}
-        className="bg-primary hover:bg-primary-hover mt-4 rounded-lg py-4 font-bold text-white transition-all disabled:cursor-not-allowed disabled:opacity-50"
+        className="bg-primary hover:bg-primary-hover text-bg-main mt-4 rounded-lg py-4 font-bold transition-all disabled:cursor-not-allowed disabled:opacity-50"
       >
         {/* 실존 확인에 몇 초 걸려 문구로 진행 중임을 알린다 */}
         {isVerifying

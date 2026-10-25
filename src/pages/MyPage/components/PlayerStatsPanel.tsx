@@ -59,7 +59,7 @@ export const PlayerStatsPanel = ({ onNavigateSettings }: Props) => {
     <button
       type="button"
       onClick={onNavigateSettings}
-      className="bg-primary hover:bg-primary-hover rounded-lg px-4 py-2 text-[13px] font-bold text-white transition-colors"
+      className="bg-primary hover:bg-primary-hover text-bg-main rounded-lg px-4 py-2 text-[13px] font-bold transition-colors"
     >
       프로필 설정으로
     </button>
