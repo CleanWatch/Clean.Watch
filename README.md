@@ -5,11 +5,9 @@ Blizzard Entertainment와 무관한 비공식 커뮤니티 서비스입니다.
 
 https://cleanwatch.cloud
 
-![홈 화면 (데스크톱)](docs/images/home-desktop.png)
+![홈 화면](docs/images/home-desktop.png)
 
-<img src="docs/images/home-mobile.png" alt="홈 화면 (모바일)" width="260">
-
-위 화면은 샘플 데이터로 찍은 것입니다.
+샘플 데이터로 찍은 화면입니다.
 
 ## 하는 일
 
