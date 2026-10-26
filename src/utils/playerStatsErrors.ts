@@ -6,7 +6,7 @@ import type { PlayerStatsErrorCode } from '@/types';
  * retry: 다시 시도하면 풀림
  * none: 버튼으로 해결 불가
  */
-export type PlayerStatsErrorAction = 'settings' | 'retry' | 'none';
+type PlayerStatsErrorAction = 'settings' | 'retry' | 'none';
 
 interface PlayerStatsErrorInfo {
   message: string;

@@ -8,7 +8,7 @@ import { auth, db } from '@/firebase/firebase';
 import { api } from '@/api';
 import { useAuthStore } from '@/store';
 
-export interface Report {
+interface Report {
   id: string;
   battletag: string;
   reason: string;
