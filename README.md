@@ -73,22 +73,23 @@ https://cleanwatch.cloud
 ## 구조
 
 ```text
-api/                 Vercel Serverless Functions. DB 쓰기와 외부 API 호출을 맡습니다.
-  _lib/              Admin SDK, 토큰 검증, OverFast 클라이언트, uid별 쓰로틀
-  auth/discord/      OAuth 인가·콜백 (코드 교환, 커스텀 토큰 발급)
-  reports/           신고 접수·삭제
-  stats/             OverFast 프록시 (내 전적, 배틀태그 실존 확인)
-  users/             닉네임·배틀태그 중복 검사, 프로필 생성·수정
-  account/           회원 탈퇴 (신고 익명화, 문서 삭제, 계정 삭제 순)
-src/                 프론트엔드
-  api/               통신 계층. 인터셉터가 ID 토큰을 자동으로 붙입니다.
-  pages/             화면 단위. 로직은 페이지별 hooks/로 나눕니다.
-  components/        공용 UI
-  hooks/queries/     React Query 훅 (서버 상태)
-  store/             Zustand (클라이언트 전역 상태)
-  router/            lazy 로딩과 AsyncBoundary 기반 에러·서스펜스 처리
-firestore.rules      Firestore 보안 규칙. Firebase 콘솔에 붙여넣어 게시합니다.
-vercel.json          보안 헤더(CSP 등)와 배포 설정
+project-root
+├── api/                 # Vercel Serverless Functions. DB 쓰기와 외부 API 호출을 맡습니다.
+│   ├── _lib/            #   Admin SDK, 토큰 검증, OverFast 클라이언트, uid별 쓰로틀
+│   ├── auth/discord/    #   OAuth 인가·콜백 (코드 교환, 커스텀 토큰 발급)
+│   ├── reports/         #   신고 접수·삭제
+│   ├── stats/           #   OverFast 프록시 (내 전적, 배틀태그 실존 확인)
+│   ├── users/           #   닉네임·배틀태그 중복 검사, 프로필 생성·수정
+│   └── account/         #   회원 탈퇴 (신고 익명화, 문서 삭제, 계정 삭제 순)
+├── src/                 # 프론트엔드
+│   ├── api/             #   통신 계층. 인터셉터가 ID 토큰을 자동으로 붙입니다.
+│   ├── pages/           #   화면 단위. 로직은 페이지별 hooks/로 나눕니다.
+│   ├── components/      #   공용 UI
+│   ├── hooks/queries/   #   React Query 훅 (서버 상태)
+│   ├── store/           #   Zustand (클라이언트 전역 상태)
+│   └── router/          #   lazy 로딩과 AsyncBoundary 기반 에러·서스펜스 처리
+├── firestore.rules      # Firestore 보안 규칙. Firebase 콘솔에 붙여넣어 게시합니다.
+└── vercel.json          # 보안 헤더(CSP 등)와 배포 설정
 ```
 
 DB 쓰기는 모두 `api/`를 거칩니다. Firestore 규칙은 문서 하나만 보기 때문에 "중복 검사를 거쳤는지",
