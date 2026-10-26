@@ -7,8 +7,6 @@ https://cleanwatch.cloud
 
 ![홈 화면](docs/images/home-desktop.png)
 
-샘플 데이터로 찍은 화면입니다.
-
 ## 하는 일
 
 - 배틀태그를 검색하면 누적 신고 횟수와 최근 신고 시점을 보여 줍니다.
@@ -17,6 +15,16 @@ https://cleanwatch.cloud
 - 마이페이지에서 내 신고 내역을 보고 프로필을 수정합니다. 배틀태그를 등록하면 오버워치 프로필과 경쟁전 티어도 보입니다.
 - 이메일 또는 Discord 계정으로 로그인합니다.
 - 관리자는 접수된 신고를 열람하고 삭제할 수 있습니다.
+
+배틀태그를 검색하면 이렇게 나옵니다.
+
+![검색 결과](docs/images/search-result.png)
+
+전체 순위는 `/ranking`에서 봅니다.
+
+![신고 랭킹](docs/images/ranking.png)
+
+화면 이미지는 모두 샘플 데이터로 찍은 것입니다.
 
 ## 설계 결정
 
@@ -44,6 +52,9 @@ https://cleanwatch.cloud
 
 ## 보안
 
+<details>
+<summary>보안 항목 (펼치기)</summary>
+
 - Firestore 규칙은 기본이 전체 차단입니다. 공개 데이터(배틀태그별 신고 수)와 본인 문서, 본인 신고의
   읽기만 열려 있고, 모든 쓰기는 막혀 있습니다.
 - 서버는 `uid`를 요청 본문이 아니라 검증된 ID 토큰에서만 얻습니다.
@@ -61,6 +72,8 @@ https://cleanwatch.cloud
 - 브라우저에 노출되는 공개값(Firebase 웹 설정, 사이트 키)과 비밀값(Admin SDK 개인 키, OAuth 시크릿)을
   구분해서 관리하고, `.env.example`에 어느 쪽인지 적어 두었습니다.
 
+</details>
+
 ## 기술 스택
 
 - 프론트엔드: React 19, TypeScript, Vite 8, React Router, TanStack Query, Zustand, Tailwind CSS
@@ -69,6 +82,19 @@ https://cleanwatch.cloud
 - CI: GitHub Actions(린트·타입 검사·빌드), 배포 후 스모크 테스트
 
 ## 구조
+
+```mermaid
+flowchart LR
+    B["브라우저"]
+    S["api/<br/>Vercel Serverless Functions"]
+    F[("Firestore")]
+    O["OverFast API"]
+
+    B -- "읽기: 검색·랭킹·내 신고" --> F
+    B -- "쓰기 요청 + ID 토큰" --> S
+    S -- "검사 후 트랜잭션 쓰기<br/>(Admin SDK)" --> F
+    S -- "전적 조회" --> O
+```
 
 ```text
 project-root
