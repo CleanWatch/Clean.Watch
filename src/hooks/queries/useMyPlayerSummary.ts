@@ -3,10 +3,7 @@ import { useAuthStore } from '@/store';
 import { fetchMyPlayerSummary } from '@/api';
 import { useUser } from './useUser';
 
-export const myPlayerSummaryKey = (uid: string | null) => [
-  'myPlayerSummary',
-  uid,
-];
+const myPlayerSummaryKey = (uid: string | null) => ['myPlayerSummary', uid];
 
 // 서버가 no-store를 주므로 캐시는 여기 하나뿐이다
 export const useMyPlayerSummary = () => {

@@ -1,5 +1,5 @@
 // getAuthErrorMessage가 Firebase 에러처럼 code로 식별한다
-export class TimeoutError extends Error {
+class TimeoutError extends Error {
   readonly code = 'app/timeout';
 
   constructor(message = '요청 시간이 초과되었습니다.') {

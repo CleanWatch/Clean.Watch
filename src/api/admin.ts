@@ -8,7 +8,7 @@ import {
   Timestamp,
 } from 'firebase/firestore';
 
-export interface AdminReport {
+interface AdminReport {
   id: string;
   battletag: string;
   reason: string;

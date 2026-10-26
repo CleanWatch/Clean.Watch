@@ -6,7 +6,7 @@ import {
 } from 'firebase/firestore';
 import { db } from '@/firebase/firebase';
 
-export interface HomeStatsData {
+interface HomeStatsData {
   reportCount: number;
   battleTagCount: number;
 }

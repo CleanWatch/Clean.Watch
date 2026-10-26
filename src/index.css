@@ -11,7 +11,6 @@
 
   /* Discord */
   --color-discord: #5865f2;
-  --color-discord-hover: #4752c4;
 
   /* 2. 글로벌 배경 톤앤매너 (레거시 계승) */
   --color-bg-main: #09090b; /* 화면 전체 바탕색 (tailwind gray-50) */
