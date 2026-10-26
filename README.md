@@ -76,10 +76,36 @@ https://cleanwatch.cloud
 
 ## 기술 스택
 
-- 프론트엔드: React 19, TypeScript, Vite 8, React Router, TanStack Query, Zustand, Tailwind CSS
-- 백엔드: Vercel Serverless Functions(`api/`), Firebase(Authentication, Cloud Firestore, App Check, Admin SDK)
-- 외부 서비스: OverFast API(오버워치 프로필·티어), Discord OAuth2, Cloudflare Turnstile(봇 방어)
-- CI: GitHub Actions(린트·타입 검사·빌드), 배포 후 스모크 테스트
+프론트엔드 (React 19, TypeScript, Vite 8)
+
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E)
+![React Router](https://img.shields.io/badge/React_Router-CA4245?style=for-the-badge&logo=react-router&logoColor=white)
+![React Query](https://img.shields.io/badge/React_Query-FF4154?style=for-the-badge&logo=ReactQuery&logoColor=white)
+![Zustand](https://img.shields.io/badge/Zustand-443E38?style=for-the-badge)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+
+백엔드와 인프라
+
+![Firebase](https://img.shields.io/badge/firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)
+![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
+![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white)
+
+Firebase Authentication, Cloud Firestore, App Check, Admin SDK와 Vercel Serverless Functions를 씁니다.
+푸시마다 린트·타입 검사·빌드를 돌리고, 배포 뒤에는 스모크 테스트가 실제 엔드포인트를 확인합니다.
+
+외부 서비스
+
+![OverFast API](https://img.shields.io/badge/OverFast_API-F99E1A?style=for-the-badge&logo=overwatch&logoColor=white)
+![Discord OAuth2](https://img.shields.io/badge/Discord_OAuth2-5865F2?style=for-the-badge&logo=discord&logoColor=white)
+![Cloudflare Turnstile](https://img.shields.io/badge/Cloudflare_Turnstile-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)
+![Sonner](https://img.shields.io/badge/Sonner-000000?style=for-the-badge&logo=react&logoColor=white)
+
+- OverFast API: 오버워치 프로필과 경쟁전 티어를 조회합니다. 서버리스 함수를 통해서만 호출합니다.
+- Discord OAuth2: 소셜 로그인입니다. 토큰 교환은 서버에서 처리합니다.
+- Cloudflare Turnstile: 회원가입, 비밀번호 재설정, 반복된 로그인 실패 뒤의 로그인에서 봇을 막습니다.
+- Sonner: 토스트 알림입니다. 사용자 안내에 `alert()`를 쓰지 않습니다.
 
 ## 구조
 
